@@ -1,4 +1,5 @@
 import { useState } from "react";
+const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const SingleFileUploader = () => {
   const [file, setFile] = useState(null);
@@ -20,7 +21,7 @@ const SingleFileUploader = () => {
         formData.append("file", file);
   
         try {
-          const result = await fetch("http://0.0.0.0:3000/api/storage/geturl?" + new URLSearchParams({ file: file.name }));
+          const result = await fetch(`${serverHost}/api/storage/geturl?` + new URLSearchParams({ file: file.name }));
           const data = await result.json();
           const { presignedURL } = data;
           console.log(presignedURL)

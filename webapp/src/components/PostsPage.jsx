@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from "react";
 import Navigation from './Navigation';
+const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const Posts = () => {
       const [posts, setPosts] = useState([]);
       
       useEffect(() => {
             async function getPosts(){
-                  const response = await fetch("http://localhost:3000/api/posts");
+                  const response = await fetch(`${serverHost}/api/posts`);
                   const data = await response.json();
                   setPosts(data)
             }

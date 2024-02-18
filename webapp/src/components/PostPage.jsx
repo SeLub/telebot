@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from "react";
 import Navigation from './Navigation';
+const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const Post = () => {
       const { postId:post_id } = useParams()
@@ -8,7 +9,7 @@ const Post = () => {
 
       useEffect(() => {
             async function getImages(){
-                  const response = await fetch(`http://localhost:3000/api/posts/photos/${post_id}`);
+                  const response = await fetch(`${serverHost}/api/posts/photos/${post_id}`);
                   const data = await response.json();
                   console.log(data)
                   if (data.code == 404) { setImages([]) } else { setImages(data) }

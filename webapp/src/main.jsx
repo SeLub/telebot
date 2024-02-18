@@ -5,8 +5,7 @@ import HomePage from './components/HomePage'
 import Posts from './components/PostsPage'
 import Post from './components/PostPage'
 import NotFoundPage from './components/NotFoundPage'
-const webAppHost = import.meta.env.VITE_REACT_APP_WEBAPP_HOST;
-//const baseHref = `<base href="https://${webAppHost}" />`
+//const webAppHost = import.meta.env.VITE_REACT_APP_WEBAPP_HOST;
 var base = document.createElement('base');
 base.href = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
 document.getElementsByTagName('head')[0].appendChild(base);

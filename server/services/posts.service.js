@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 const { MoleculerError } = require("moleculer").Errors;
 
-const notFoundError = (id) => { throw new MoleculerError(`Record with ${id} not found.`, 404, "ERR_NOTFOUND"); }
+//const notFoundError = (id) => { throw new MoleculerError(`Record with ${id} not found.`, 404, "ERR_NOTFOUND"); }
 
 // PostgreSQL connection configuration
 const pgConfig = {
@@ -29,7 +29,7 @@ module.exports = {
         defaultPhotoFilename: "",
         // Expose REST API at root endpoint
         //rest: "/",
-        authorize: true
+        authorize: false
     },
     async started() {
         try {
@@ -74,10 +74,10 @@ module.exports = {
             if (!res.rows[0].exists) {
                 await client.query(`
                     CREATE TABLE photo (
-                        id SERIAL PRIMARY KEY,
-                        photo_id UUID,
+                        photo_id UUID PRIMARY KEY,
+                        post_id_photo UUID,
                         photo_filename TEXT,
-                        FOREIGN KEY (photo_id) REFERENCES post(post_id)
+                        FOREIGN KEY (post_id_photo) REFERENCES post(post_id)
                     );
                 `);
                 console.log("Created 'photo' table");
@@ -92,7 +92,7 @@ module.exports = {
         },
         async checkPhotoExists(photoId) {
             const res = await client.query(`
-                SELECT COUNT(*) FROM photo WHERE photo_id = $1;
+                SELECT COUNT(*) FROM photo WHERE post_id_photo = $1;
             `, [photoId]);
             const photoExists = !!Number(res.rows[0].count);
             if (!photoExists) return Promise.reject(new MoleculerError("Photo not found!", 404));
@@ -110,7 +110,7 @@ module.exports = {
             // Check if the photo exists
             await this.checkPhotoExists(photoId);
             const res = await client.query(`
-            SELECT * FROM photo WHERE photo_id = $1;
+            SELECT * FROM photo WHERE post_id_photo = $1;
         `, [photoId]);
         return res.rows;
 
@@ -142,9 +142,10 @@ module.exports = {
     actions: {
         listPosts: {
             rest: "GET /",
+            // SELECT * FROM post LEFT JOIN photo ON post.post_id=photo.post_id_photo
             async handler(ctx) {
                 const res = await client.query(`
-                    SELECT * FROM post;
+                    SELECT * FROM post
                 `);
                 return res.rows;
             }
@@ -196,11 +197,12 @@ module.exports = {
                         VALUES ($1, $2);
                     `, [post_id, post_text]);
 
-                    const photo_id = post_id;
+                    const post_id_photo = post_id;
+                    const photo_id = uuidv4()
                     await client.query(`
-                        INSERT INTO photo (photo_id, photo_filename) 
-                        VALUES ($1, $2);
-                    `, [photo_id, photo_filename]);
+                        INSERT INTO photo (photo_id, post_id_photo, photo_filename) 
+                        VALUES ($1, $2, $3);
+                    `, [photo_id, post_id_photo, photo_filename]);
                 } else {
                         // Create a new post record
                         await client.query(`
@@ -218,12 +220,13 @@ module.exports = {
                   photo_filename: { type: "string", optional: true }
               },
             async handler(ctx) {
-                await this.checkPostExists(ctx.params.post_id);
-                const { post_id, photo_filename } = ctx.params.post_id;
+                const { post_id, photo_filename } = ctx.params
+                await this.checkPostExists(post_id);
+                const photo_id = uuidv4()
                 await client.query(`
-                    INSERT INTO photo (photo_id, photo_filename) 
-                    VALUES ($1, $2);
-                    `, [post_id, photo_filename]);
+                    INSERT INTO photo (photo_id, post_id_photo, photo_filename) 
+                    VALUES ($1, $2, $3);
+                    `, [photo_id, post_id, photo_filename]);
                 return await this.getPost(post_id);
             }
         },
@@ -245,11 +248,11 @@ module.exports = {
                     WHERE post_id = $2;`, [post_text, id]);
                     return await this.getPost(id);
                 } else {
-                        photo_id = id;
+                        post_id_photo = id;
                         await client.query(`
-                            INSERT INTO photo (photo_id, photo_filename) 
+                            INSERT INTO photo (post_id_photo, photo_filename) 
                             VALUES ($1, $2);
-                        `, [photo_id, photo_filename]);
+                        `, [post_id_photo, photo_filename]);
                         return await this.getPost(id);
                 }
             }
@@ -265,7 +268,7 @@ module.exports = {
                 await this.checkPostExists(id);
                 // Delete photos of post record
                 await client.query(`
-                DELETE FROM photo WHERE photo_id = $1;
+                DELETE FROM photo WHERE post_id_photo = $1;
                 `, [id]);
                 // Delete the post record
                 await client.query(`

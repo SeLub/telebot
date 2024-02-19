@@ -28,7 +28,11 @@ module.exports = {
 		routes: [
 			{
 				path: "/api",
-
+				cors: {
+					origin: ["http://localhost:5173", "http://0.0.0.0:3000", "https://tgrobot.netlify.app"],
+					methods: ["GET", "POST", "PUT", "DELETE"],
+					credentials: false
+				  },
 				whitelist: [
 					"**"
 				],
@@ -57,6 +61,7 @@ module.exports = {
 					"GET /photos": "posts.getPhotos",
 					"POST /posts": "posts.createPost",
 					"POST /photos": "posts.addPhotoToPost",
+					"GET /storage": "storage.getURL"
 				},
 
 				/**

@@ -4,7 +4,7 @@
   "description": "My Moleculer-based microservices project",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services/**/*.service.js",
-    "start": "moleculer-runner",
+    "start": "moleculer-runner services/**/*.service.js",
     "cli": "moleculer connect ",
     "ci": "jest --watch",
     "test": "jest --coverage"
@@ -20,6 +20,8 @@
     "moleculer-repl": "^0.7.3"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.515.0",
+    "@aws-sdk/s3-request-presigner": "^3.515.0",
     "dotenv": "^16.4.1",
     "moleculer": "^0.14.26",
     "moleculer-db": "^0.8.25",

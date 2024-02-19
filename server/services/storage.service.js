@@ -114,22 +114,27 @@ module.exports = {
                   async handler(ctx){
                         const { file } = ctx.params;
 
-                        const Key = decodeURIComponent(file);
-                        const ContentType = this.getImageContentType(Key);
-
-                        const createPresignedUrlWithClient = ({ Bucket, Key, ContentType }) => {
-                              const command = new PutObjectCommand({ Bucket, Key, ContentType });
-                              return getSignedUrl(s3Client, command, { expiresIn: 3600 });
-                            };
+                        const fileNameWithPath = `images/${decodeURIComponent(file)}`;
+                        const ContentType = this.getImageContentType(fileNameWithPath);
                         
-                            const presignedURL = await createPresignedUrlWithClient({
-                              region: 'global',
+                        const commandParams = {
                               Bucket,
-                              Key,
-                              ContentType
-                            });
+                              Key: fileNameWithPath,
+                              //ContentType, // Set the content type here
+                              ACL:'public-read'
+                        };
 
-                        return { presignedURL };
+                          console.log(commandParams)
+                        
+                        const putCommand = new PutObjectCommand(commandParams);
+
+                        try {
+                              const presignedURL = await getSignedUrl(s3Client, putCommand, { expiresIn: 3600 });
+                              console.log(`Getting signedUrl to put "${fileNameWithPath}" to "${commandParams.Bucket}".\nSinedURL :`, presignedURL);
+                              return { presignedURL };
+                        } catch (error) {
+                              console.log("Error during presigned URL", error);
+                        }
                   }
             },
             async deleteFile(ctx){

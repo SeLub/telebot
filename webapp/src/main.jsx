@@ -5,6 +5,7 @@ import HomePage from './components/HomePage'
 import Posts from './components/PostsPage'
 import Post from './components/PostPage'
 import NotFoundPage from './components/NotFoundPage'
+import Picture from './components/Picture'
 //const webAppHost = import.meta.env.VITE_REACT_APP_WEBAPP_HOST;
 var base = document.createElement('base');
 base.href = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path:'posts/:postId',
     element: <Post />
+  },
+  {
+    path:'/image',
+    element: <Picture imageName='villa.jpg'/>
   }
 ])
 

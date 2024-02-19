@@ -12,13 +12,46 @@ const SingleFileUploader = () => {
     }
   };
 
+  const getImageContentType = (filePath) => {
+    const ext = '.' + filePath.toLowerCase().split('.').pop();
+    switch (ext) {
+    case '.jpg':
+    case '.jpeg':
+          return 'image/jpeg';
+    case '.png':
+          return 'image/png';
+    case '.csv': 
+          return 'text/csv';
+    case '.txt':
+          return 'text/plain';
+    case '.doc':
+          return 'application/msword';
+    case '.pdf':
+          return 'application/pdf';
+    case '.avi':
+          return 'video/x-msvideo';
+    case '.mp3':
+          return 'audio/mpeg';
+    case '.mp4':
+          return 'video/mp4';
+    case '.mpeg':
+          return 'video/mpeg';
+    case '.webp':
+          return 'image/webp';
+    case '.webm':
+          return 'video/webm';
+    case '.xls':
+          return 'application/vnd.ms-excel';
+    default:
+          throw new Error('Unsupported file type');
+    }
+}
+
   const handleUpload = async () => {
       if (file) {
         console.log(file)
+        const contentType = await getImageContentType(file.name);
         setStatus("uploading");
-  
-        const formData = new FormData();
-        formData.append("file", file);
   
         try {
           const result = await fetch(`${serverHost}/api/storage/geturl?` + new URLSearchParams({ file: file.name }));
@@ -28,10 +61,12 @@ const SingleFileUploader = () => {
           const result2 = await fetch(presignedURL, 
             {
               headers: {
-                'x-amz-acl': 'bucket-owner-full-control'
+                //'x-amz-acl': 'bucket-owner-full-control',
+                'Content-Type': contentType,
+                'x-amz-acl': 'public-read'
               },
               method: "PUT",
-              body: formData,
+              body: file
             });
 
             console.log('result2 ', result2)

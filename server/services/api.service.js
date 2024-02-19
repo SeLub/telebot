@@ -1,6 +1,7 @@
 "use strict";
 
 const ApiGateway = require("moleculer-web");
+require("dotenv").config();
 
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
@@ -29,7 +30,7 @@ module.exports = {
 			{
 				path: "/api",
 				cors: {
-					origin: ["http://localhost:5173", "http://0.0.0.0:3000", "https://tgrobot.netlify.app"],
+					origin: [`${process.env.FRONTEND_HOST}`],
 					methods: ["GET", "POST", "PUT", "DELETE"],
 					credentials: false
 				  },

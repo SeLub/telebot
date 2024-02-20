@@ -1,4 +1,4 @@
-import SingleFileUploader from './SingleFileUploader'
+import PostForm from './PostTextForm'
 import Navigation from './Navigation'
 
 const Home = () => {
@@ -6,7 +6,7 @@ const Home = () => {
       <>
             <Navigation />      
                   <h1>Home</h1>
-            <SingleFileUploader />
+            
             
       </>
       )

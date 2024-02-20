@@ -1,29 +1,45 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from "react";
 import Navigation from './Navigation';
+import PostTextForm from './PostTextForm';
+import AttachmentsForm from './AttachmentsForm'
+import SubmitForm from './SubmitForm';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const Post = () => {
-      const { postId:post_id } = useParams()
-      const [images, setImages] = useState([]);
+      const { postId:post_id } = useParams();
+      const [attachments, setAttachments] = useState([]);
+      const [text, setText] = useState('');
 
       useEffect(() => {
-            async function getImages(){
+
+            const getAttachments = async () => {
                   const response = await fetch(`${serverHost}/api/posts/photos/${post_id}`);
                   const data = await response.json();
-                  console.log(data)
-                  if (data.code == 404) { setImages([]) } else { setImages(data) }
+                  console.log('attachment data: ', data)
+                  if (data.code == 404) { setAttachments([]) } else { setAttachments(data) }
             }
-            getImages()
-
+                  getAttachments()
             }, [post_id])
-      
-            const listImage = (image) => (<li key={image.photo_id}>{image.photo_filename}</li>)
+
+      useEffect(() => {
+            const getText = async () => {
+                  const response = await fetch(`${serverHost}/api/posts/${post_id}`);
+                  const data = await response.json();
+                  console.log('text data: ', data[0]['post_text'])
+                  const postText = data[0]['post_text']; 
+                  if (data.code == 404) { setText([]) } else { setText(postText) }
+            }
+                  getText()
+      }, [post_id])
+
       return(
             <>
                   <Navigation />
                   <h1>Post page {post_id}</h1>
-                  <ul> { images.map(image => listImage(image)) } </ul>
+                  <PostTextForm text={text} setText={setText} />
+                  <AttachmentsForm attachments={attachments} setAttachments={setAttachments} post_id={post_id}/>
+                  <SubmitForm  />
             </>
       )
 }

@@ -30,7 +30,7 @@ module.exports = {
 			{
 				path: "/api",
 				cors: {
-					origin: [`${process.env.FRONTEND_HOST}`],
+					origin: ['http://0.0.0.0:3000/',`${process.env.FRONTEND_HOST}`],
 					methods: ["GET", "POST", "PUT", "DELETE"],
 					credentials: false
 				  },

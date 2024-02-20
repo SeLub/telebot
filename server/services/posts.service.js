@@ -217,12 +217,12 @@ module.exports = {
             rest: "POST /photos/:post_id",
             params: {
                   post_id: { type: "string" },
+                  photo_id: { type: "string" },
                   photo_filename: { type: "string", optional: true }
               },
             async handler(ctx) {
-                const { post_id, photo_filename } = ctx.params
+                const { post_id, photo_id, photo_filename } = ctx.params;
                 await this.checkPostExists(post_id);
-                const photo_id = uuidv4()
                 await client.query(`
                     INSERT INTO photo (photo_id, post_id_photo, photo_filename) 
                     VALUES ($1, $2, $3);

@@ -61,7 +61,6 @@ const AttachmentsForm = (params) => {
       }
       const handleUpload = async () => {
           if (file) {
-            console.log(file)
             const contentType = await getImageContentType(file.name);
             setStatus("uploading");
       
@@ -71,8 +70,7 @@ const AttachmentsForm = (params) => {
               //Make a request to get signedURL
               const getPresignedURL = await fetch(`${serverHost}/api/storage/geturl?` + new URLSearchParams({ file: uniqueFileName }));
               const { presignedURL } = await getPresignedURL.json();
-              //console.log(presignedURL)
-              const putFileToStorage = await fetch(presignedURL, 
+              await fetch(presignedURL, 
                 {
                   headers: {
                     //'x-amz-acl': 'bucket-owner-full-control',
@@ -82,13 +80,10 @@ const AttachmentsForm = (params) => {
                   method: "PUT",
                   body: file
                 });
-    
-                console.log('result putFileToStorage: ', putFileToStorage)
 
-                const attachFileToPost = await fetch(`${serverHost}/api/posts/photos/${post_id}`, {
+                await fetch(`${serverHost}/api/posts/photos/${post_id}`, {
                   headers: {
                     "Content-Type": "application/json",
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
                   },
                   method: 'POST',
                   body: JSON.stringify({
@@ -104,7 +99,6 @@ const AttachmentsForm = (params) => {
                     photo_id_post: post_id,
                     photo_filename: uniqueFileName
                   }]);
-                console.log('attachFileToPost ', attachFileToPost);
 
               setStatus("success");
             } catch (error) {
@@ -121,11 +115,9 @@ const AttachmentsForm = (params) => {
         </div>)
 
       const addFileToDelete = (e) => {
-        console.log(e)
         if(e.target.checked) {
           setToDelete([ ...toDelete, e.target.value]);
         } else {
-          console.log('!!!!!!!!!! = ', toDelete.filter(el => el !== e.target.value));
           setToDelete(toDelete.filter(el => el !== e.target.value))
         }
       }

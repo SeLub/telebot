@@ -6,6 +6,7 @@ const AttachmentsForm = (params) => {
       const { attachments, setAttachments, post_id } = params;
       const [file, setFile] = useState(null);
       const [status, setStatus] = useState("initial");
+      const [toDelete, setToDelete] = useState([]);
 
       const handleAddFile = (e) => {
         if (e.target.files) {
@@ -113,7 +114,27 @@ const AttachmentsForm = (params) => {
           }
         };
 
-      const displayFile = (file) => (<li key={file.photo_id}><input type="checkbox" value={file.photo_filename}/>{file.photo_filename}</li>)
+      const displayFile = (file) => (
+        <div id="grid-80">
+          <div>{file.photo_filename}</div>
+          <div key={file.photo_filename}><input type="checkbox" value={file.photo_filename} onClick={addFileToDelete}/></div>
+        </div>)
+
+      const addFileToDelete = (e) => {
+        console.log(e)
+        if(e.target.checked) {
+          setToDelete([ ...toDelete, e.target.value]);
+        } else {
+          console.log('!!!!!!!!!! = ', toDelete.filter(el => el !== e.target.value));
+          setToDelete(toDelete.filter(el => el !== e.target.value))
+        }
+      }
+      
+      const isArrayEmpty = (arr) => Array.isArray(arr) && arr.length === 0 ? true : false;
+
+      const handleDelete = () => {}
+
+      const filesWillBeDeleted = () => toDelete.map(file => <li key={file}>{file}</li>)
 
       return(
             <>
@@ -124,8 +145,9 @@ const AttachmentsForm = (params) => {
             </fieldset>
             </div>
             
-            
             <fieldset className="checkboxgroup">
+            <div id="grid-80">
+              <div>
             <div>
               <label htmlFor="file" className="sr-only">Add file</label>
               <input id="file" type="file" onChange={handleAddFile} />
@@ -146,6 +168,23 @@ const AttachmentsForm = (params) => {
                 Upload a file
               </button>
             )}
+            </div>
+            <div>
+              {
+                !isArrayEmpty(toDelete) &&
+                <>
+                <button onClick={handleDelete} className="submit">
+                Delete file
+              </button>
+                          <section>File will be deleted:
+                          <ul>
+                            { filesWillBeDeleted() }
+                          </ul>
+                        </section>
+                </>
+              }
+            </div>
+            </div>
             </fieldset>
       <StatusForm status={status} />
             </>

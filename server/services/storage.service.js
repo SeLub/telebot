@@ -137,8 +137,36 @@ module.exports = {
                         }
                   }
             },
-            async deleteFile(ctx){
-                  //TODO
+            deleteFile: {
+                 rest: "DELETE /file/",
+                 params: {
+                        filename: { type: "string" }
+                 },
+                 async handler(ctx) {
+                  const { filename } = ctx.params;
+
+                  const fileNameWithPath = `images/${decodeURIComponent(filename)}`;
+
+                  const commandParams = {
+                        Bucket,
+                        Key: fileNameWithPath,
+                        Condition: {
+                              StringEquals: {
+                                  'x-amz-acl': 'bucket-owner-full-control'
+                              }
+                          }
+                  };
+                  try {
+                        const deleteCommand = new DeleteObjectCommand(commandParams);
+                        const data = await s3Client.send(deleteCommand)
+                        console.log("Success. Object deleted.", data);
+                        return data; // For unit tests.
+                  } catch(error) {
+                        console.log("Error:", error);
+                  }
+                        
+
+                 }
             }
       }
 }

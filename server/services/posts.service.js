@@ -240,9 +240,11 @@ module.exports = {
                 const { post_id, photo_filename } = ctx.params;
                 await this.checkPostExists(post_id);
                 try {
+                    await ctx.call("storage.deleteFile", { filename: photo_filename });
+
                     await client.query(`
                     DELETE FROM photo WHERE post_id_photo='${post_id}' AND photo_filename='${photo_filename}'`);
-                    return 'Deleted';
+                    return 'Deleted From DB and Storage';
                 } catch(e) {
                     return e;
                 }

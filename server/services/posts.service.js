@@ -230,6 +230,25 @@ module.exports = {
                 return await this.getPost(post_id);
             }
         },
+        deletePhotoFromPost: {
+            rest: "DELETE /photos/:post_id",
+            params: {
+                post_id: { type: "string" },
+                photo_filename: { type: "string", optional: true }
+            },
+            async handler(ctx) {
+                const { post_id, photo_filename } = ctx.params;
+                await this.checkPostExists(post_id);
+                try {
+                    await client.query(`
+                    DELETE FROM photo WHERE post_id_photo='${post_id}' AND photo_filename='${photo_filename}'`);
+                    return 'Deleted';
+                } catch(e) {
+                    return e;
+                }
+                
+            }
+        },
         put: {
             rest: "PUT /:id",
             params: {

@@ -124,7 +124,22 @@ const AttachmentsForm = (params) => {
       
       const isArrayEmpty = (arr) => Array.isArray(arr) && arr.length === 0 ? true : false;
 
-      const handleDelete = () => {}
+      const handleDelete = () => {
+        const fetchDeleteFile = async (post_id, filename) => {
+          await fetch(`${serverHost}/api/posts/photos/${post_id}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: 'DELETE',
+            body: JSON.stringify({
+                photo_filename: filename
+            })
+          });
+        }
+        console.log('toDelete', toDelete);
+        toDelete.map(filename => fetchDeleteFile(post_id, filename));
+        //promises.allSettled(promises).then((results) => results.forEach((result) => console.log(result.status)));
+      }
 
       const filesWillBeDeleted = () => toDelete.map(file => <li key={file}>{file}</li>)
 

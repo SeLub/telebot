@@ -16,7 +16,6 @@ const Post = () => {
             const getAttachments = async () => {
                   const response = await fetch(`${serverHost}/api/posts/photos/${post_id}`);
                   const data = await response.json();
-                  console.log('attachment data: ', data)
                   if (data.code == 404) { setAttachments([]) } else { setAttachments(data) }
             }
                   getAttachments()
@@ -26,7 +25,6 @@ const Post = () => {
             const getText = async () => {
                   const response = await fetch(`${serverHost}/api/posts/${post_id}`);
                   const data = await response.json();
-                  console.log('text data: ', data[0]['post_text'])
                   const postText = data[0]['post_text']; 
                   if (data.code == 404) { setText([]) } else { setText(postText) }
             }

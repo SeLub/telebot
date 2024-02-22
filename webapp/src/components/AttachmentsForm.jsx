@@ -8,6 +8,19 @@ const AttachmentsForm = (params) => {
       const [status, setStatus] = useState("initial");
       const [toDelete, setToDelete] = useState([]);
 
+      let clickCount = 0;
+      const deleteSafely = () => {
+        clickCount++;
+        if (clickCount === 1) {
+          // Change button color to red on first click
+          const deleteButton = document.getElementById('deleteButton');
+          deleteButton.classList.add('red');
+        } else if (clickCount === 2) {
+          // Run handleDelete function on second click
+          handleDelete();
+      }
+      }
+
       const handleAddFile = (e) => {
         if (e.target.files) {
           setFile(e.target.files[0]);
@@ -109,9 +122,9 @@ const AttachmentsForm = (params) => {
         };
 
       const displayFile = (file) => (
-        <div id="grid-80">
+        <div id="grid-80" key={file.photo_filename}>
           <div>{file.photo_filename}</div>
-          <div key={file.photo_filename}><input type="checkbox" value={file.photo_filename} onClick={addFileToDelete}/></div>
+          <div><input type="checkbox" value={file.photo_filename} onClick={addFileToDelete}/></div>
         </div>)
 
       const addFileToDelete = (e) => {
@@ -124,7 +137,7 @@ const AttachmentsForm = (params) => {
       
       const isArrayEmpty = (arr) => Array.isArray(arr) && arr.length === 0 ? true : false;
 
-      const handleDelete = () => {
+      const handleDelete = async() => {
         const fetchDeleteFile = async (post_id, filename) => {
           await fetch(`${serverHost}/api/posts/photos/${post_id}`, {
             headers: {
@@ -136,31 +149,53 @@ const AttachmentsForm = (params) => {
             })
           });
         }
-        console.log('toDelete', toDelete);
-        toDelete.map(filename => fetchDeleteFile(post_id, filename));
-        //promises.allSettled(promises).then((results) => results.forEach((result) => console.log(result.status)));
+        console.log('toDelete ', toDelete);
+
+        const actualToDelete = [...toDelete];
+        let actualAttachment = [...attachments];
+        let fileToDelete;
+        // eslint-disable-next-line no-cond-assign
+        while(fileToDelete = actualToDelete.shift()){
+          console.log('filename: ', fileToDelete);
+          await fetchDeleteFile(post_id, fileToDelete);
+          console.log('actualAttachment', actualAttachment);
+
+        const deleteFileFromAttachments = (fileToDelete) => actualAttachment.filter((att) => att.photo_filename !== fileToDelete);
+        
+        const newAttachmentsState = deleteFileFromAttachments(fileToDelete);
+        console.log('newAttachmentsState ', newAttachmentsState);
+        actualAttachment = newAttachmentsState;
+
+        setAttachments(actualAttachment);
+        }
+        console.log('actualToDelete ', actualToDelete);
+
+        
+        setToDelete(actualToDelete);
+
+        // Promise.allSettled(promises).then((results) =>
+        //   results.forEach((result) => console.log(result.status)),);
       }
 
       const filesWillBeDeleted = () => toDelete.map(file => <li key={file}>{file}</li>)
 
       return(
             <>
-            <div>
             <fieldset className="checkboxgroup">
               <p>Current attachments:</p>
-              <ul> { attachments.map(file => displayFile(file)) } </ul>
+              { attachments.map(file => displayFile(file)) }
             </fieldset>
-            </div>
             
             <fieldset className="checkboxgroup">
             <div id="grid-80">
               <div>
             <div>
               <label htmlFor="file" className="sr-only">Add file</label>
-              <input id="file" type="file" onChange={handleAddFile} />
+              <input id="file" type="file" onChange={handleAddFile}/>
             </div>
 
             {file && (
+            <>
             <section>File details:
               <ul>
                 <li>Name: {file.name}</li>
@@ -168,26 +203,21 @@ const AttachmentsForm = (params) => {
                 <li>Size: {file.size} bytes</li>
               </ul>
             </section>
-            )}
-
-            {file && (
-              <button onClick={handleUpload} className="submit">
-                Upload a file
-              </button>
+            <button onClick={handleUpload} className="submit"> Upload a file</button>
+            </>
             )}
             </div>
             <div>
               {
                 !isArrayEmpty(toDelete) &&
                 <>
-                <button onClick={handleDelete} className="submit">
-                Delete file
-              </button>
-                          <section>File will be deleted:
-                          <ul>
-                            { filesWillBeDeleted() }
-                          </ul>
-                        </section>
+                <section>File will be deleted:
+                  <ul>
+                    { filesWillBeDeleted() }
+                  </ul>
+                </section>
+                
+                <button id="deleteButton" onClick={deleteSafely} className="submit">Delete file</button>
                 </>
               }
             </div>
@@ -197,8 +227,5 @@ const AttachmentsForm = (params) => {
             </>
       )
 }
-
-// eslint-disable-next-line react/prop-types
-
 
 export default AttachmentsForm

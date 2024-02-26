@@ -1,4 +1,3 @@
-import PostForm from './PostTextForm'
 import Navigation from './Navigation'
 
 const Home = () => {

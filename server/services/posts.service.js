@@ -306,13 +306,12 @@ module.exports = {
             },
             async handler(ctx) {
                 const { id } = ctx.params;
-                const { post_text } = await this.getPost(id);
+                const result1 = await this.getPost(id);
+                const { post_text: text } = result1[0];
                 const result = await this.getPhotos(id);
-                const fileNames = result.map(element => element.photo_filename);
-                await ctx.call("telegram.sendPost", { text: post_text, mediaArray: fileNames });
-
-                console.log(fileNames)
-                return fileNames;
+                const mediaArray = result.map(element => element.photo_filename);
+                await ctx.call("telegram.sendPost", { text , mediaArray });
+                return mediaArray;
             }
 
         }

@@ -12,9 +12,7 @@ module.exports = {
       methods: {
             isArrayEmpty (arr) { return Array.isArray(arr) && arr.length === 0 ? true : false },
             getMediaContentType(fileName) {
-                  console.log('@@@@ fileName:', fileName)
                   const ext = '.' + fileName.toLowerCase().split('.').pop();
-                  console.log('@@@@ fileName.ext:', ext)
                   switch (ext) {
                         case '.jpg':
                         case '.jpeg':
@@ -38,7 +36,7 @@ module.exports = {
                               throw new Error('Unsupported file type');
                   }
             },
-            composeMediaGroupe(text, mediaArray) {
+            composeMediaGroup(text, mediaArray) {
                   let mediaPhotosAndVideos = [];
                   let mediaDocuments = [];
                   let mediaAudios = [];
@@ -52,9 +50,7 @@ module.exports = {
                                           {
                                               type: 'photo',
                                               media: this.storagePath + fileName,
-                                              //caption: text,
                                               parse_mode: 'HTML',
-                                              //has_spoiler: true
                                           });
                                     return;
                               case 'document':
@@ -62,9 +58,7 @@ module.exports = {
                                           {
                                                 type: 'document',
                                                 media: `https://s3.tebi.io/telegram.backet/images/${fileName}`,
-                                                //caption: text,
                                                 parse_mode: 'HTML',
-                                                //has_spoiler: true
                                             });
                                     return;
                               case 'audio':
@@ -72,9 +66,7 @@ module.exports = {
                                           {
                                                 type: 'audio',
                                                 media: `https://s3.tebi.io/telegram.backet/images/${fileName}`,
-                                                //caption: text,
                                                 parse_mode: 'HTML',
-                                                //has_spoiler: true
                                             });
                                     return;
                               default:
@@ -83,7 +75,6 @@ module.exports = {
                         }
                   });
                   mediaPhotosAndVideos[0]['caption'] = text;
-                  console.log('mediaPhotosAndVideos ', mediaPhotosAndVideos);
                   return mediaPhotosAndVideos;
             }
       },
@@ -93,15 +84,12 @@ module.exports = {
             },
             sendPost(ctx){
                   const { text, mediaArray } = ctx.params;
-                  console.log('mediaArray ', typeof mediaArray, mediaArray);
-                  // const media = mediaArray.slice(1, -1).replaceAll('"', '').split(",");
-                  // console.log('!!! media ', media);
                   const sendJustText = this.isArrayEmpty(mediaArray);
 
                   if (sendJustText){
                         this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })
                   } else {
-                        this.bot.sendMediaGroup(this.chatId, this.composeMediaGroupe(text, mediaArray))
+                        this.bot.sendMediaGroup(this.chatId, this.composeMediaGroup(text, mediaArray))
                   }
             }
       },

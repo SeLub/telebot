@@ -2,7 +2,7 @@ const telegrambot = require("node-telegram-bot-api");
 require("dotenv").config();
 const { citates } = require('./citates');
 
-const token = process.env.TELEGRAM_BOT;
+const token = process.env.TELEGRAM_BOT_TOKEN;
 const chat_id = process.env.TELEGRAM_CHAT_ID;
 console.log('token: ', token);
 console.log('Chat id: ', chat_id);
@@ -25,6 +25,7 @@ bot.on("message",(message) => {
             text = gen.next().value;
             text.text = `${text.text}\n` + `<b>This is bold text</b>\n
 <i>This is italic text</i>\n
+🏠
 <u>This is underlined text</u>\n
 <s>This is strikethrough text</s>\n
 <pre>
@@ -42,23 +43,29 @@ let text = '';
                 .then(() => {
                     // Sending the media group
                     bot.sendMediaGroup(chat_id, [
-                        {
-                            type: 'photo',
-                            media: './content/image.jpg',
-                            caption: text.text,
-                            parse_mode: 'HTML'
-                        },
+                        // {
+                        //     type: 'photo',
+                        //     media: 'https://s3.tebi.io/telegram.backet/images/Siemiradzki-Nimfa-bfde1635-e28b-4027-ba21-15ddb26e00fd.jpg',
+                        //     caption: text.text,
+                        //     parse_mode: 'HTML',
+                        //     has_spoiler: true
+                        // },
                         // {
                         //     type: 'document',
-                        //     media: './content/document.pdf',
+                        //     media: 'https://s3.tebi.io/telegram.backet/images/document-a0313a43-aa70-426a-a089-1903805e334e.pdf',
                         //     caption: text.text,
                         //     parse_mode: 'HTML'
                         // },
-                        {
-                            type: 'video',
-                            media: './content/video.mp4',
-                            parse_mode: 'HTML'
-                        }
+                        // {
+                        //     type: 'audio',
+                        //     media: 'https://s3.tebi.io/telegram.backet/images/sample-71f65e8a-39fe-4419-b067-cc473114c312.mp3',
+                        //     caption: text.text,
+                        // },
+                        // {
+                        //     type: 'video',
+                        //     media: 'https://s3.tebi.io/telegram.backet/images/video-14feae6e-feb8-4103-a2ef-d0dfaba6e4f0.mp4',
+                        //     parse_mode: 'HTML'
+                        // }
                     ])
                     .then(() => console.log("Media group sent successfully"))
                     .catch((error) => console.error("Error sending media group:", error));

@@ -298,6 +298,23 @@ module.exports = {
 
                 return { deletedPostId: id };
             }
+        },
+        publishPost: {
+            rest: 'POST /publish/:id',
+            params: {
+                id: { type: "uuid" },
+            },
+            async handler(ctx) {
+                const { id } = ctx.params;
+                const { post_text } = await this.getPost(id);
+                const result = await this.getPhotos(id);
+                const fileNames = result.map(element => element.photo_filename);
+                await ctx.call("telegram.sendPost", { text: post_text, mediaArray: fileNames });
+
+                console.log(fileNames)
+                return fileNames;
+            }
+
         }
     }
 };

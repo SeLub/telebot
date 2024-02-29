@@ -78,17 +78,23 @@ In 'Connections' section copy 'External Database URL'.
 ## How to get STORAGE_ACCESS_KEY_ID, STORAGE_SECRET_ACCESS_KEY, STORAGE_BUCKET_NAME, STORAGE_ENDPOINT?
 
 Go to https://client.tebi.io/.
+
 Select bucket.
+
 Here you can find STORAGE_ACCESS_KEY_ID, STORAGE_SECRET_ACCESS_KEY, STORAGE_BUCKET_NAME.
+
 Set STORAGE_ENDPOINT to s3.tebi.io.
 
 ## How to set FRONTEND_HOST & PORT?
 
 FOR PRODUCTION OR server started localy to get requests from deployed Frontend:
+
 Go to https://app.netlify.com/teams/selub/overview
+
 Select the appropriate site.
 
       https://postup24.netlify.app
 
-FOR local development
+FOR local DEVELOPMENT
+
 http://localhost:5173

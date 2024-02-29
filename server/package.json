@@ -26,6 +26,7 @@
     "moleculer": "^0.14.26",
     "moleculer-db": "^0.8.25",
     "moleculer-web": "^0.10.4",
+    "node-telegram-bot-api": "^0.64.0",
     "pg": "^8.11.3",
     "uuid": "^9.0.1"
   },

@@ -84,7 +84,11 @@ Set STORAGE_ENDPOINT to s3.tebi.io.
 
 ## How to set FRONTEND_HOST & PORT?
 
+FOR PRODUCTION OR server started localy to get requests from deployed Frontend:
 Go to https://app.netlify.com/teams/selub/overview
 Select the appropriate site.
 
-https://postup24.netlify.app
+      https://postup24.netlify.app
+
+FOR local development
+http://localhost:5173

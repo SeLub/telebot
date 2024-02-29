@@ -75,7 +75,7 @@ module.exports = {
                         }
                   });
                   mediaPhotosAndVideos[0]['caption'] = text;
-                  return mediaPhotosAndVideos;
+                  return { mediaPhotosAndVideos, mediaDocuments, mediaAudios };
             }
       },
       actions:{
@@ -89,7 +89,15 @@ module.exports = {
                   if (sendJustText){
                         this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })
                   } else {
-                        this.bot.sendMediaGroup(this.chatId, this.composeMediaGroup(text, mediaArray))
+                        const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } = this.composeMediaGroup(text, mediaArray);
+                        
+                        if (!this.isArrayEmpty(mediaPhotosAndVideos))
+                              this.bot.sendMediaGroup(this.chatId, mediaPhotosAndVideos);
+                        flag = this.isArrayEmpty(mediaDocuments);
+                        if (!this.isArrayEmpty(mediaDocuments)) 
+                              this.bot.sendMediaGroup(this.chatId, mediaDocuments);
+                        if (!this.isArrayEmpty(mediaAudios))
+                              this.bot.sendMediaGroup(this.chatId, mediaAudios);
                   }
             }
       },

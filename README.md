@@ -8,6 +8,7 @@ REST API
 ### Database
 
 Database is exposed by [Render](https://render.com/).
+
 Region: Frankfurt (EU Central)
 Instance Type: Free RAM:256MB CPU:100m Storage: 1 GB
 
@@ -16,6 +17,7 @@ Instance Type: Free RAM:256MB CPU:100m Storage: 1 GB
 ### File Storage
 
 File storage is exposed by [Tebi.io](https://tebi.io/)
+
 Uses AWS S3 under the hood. We use <code>@aws-sdk</code> to manage resources.
 Free Tier + Pay As You Go Limitations:
 

@@ -25,11 +25,6 @@ client.connect()
 module.exports = {
     name: "posts",
     settings: {
-        // Default photo filename if not provided
-        defaultPhotoFilename: "",
-        // Expose REST API at root endpoint
-        //rest: "/",
-        authorize: false
     },
     async started() {
         try {

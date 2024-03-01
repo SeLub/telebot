@@ -1,4 +1,5 @@
 "use strict";
+const os = require('os');
 
 /**
  * Moleculer ServiceBroker configuration file
@@ -29,9 +30,9 @@
  */
 module.exports = {
 	// Namespace of nodes to segment your nodes on the same network.
-	namespace: "",
+	namespace: "PostUp",
 	// Unique node identifier. Must be unique in a namespace.
-	nodeID: null,
+	nodeID: os.hostname().toLowerCase() + "-" + process.pid,
 	// Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
 	metadata: {},
 

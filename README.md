@@ -48,6 +48,7 @@ CI/CD with Netlify.
 To build and publish - just push in branch 'main'.
 Branch - webapp.
 Host - https://postup24.netlify.app/
+Webhook to trigger deply - https://api.render.com/deploy/srv-cn9m2gf109ks739v0vd0?key=kOvOVl-NR_I
 
 # Telegram API
 
@@ -65,9 +66,18 @@ Forward any message from chat to **@JsonDumpBot**.
 ## How to get telegram bot token (TELEGRAM)BOT_TOKEN in .env)?
 
 Open **@BotFather**.
+
 Input command <code>/revoke</code>.
+
 On message: Choose a bot to generate a new token. Warning: your old token will stop working.
-input: @BisonTeamBot
+
+DEVELOPMENT
+
+@BisonTeamBot
+
+PRODUCTION
+
+@PostUp24Bot
 
 ## How to get database url (DATABASE_URL in .env)?
 

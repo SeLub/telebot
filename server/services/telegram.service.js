@@ -45,10 +45,17 @@ module.exports = {
                         const type = this.getMediaContentType(fileName);
                         switch (type) {
                               case 'photo':
-                              case 'video':
                                     mediaPhotosAndVideos.push(                        
                                           {
                                               type: 'photo',
+                                              media: this.storagePath + fileName,
+                                              parse_mode: 'HTML',
+                                          });
+                                    return;
+                              case 'video':
+                                    mediaPhotosAndVideos.push(                        
+                                          {
+                                              type: 'video',
                                               media: this.storagePath + fileName,
                                               parse_mode: 'HTML',
                                           });
@@ -57,7 +64,7 @@ module.exports = {
                                     mediaDocuments.push(
                                           {
                                                 type: 'document',
-                                                media: `https://s3.tebi.io/telegram.backet/images/${fileName}`,
+                                                media: this.storagePath + fileName,
                                                 parse_mode: 'HTML',
                                             });
                                     return;
@@ -65,7 +72,7 @@ module.exports = {
                                     mediaAudios.push(
                                           {
                                                 type: 'audio',
-                                                media: `https://s3.tebi.io/telegram.backet/images/${fileName}`,
+                                                media: this.storagePath + fileName,
                                                 parse_mode: 'HTML',
                                             });
                                     return;
@@ -90,6 +97,7 @@ module.exports = {
                         this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })
                   } else {
                         const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } = this.composeMediaGroup(text, mediaArray);
+                        console.log({ mediaPhotosAndVideos, mediaDocuments, mediaAudios });
                         
                         if (!this.isArrayEmpty(mediaPhotosAndVideos))
                               this.bot.sendMediaGroup(this.chatId, mediaPhotosAndVideos);

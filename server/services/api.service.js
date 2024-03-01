@@ -62,7 +62,8 @@ module.exports = {
 					"GET /photos": "posts.getPhotos",
 					"POST /posts": "posts.createPost",
 					"POST /photos": "posts.addPhotoToPost",
-					"GET /storage": "storage.getURL"
+					"GET /storage": "storage.getURL",
+					"POST /posts": "posts.publishPost"
 				},
 
 				/**

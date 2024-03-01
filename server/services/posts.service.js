@@ -90,13 +90,6 @@ module.exports = {
             const postExists = !!Number(res.rows[0].count);
             if (!postExists) return Promise.reject(new MoleculerError("Post not found!", 404));
         },
-        async checkPhotoExists(photoId) {
-            const res = await client.query(`
-                SELECT COUNT(*) FROM photo WHERE post_id_photo = $1;
-            `, [photoId]);
-            const photoExists = !!Number(res.rows[0].count);
-            if (!photoExists) return Promise.reject(new MoleculerError("Photo not found!", 404));
-        },
         async getPost(postId) {
             // Check if the post exists
             await this.checkPostExists(postId);
@@ -107,8 +100,6 @@ module.exports = {
 
         }, 
         async getPhotos(photoId) {
-            // Check if the photo exists
-            //await this.checkPhotoExists(photoId);
             const res = await client.query(`
             SELECT * FROM photo WHERE post_id_photo = $1;
         `, [photoId]);

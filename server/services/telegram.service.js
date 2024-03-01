@@ -108,7 +108,6 @@ module.exports = {
             sendPost(ctx){
                   const { text, mediaArray } = ctx.params;
                   const sendJustText = this.isArrayEmpty(mediaArray);
-                  console.log('REQUEST ACCEPTED!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                   try {
                         if (sendJustText){
                               this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })
@@ -123,9 +122,7 @@ module.exports = {
                               
                               if (!this.isArrayEmpty(mediaPhotosAndVideos))
                                     this.bot.sendMediaGroup(this.chatId, mediaPhotosAndVideos);
-
                         }
-
                   } catch(error) {
                         console.log('Error in sendPost:', error);
                   }

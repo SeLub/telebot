@@ -241,27 +241,16 @@ module.exports = {
             rest: "PUT /:id",
             params: {
                 id: { type: "uuid" },
-                post_text: { type: "string" },
-                photo_filename: { type: "string", optional: true }
+                post_text: { type: "string" }
             },
             async handler(ctx) {
-                const { id, post_text, photo_filename } = ctx.params;
+                const { id, post_text } = ctx.params;
                 // Check if the post exists
                 await this.checkPostExists(id);
-                if (photo_filename === "") {
-                    // Update only text in the post record
-                    await client.query(`
+                await client.query(`
                     UPDATE post SET post_text = $1 
                     WHERE post_id = $2;`, [post_text, id]);
-                    return await this.getPost(id);
-                } else {
-                        post_id_photo = id;
-                        await client.query(`
-                            INSERT INTO photo (post_id_photo, photo_filename) 
-                            VALUES ($1, $2);
-                        `, [post_id_photo, photo_filename]);
-                        return await this.getPost(id);
-                }
+                return await this.getPost(id);
             }
         },
         delete: {

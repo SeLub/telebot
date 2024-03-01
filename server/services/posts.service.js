@@ -108,7 +108,7 @@ module.exports = {
         }, 
         async getPhotos(photoId) {
             // Check if the photo exists
-            await this.checkPhotoExists(photoId);
+            //await this.checkPhotoExists(photoId);
             const res = await client.query(`
             SELECT * FROM photo WHERE post_id_photo = $1;
         `, [photoId]);
@@ -306,12 +306,18 @@ module.exports = {
             },
             async handler(ctx) {
                 const { id } = ctx.params;
-                const result1 = await this.getPost(id);
-                const { post_text: text } = result1[0];
-                const result = await this.getPhotos(id);
-                const mediaArray = result.map(element => element.photo_filename);
-                await ctx.call("telegram.sendPost", { text , mediaArray });
-                return mediaArray;
+                try {
+                    const result1 = await this.getPost(id);
+                    const { post_text: text } = result1[0];
+                    const result = await this.getPhotos(id);
+                    const mediaArray = result.map(element => element.photo_filename);
+                    await ctx.call("telegram.sendPost", { text , mediaArray });
+                    return mediaArray;
+                } catch(error) {
+                    console.log('Error', error);
+                }
+                
+                
             }
 
         }

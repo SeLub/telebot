@@ -108,3 +108,27 @@ Select the appropriate site.
 FOR local DEVELOPMENT
 
 http://localhost:5173
+
+## Remove all unnamed docker images.
+
+docker rmi $(docker images -f dangling=true -q)
+
+## Remove all docker images.
+
+docker rmi $(docker image ls)
+
+## Push image to Docker Hub.
+
+docker login
+
+If not possible to login try the code:
+
+```
+service docker stop
+rm ~/.docker/config.json
+service docker start
+```
+
+docker tag postup:latest selub/postup:latest
+
+docker push selub/postup:latest

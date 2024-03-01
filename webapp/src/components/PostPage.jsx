@@ -37,7 +37,7 @@ const Post = () => {
                   <h1>Post page {post_id}</h1>
                   <PostTextForm text={text} setText={setText} />
                   <AttachmentsForm attachments={attachments} setAttachments={setAttachments} post_id={post_id}/>
-                  <SubmitForm  />
+                  <SubmitForm  postId={post_id}/>
             </>
       )
 }

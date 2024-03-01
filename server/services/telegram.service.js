@@ -108,6 +108,7 @@ module.exports = {
             sendPost(ctx){
                   const { text, mediaArray } = ctx.params;
                   const sendJustText = this.isArrayEmpty(mediaArray);
+                  console.log('REQUEST ACCEPTED!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                   try {
                         if (sendJustText){
                               this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })

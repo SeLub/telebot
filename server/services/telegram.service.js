@@ -8,6 +8,8 @@ module.exports = {
             this.chatId = process.env.TELEGRAM_CHAT_ID;
             this.storagePath = process.env.STORAGE_ENDPOINT + '/' +process.env.STORAGE_BUCKET_NAME +'/images/'
             this.bot = new telegrambot(token, {polling:true});
+            this.bot.close();
+            //this.bot.logOut();
       },
       methods: {
             isArrayEmpty (arr) { return Array.isArray(arr) && arr.length === 0 ? true : false },
@@ -78,10 +80,24 @@ module.exports = {
                                     return;
                               default:
                                     return;
-                              //throw new Error('Unsupported file type');
                         }
                   });
-                  mediaPhotosAndVideos[0]['caption'] = text;
+                  let capthionAdded = false;
+                        if (mediaPhotosAndVideos[0] !== undefined) {
+                              mediaPhotosAndVideos[0]['caption'] = text;
+                              capthionAdded = true;
+                        }
+
+                        if (mediaDocuments[0] !== undefined && !capthionAdded) {
+                              mediaDocuments[0]['caption'] = text;
+                              capthionAdded = true;
+                        }
+
+                        if (mediaAudios[0] !== undefined && !capthionAdded) {
+                              mediaAudios[0]['caption'] = text;
+                              capthionAdded = true;
+                        }
+
                   return { mediaPhotosAndVideos, mediaDocuments, mediaAudios };
             }
       },
@@ -92,21 +108,27 @@ module.exports = {
             sendPost(ctx){
                   const { text, mediaArray } = ctx.params;
                   const sendJustText = this.isArrayEmpty(mediaArray);
+                  try {
+                        if (sendJustText){
+                              this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })
+                        } else {
+                              const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } = this.composeMediaGroup(text, mediaArray);
+                              
+                              if (!this.isArrayEmpty(mediaDocuments)) 
+                                    this.bot.sendMediaGroup(this.chatId, mediaDocuments);
+                              
+                              if (!this.isArrayEmpty(mediaAudios))
+                                    this.bot.sendMediaGroup(this.chatId, mediaAudios);
+                              
+                              if (!this.isArrayEmpty(mediaPhotosAndVideos))
+                                    this.bot.sendMediaGroup(this.chatId, mediaPhotosAndVideos);
 
-                  if (sendJustText){
-                        this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })
-                  } else {
-                        const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } = this.composeMediaGroup(text, mediaArray);
-                        console.log({ mediaPhotosAndVideos, mediaDocuments, mediaAudios });
-                        
-                        if (!this.isArrayEmpty(mediaPhotosAndVideos))
-                              this.bot.sendMediaGroup(this.chatId, mediaPhotosAndVideos);
-                        flag = this.isArrayEmpty(mediaDocuments);
-                        if (!this.isArrayEmpty(mediaDocuments)) 
-                              this.bot.sendMediaGroup(this.chatId, mediaDocuments);
-                        if (!this.isArrayEmpty(mediaAudios))
-                              this.bot.sendMediaGroup(this.chatId, mediaAudios);
+                        }
+
+                  } catch(error) {
+                        console.log('Error in sendPost:', error);
                   }
+                  
             }
       },
 }

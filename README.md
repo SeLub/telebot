@@ -79,6 +79,12 @@ PRODUCTION
 
 @PostUp24Bot
 
+## How to get user id?
+
+Find bot **@userinfobot**
+Push /start
+You`ll receive message with Id: ..., First: ..., Last: ..., Lang: ... .
+
 ## How to get database url (DATABASE_URL in .env)?
 
 Go to https://dashboard.render.com/

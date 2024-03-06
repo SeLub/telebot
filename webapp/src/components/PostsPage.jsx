@@ -21,7 +21,6 @@ const Posts = () => {
       
       return(
             <>
-            <Navigation />
              <h1>Posts Page</h1>
                   <div>
                         <ul> { posts.map(post => listPost(post)) } </ul>

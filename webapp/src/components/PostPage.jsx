@@ -33,7 +33,6 @@ const Post = () => {
 
       return(
             <>
-                  <Navigation />
                   <h1>Post page {post_id}</h1>
                   <PostTextForm postId={post_id} text={text} setText={setText} />
                   <AttachmentsForm attachments={attachments} setAttachments={setAttachments} post_id={post_id}/>

@@ -1,7 +1,7 @@
 import { AppShell, Burger, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Image } from '@mantine/core';
-import ReactLogo from '../assets/react.svg';
+import PostUp24Logo from '../assets/postup_logo_small_full.png';
 import { NavbarSimpleColored } from './NavbarSimpleColored'
 import React from 'react';
 
@@ -10,14 +10,14 @@ export function Dashboard({children}) {
 
   return (
     <AppShell
-      header={{ height: 60 }}
+      header={{ height: 68 }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       padding="md"
     >
-      <AppShell.Header>
+      <AppShell.Header >
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <Image radius="md" src={ReactLogo} alt="React Logo image" />
+          <Image radius="md" src={PostUp24Logo} alt="React Logo image" />
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">

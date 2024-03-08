@@ -1,3 +1,5 @@
+import DCButton from "./ui/DCButton";
+import { notifications } from '@mantine/notifications';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const PostForm = (params) => {
@@ -15,8 +17,6 @@ const PostForm = (params) => {
 
   const saveText = async (postId) => {
 
-    const message = document.getElementById('message');
-    
     try {
           const result = await fetch(`${serverHost}/api/posts/${postId}`, { 
             method: 'PUT',
@@ -28,12 +28,19 @@ const PostForm = (params) => {
             })
           });
           if (result.ok) {
-                message.innerText='Post has been updated.'
+            notifications.show({
+              title: 'Success',
+              message: 'Post has been updated. 😊',
+              color: "green"
+            });
           }
           console.log(result);
     } catch(error) {
-          console.log('Error while try to update text of the post: ', error);
-          message.innerText='Error while try to update text of the post.'
+          notifications.show({
+            title: 'Failed',
+            message: 'Error while try to update text of the post. 🤥',
+            color: "red"
+          });
     }
   }
 
@@ -41,7 +48,26 @@ const PostForm = (params) => {
       <>
       <div width="50%">
                 <div><textarea name="text" value={text} rows="15" cols="33" onChange={handleTextChange} /></div>
-                <div><button id="saveTextButton" onClick={() => saveText(postId)} className="submit">Save Text</button></div>
+                <RichTextEditor editor={editor}>
+                  {editor && (
+                    <BubbleMenu editor={editor}>
+                      <RichTextEditor.ControlsGroup>
+                        <RichTextEditor.Bold />
+                        <RichTextEditor.Italic />
+                        <RichTextEditor.Link />
+                      </RichTextEditor.ControlsGroup>
+                    </BubbleMenu>
+                  )}
+                  <RichTextEditor.Content />
+                </RichTextEditor>
+                <DCButton 
+                  buttonId = "saveTextButton"
+                  handleOnClick = {() => saveText(postId)}
+                  buttonClassName = "submit" 
+                  buttonText = "SavePost"
+                  color="green"
+                />
+                                
                 <div id='text-status'></div> 
       </div>
       <div width="50%">

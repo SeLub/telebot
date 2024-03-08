@@ -20,8 +20,8 @@ function DCButton(props: Props ) {
           setCount(1);
         } else {
           handleOnClick();
-          setCount(0);
           setColor("teal");
+          setCount(0);
       }
       }
   

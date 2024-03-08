@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from "react";
-import Navigation from './Navigation';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const Posts = () => {

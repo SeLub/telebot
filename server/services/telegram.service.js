@@ -107,10 +107,21 @@ module.exports = {
             },
             sendPost(ctx){
                   const { text, mediaArray } = ctx.params;
+                  // TODO: Move in separate method
+                  const cleanTextFromUnsupportedHTMLtag = text
+                                                            .replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, '')
+                                                            .replace(/<\/p>|<br>/gm,"\n")
+                                                            .replace(/<code>/gm,'<pre>')
+                                                            .replace(/<\/code>/gm,'</pre>')
+                                                            .replace(/<\/p>|<li>/gm,"- ")
+                                                            .replace(/<strong>/gm, '<b>')
+                                                            .replace(/<\/strong>/gm, '</b>')
+                                                            .replace(/rel="noopener noreferrer nofollow" /gm, '');
+                  console.log('cleanTextFromUnsupportedHTMLtag:', cleanTextFromUnsupportedHTMLtag);
                   const sendJustText = this.isArrayEmpty(mediaArray);
                   try {
                         if (sendJustText){
-                              this.bot.sendMessage(this.chatId, text, { parse_mode: 'HTML' })
+                              this.bot.sendMessage(this.chatId, cleanTextFromUnsupportedHTMLtag, { parse_mode: 'HTML' })
                         } else {
                               const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } = this.composeMediaGroup(text, mediaArray);
                               

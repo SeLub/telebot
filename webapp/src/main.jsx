@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './components/HomePage'
@@ -7,12 +6,11 @@ import Post from './components/PostPage'
 import NotFoundPage from './components/NotFoundPage'
 import Picture from './components/Picture'
 import { Dashboard } from './components/Dashboard'
-import { createTheme, MantineProvider } from '@mantine/core'
+import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
-//const webAppHost = import.meta.env.VITE_REACT_APP_WEBAPP_HOST;
-var base = document.createElement('base');
-base.href = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-document.getElementsByTagName('head')[0].appendChild(base);
+import '@mantine/notifications/styles.css';
+import '@mantine/tiptap/styles.css';
+import { Notifications } from '@mantine/notifications';
 
 const router = createBrowserRouter([
   {
@@ -34,15 +32,16 @@ const router = createBrowserRouter([
   }
 ])
 const theme = createTheme({
-  /** Put your mantine theme override here */
+  colorScheme: 'dark',
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  
      <MantineProvider theme={theme}>
+        <Notifications />
         <Dashboard>
           <RouterProvider router={router} />
         </Dashboard>
     </MantineProvider>
-  </React.StrictMode>,
+  
 )

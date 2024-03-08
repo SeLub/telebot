@@ -9,11 +9,11 @@ type Props = {
     };
 
 function MyButton(props) {
-  const { buttonId, OnClick, buttonClassName, color="teal", buttonText="Submit" } = props;
+  const { buttonId, onClick, buttonClassName, color="teal", buttonText="Submit" } = props;
   return    <Button 
                   className={buttonClassName}
                   id={buttonId}
-                  onClick={OnClick}
+                  onClick={onClick}
                   variant="filled"
                   color={color}
             >{buttonText}

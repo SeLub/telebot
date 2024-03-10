@@ -1,5 +1,6 @@
 import { Divider, Image, Flex  } from '@mantine/core';
 import { Dropzone, FileWithPath } from '@mantine/dropzone';
+import { notifications } from '@mantine/notifications';
 import React, { useState, Fragment } from 'react';
 import addFilesImage from '../assets/add_files.png';
 import saveFileImage from '../assets/save_files.png';
@@ -82,9 +83,19 @@ function Attach(props) {
                       photo_id_post: postId,
                       photo_filename: uniqueFileName
                     }]);
+                    notifications.show({
+                      title: 'Success',
+                      message: `File ${file.name} uploaded successfully`,
+                      color: 'green',
+                    });
   
               } catch (error) {
                 console.error(error);
+                notifications.show({
+                  title: 'Error',
+                  message: `File ${file.name} upload failed`,
+                  color: 'red',
+                });
               }
           };
 

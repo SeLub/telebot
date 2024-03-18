@@ -4,7 +4,7 @@ import React, { useState} from "react";
 
 type Props = {
   buttonId: string | undefined;
-  handleOnClick: () => void | undefined;
+  handleOnClick: () => Promise<void> | undefined;
   buttonClassName: string | undefined;
   buttonText: string | undefined;
 };

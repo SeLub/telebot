@@ -1,9 +1,10 @@
-import { useParams } from 'react-router-dom'
-import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
+import { Title } from '@mantine/core';
+import { Fragment, useState, useEffect } from "react";
 import PostTextEditor from './PostTextEditor';
-import AttachmentsForm from './AttachmentsForm';
 import Attach from './Attach';
 import SubmitForm from './SubmitForm';
+import CurrentAttachments from './CurrentAttachments';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const Post = () => {
@@ -18,16 +19,16 @@ const Post = () => {
                   if (data.code == 404) { setAttachments([]) } else { setAttachments(data) }
             }
                   getAttachments()
-            }, [post_id])
+            }, [post_id, attachments])
 
       return(
-            <>
-                  <h1>Post page {post_id}</h1>
-                  <PostTextEditor postId={post_id} />
+            <Fragment>
+                  <Title order={1}>Post {post_id}</Title>
+                  <CurrentAttachments postId={post_id} attachments={attachments} setAttachments={setAttachments}/>
                   <Attach postId={post_id} attachments={attachments} setAttachments={setAttachments} />
-                  {<AttachmentsForm attachments={attachments} setAttachments={setAttachments} post_id={post_id}/>}
+                  <PostTextEditor postId={post_id} />
                   <SubmitForm  postId={post_id} />
-            </>
+            </Fragment>
       )
 }
 export default Post

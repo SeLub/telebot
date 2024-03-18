@@ -3,7 +3,7 @@ import { Flex, Title } from '@mantine/core';
 import { useState, useEffect, Fragment } from "react";
 import React from 'react';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
-import ArticleCard from './ArticleCard';
+import ArticleCard from './ArticleCard/ArticleCard';
 import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical'
 
 const Posts = () => {

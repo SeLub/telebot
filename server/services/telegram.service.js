@@ -123,7 +123,7 @@ module.exports = {
                         if (sendJustText){
                               this.bot.sendMessage(this.chatId, cleanTextFromUnsupportedHTMLtag, { parse_mode: 'HTML' })
                         } else {
-                              const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } = this.composeMediaGroup(text, mediaArray);
+                              const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } = this.composeMediaGroup(cleanTextFromUnsupportedHTMLtag, mediaArray);
                               
                               if (!this.isArrayEmpty(mediaDocuments)) 
                                     this.bot.sendMediaGroup(this.chatId, mediaDocuments);

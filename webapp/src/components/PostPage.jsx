@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from "react";
 import PostTextEditor from './PostTextEditor';
-import AttachmentsForm from './AttachmentsForm'
+import AttachmentsForm from './AttachmentsForm';
+import Attach from './Attach';
 import SubmitForm from './SubmitForm';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
@@ -23,7 +24,8 @@ const Post = () => {
             <>
                   <h1>Post page {post_id}</h1>
                   <PostTextEditor postId={post_id} />
-                  <AttachmentsForm attachments={attachments} setAttachments={setAttachments} post_id={post_id}/>
+                  <Attach postId={post_id} attachments={attachments} setAttachments={setAttachments} />
+                  {<AttachmentsForm attachments={attachments} setAttachments={setAttachments} post_id={post_id}/>}
                   <SubmitForm  postId={post_id} />
             </>
       )

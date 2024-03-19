@@ -1,11 +1,12 @@
 import { Flex, Image } from '@mantine/core';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
+import { IAttachProps } from '../common/types';
 import { getImageUrl, isArrayEmpty } from '../utils';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function CurrentAttachments(props) {
+function CurrentAttachments(props: IAttachProps) {
     const { attachments, setAttachments } = props;
 
     const handleDelete = async (attachment) => {
@@ -21,7 +22,7 @@ function CurrentAttachments(props) {
             });
         };
         try {
-            let actualAttachment = [...attachments];
+            const actualAttachment = [...attachments];
             const deleteFileFromAttachments = (fileToDelete) =>
                 actualAttachment.filter((att) => att.photo_filename !== fileToDelete);
             await fetchDeleteFile(attachment.post_id_photo, attachment.photo_filename);

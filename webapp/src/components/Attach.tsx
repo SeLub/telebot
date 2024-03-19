@@ -5,19 +5,19 @@ import { Fragment, useState } from 'react';
 
 import addFilesImage from '../assets/add_files.png';
 import saveFileImage from '../assets/save_files.png';
-import { generateUniqueFileName, getImageContentType, getImageUrl, isArrayEmpty } from '../utils';
+import { generateUniqueFileName, getImageContentType, isArrayEmpty } from '../utils';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 interface IAttachProps {
     post_id: string;
-    attachments: any;
-    setAttachments: any;
+    attachments: string;
+    setAttachments: () => void;
 }
 
 function Attach(props: IAttachProps) {
     const { post_id, attachments, setAttachments } = props;
-    const [files, setFiles] = useState<FileWithPath[]>([]);
+    const [files, setFiles] = useState<FileWithPath[] | []>([]);
 
     const previews = files.map((file, index) => {
         const imageUrl = URL.createObjectURL(file);

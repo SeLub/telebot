@@ -29,7 +29,7 @@ function ArticleCardVertical(props: Props) {
             }
         };
         getAttachments();
-    }, []);
+    }, [post_id]);
 
     return (
         <Card withBorder radius="md" p={0} className={classes.card}>

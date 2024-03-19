@@ -2,14 +2,10 @@ import { Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { IPost } from '../common/types';
 import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
-
-export interface IPost {
-    post_id: string;
-    post_text: string;
-}
 
 function PostsList() {
     const [posts, setPosts] = useState<IPost[] | []>([]);

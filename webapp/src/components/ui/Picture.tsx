@@ -1,19 +1,12 @@
-import PropTypes from 'prop-types';
 import { Image } from '@mantine/core';
-import React from 'react';
 
-const Picture = (props) => {
-            const {imageName} = props;
-      return(
-            <Image
-                  radius="md"
-                  src={`https://s3.tebi.io/telegram.backet/images/${imageName}`}
-            />
-      )
+type Props = {
+    imageName: string;
 };
 
-Picture.propTypes = {
-      imageName: PropTypes.string
-    };
+const Picture = (props: Props) => {
+    const { imageName } = props;
+    return <Image radius="md" src={`https://s3.tebi.io/telegram.backet/images/${imageName}`} />;
+};
 
 export default Picture;

@@ -1,23 +1,21 @@
-import { Button } from "@mantine/core";
-import React from "react";
+import { Button } from '@mantine/core';
 
-type Props = {
-      buttonId: string | undefined;
-      handleOnClick: () => void | undefined;
-      buttonClassName: string | undefined;
-      buttonText: string | undefined;
-    };
+interface IMyButtonProps {
+    buttonId: string | undefined;
+    onClick: () => void | undefined;
+    handleOnClick: () => void | undefined;
+    buttonClassName: string | undefined;
+    color: string | undefined;
+    buttonText: string | undefined;
+}
 
-function MyButton(props) {
-  const { buttonId, onClick, buttonClassName, color="teal", buttonText="Submit" } = props;
-  return    <Button 
-                  className={buttonClassName}
-                  id={buttonId}
-                  onClick={onClick}
-                  variant="filled"
-                  color={color}
-            >{buttonText}
-            </Button>;
+function MyButton(props: IMyButtonProps) {
+    const { buttonId, onClick, buttonClassName, color = 'teal', buttonText = 'Submit' } = props;
+    return (
+        <Button className={buttonClassName} id={buttonId} onClick={onClick} variant="filled" color={color}>
+            {buttonText}
+        </Button>
+    );
 }
 
 export default MyButton;

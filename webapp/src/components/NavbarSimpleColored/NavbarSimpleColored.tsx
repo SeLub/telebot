@@ -1,66 +1,63 @@
-import { useState } from 'react';
-import { Group, Code } from '@mantine/core';
 import {
-  IconBellRinging,
-  IconRobot,
-  IconKey,
-  IconSettings,
-  Icon2fa,
-  IconDatabaseImport,
-  IconReceipt2,
-  IconSwitchHorizontal,
-  IconLogout,
+    Icon2fa,
+    IconBellRinging,
+    IconDatabaseImport,
+    IconKey,
+    IconLogout,
+    IconReceipt2,
+    IconRobot,
+    IconSettings,
+    IconSwitchHorizontal,
 } from '@tabler/icons-react';
+import { useState } from 'react';
+
 import classes from './NavbarSimpleColored.module.css';
-import React from 'react';
 
 const data = [
-  { link: '/', label: 'Databases', icon: IconDatabaseImport },
-  { link: '/posts', label: 'Posts', icon: IconBellRinging },
-  { link: '/image', label: 'Billing', icon: IconReceipt2 },
-  { link: '/publishers', label: 'Publishers', icon: IconRobot },
-  { link: '', label: 'SSH Keys', icon: IconKey },
-  
-  { link: '', label: 'Authentication', icon: Icon2fa },
-  { link: '', label: 'Other Settings', icon: IconSettings },
+    { link: '/', label: 'Databases', icon: IconDatabaseImport },
+    { link: '/posts', label: 'Posts', icon: IconBellRinging },
+    { link: '/image', label: 'Billing', icon: IconReceipt2 },
+    { link: '/publishers', label: 'Publishers', icon: IconRobot },
+    { link: '', label: 'SSH Keys', icon: IconKey },
+
+    { link: '', label: 'Authentication', icon: Icon2fa },
+    { link: '', label: 'Other Settings', icon: IconSettings },
 ];
 
 export function NavbarSimpleColored() {
-  const [active, setActive] = useState('Billing');
+    const [active, setActive] = useState('Billing');
 
-  const links = data.map((item) => (
-    <a
-      className={classes.link}
-      data-active={item.label === active || undefined}
-      href={item.link}
-      key={item.label}
-      onClick={(event) => {
-        //event.preventDefault();
-        setActive(item.label);
-      }}
-    >
-      <item.icon className={classes.linkIcon} stroke={1.5} />
-      <span>{item.label}</span>
-    </a>
-  ));
-
-  return (
-    <nav className={classes.navbar}>
-      <div className={classes.navbarMain}>
-        {links}
-      </div>
-
-      <div className={classes.footer}>
-        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-          <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-          <span>Change account</span>
+    const links = data.map((item) => (
+        <a
+            className={classes.link}
+            data-active={item.label === active || undefined}
+            href={item.link}
+            key={item.label}
+            onClick={() => {
+                //event.preventDefault();
+                setActive(item.label);
+            }}
+        >
+            <item.icon className={classes.linkIcon} stroke={1.5} />
+            <span>{item.label}</span>
         </a>
+    ));
 
-        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-          <IconLogout className={classes.linkIcon} stroke={1.5} />
-          <span>Logout</span>
-        </a>
-      </div>
-    </nav>
-  );
+    return (
+        <nav className={classes.navbar}>
+            <div className={classes.navbarMain}>{links}</div>
+
+            <div className={classes.footer}>
+                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+                    <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
+                    <span>Change account</span>
+                </a>
+
+                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+                    <IconLogout className={classes.linkIcon} stroke={1.5} />
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+    );
 }

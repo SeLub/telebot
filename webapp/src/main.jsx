@@ -1,11 +1,12 @@
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './components/HomePage'
-import Posts from './components/PostsPage'
+import PostsList from './components/PostsList'
 import EditPost from './components/EditPost'
 import NotFoundPage from './components/NotFoundPage/NotFoundPage'
 import Picture from './components/ui/Picture'
-import { Dashboard } from './components/Dashboard'
+import { Dashboard } from './components/Dashboard';
+import PublishersList from './components/PublishersList';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -20,15 +21,16 @@ const router = createBrowserRouter([
   },
   {
     path:'/posts',
-    element: <Posts />
+    element: <PostsList />
   },
   {
     path:'posts/:post_id',
     element: <EditPost />
   },
   {
-    path:'/image',
-    element: <Picture imageName='file-cv.png'/>
+    path:'/publishers',
+    element: <PublishersList />,
+    errorElement: <NotFoundPage />
   }
 ])
 const theme = createTheme({

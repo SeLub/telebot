@@ -10,7 +10,7 @@ export interface IPost {
       post_text: string;
 } 
 
-const Posts = () => {
+function PostsList () {
       const [posts, setPosts] = useState<IPost[] | []>([]);
       
       useEffect(() => {
@@ -39,4 +39,4 @@ const Posts = () => {
       )
 }
 
-export default Posts
+export default PostsList;

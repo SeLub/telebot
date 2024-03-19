@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Group, Code } from '@mantine/core';
 import {
   IconBellRinging,
-  IconFingerprint,
+  IconRobot,
   IconKey,
   IconSettings,
   Icon2fa,
@@ -18,7 +18,7 @@ const data = [
   { link: '/', label: 'Databases', icon: IconDatabaseImport },
   { link: '/posts', label: 'Posts', icon: IconBellRinging },
   { link: '/image', label: 'Billing', icon: IconReceipt2 },
-  { link: '', label: 'Security', icon: IconFingerprint },
+  { link: '/publishers', label: 'Publishers', icon: IconRobot },
   { link: '', label: 'SSH Keys', icon: IconKey },
   
   { link: '', label: 'Authentication', icon: Icon2fa },

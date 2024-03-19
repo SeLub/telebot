@@ -1,14 +1,18 @@
 import { useParams } from 'react-router-dom';
 import { Title, Divider } from '@mantine/core';
-import { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import PostTextEditor from './PostTextEditor';
 import Attach from './Attach';
 import SubmitForm from './SubmitForm';
 import CurrentAttachments from './CurrentAttachments';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
+type Params = {
+      post_id: string;
+    };
+
 const Post = () => {
-      const { postId:post_id } = useParams();
+      const { post_id } = useParams<Params>();
       const [attachments, setAttachments] = useState([]);
 
       useEffect(() => {
@@ -27,11 +31,11 @@ const Post = () => {
                   <Divider my="xs" label="Current attachments" labelPosition="center" />
                   <CurrentAttachments attachments={attachments} setAttachments={setAttachments}/>
                   <Divider my="xs" label="Add attachments" labelPosition="center" />
-                  <Attach postId={post_id} attachments={attachments} setAttachments={setAttachments} />
+                  <Attach post_id={post_id} attachments={attachments} setAttachments={setAttachments} />
                   <Divider my="xs" label="Edit post" labelPosition="center" />
-                  <PostTextEditor postId={post_id} />
+                  <PostTextEditor post_id={post_id} />
                   <Divider my="xs" label="Publish post" labelPosition="center" />
-                  <SubmitForm  postId={post_id} />
+                  <SubmitForm post_id={post_id} />
             </Fragment>
       )
 }

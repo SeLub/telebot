@@ -8,7 +8,7 @@ import { isArrayEmpty, getImageContentType, generateUniqueFileName, getImageUrl 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 function Attach(props) {
-      const { postId, attachments, setAttachments } = props;
+      const { post_id, attachments, setAttachments } = props;
       const [files, setFiles] = useState<FileWithPath[]>([]);
 
       const previews = files.map((file, index) => {
@@ -66,7 +66,7 @@ function Attach(props) {
                     body: file
                   });
   
-                  await fetch(`${serverHost}/api/posts/photos/${postId}`, {
+                  await fetch(`${serverHost}/api/posts/photos/${post_id}`, {
                     headers: {
                       "Content-Type": "application/json",
                     },
@@ -81,7 +81,7 @@ function Attach(props) {
                       ...attachments,
                       {
                       photo_id: UUID,
-                      photo_id_post: postId,
+                      photo_id_post: post_id,
                       photo_filename: uniqueFileName
                     }]);
                     notifications.show({

@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './components/HomePage'
 import Posts from './components/PostsPage'
-import Post from './components/PostPage'
+import EditPost from './components/EditPost'
 import NotFoundPage from './components/NotFoundPage/NotFoundPage'
 import Picture from './components/ui/Picture'
 import { Dashboard } from './components/Dashboard'
@@ -23,8 +23,8 @@ const router = createBrowserRouter([
     element: <Posts />
   },
   {
-    path:'posts/:postId',
-    element: <Post />
+    path:'posts/:post_id',
+    element: <EditPost />
   },
   {
     path:'/image',

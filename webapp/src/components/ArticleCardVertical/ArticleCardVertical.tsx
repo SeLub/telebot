@@ -8,13 +8,13 @@ import { isArrayEmpty } from '../../utils';
 import CurrentAttachments from '../CurrentAttachments';
 
 function ArticleCardVertical(props) {
-      const { text, to, postId } = props;
+      const { text, to, post_id } = props;
       const [attachments, setAttachments] = useState([]);
 
       useEffect(() => {
 
             const getAttachments = async () => {
-                  const response = await fetch(`${serverHost}/api/posts/photos/${postId}`);
+                  const response = await fetch(`${serverHost}/api/posts/photos/${post_id}`);
                   const data = await response.json();
                   if (data.code == 404) { setAttachments([]) } else { setAttachments(data) }
             }

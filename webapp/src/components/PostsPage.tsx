@@ -1,13 +1,17 @@
 import { Link } from 'react-router-dom';
-import { Flex, Title } from '@mantine/core';
+import { Title } from '@mantine/core';
 import { useState, useEffect, Fragment } from "react";
 import React from 'react';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
-import ArticleCard from './ArticleCard/ArticleCard';
-import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical'
+import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical';
+
+export interface IPost {
+      post_id: string;
+      post_text: string;
+} 
 
 const Posts = () => {
-      const [posts, setPosts] = useState([]);
+      const [posts, setPosts] = useState<IPost[] | []>([]);
       
       useEffect(() => {
             async function getPosts(){
@@ -18,8 +22,7 @@ const Posts = () => {
             getPosts();
       },[posts])
 
-      //const listPost = (post) => (<Link key={post.post_id} to={`/posts/${post.post_id}`} >{post.post_text}</Link>)
-      const listPost = (post) => <ArticleCardVertical key={post.post_id} postId={post.post_id} to={`/posts/${post.post_id}`} text={post.post_text} />
+      const listPost = (post) => <ArticleCardVertical key={post.post_id} post_id={post.post_id} to={`/posts/${post.post_id}`} text={post.post_text} />
       
       return(
             <Fragment>

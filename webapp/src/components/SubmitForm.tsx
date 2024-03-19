@@ -1,15 +1,14 @@
-import PropTypes from 'prop-types';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 import { notifications } from '@mantine/notifications';
 import DCButton from './ui/DCButton';
 import React, {Fragment} from 'react';
 
-const PublishPost = (props: { postId: string }) => {
-      const { postId } = props;
+const PublishPost = (props: { post_id: string | undefined }) => {
+      const { post_id } = props;
 
-      const publishPost = async (postId: string): Promise<void>  => {
+      const publishPost = async (post_id: string): Promise<void>  => {
             try {
-                  const result = await fetch(`${serverHost}/api/posts/publish/${postId}`, { method: 'POST' });
+                  const result = await fetch(`${serverHost}/api/posts/publish/${post_id}`, { method: 'POST' });
                   if (result.ok) {
                         notifications.show({
                               title: 'Success',
@@ -29,11 +28,11 @@ const PublishPost = (props: { postId: string }) => {
       }
       return(
             <Fragment>
-                  <DCButton 
-                        handleOnClick={async (): Promise<void> => await publishPost(postId)} 
+                  { post_id && <DCButton 
+                        handleOnClick={async (): Promise<void> => await publishPost(post_id)} 
                         buttonText="Publish Post" 
                         buttonId={undefined} 
-                        buttonClassName={undefined} />
+                        buttonClassName={undefined} />}
             </Fragment>
       )
 }

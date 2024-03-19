@@ -9,13 +9,13 @@ import StarterKit from '@tiptap/starter-kit';
 
 
 function PostTextEditor(params) {
-      const { postId } = params;
+      const { post_id } = params;
       const [editorContent, setEditorContent] = useState('');
       const [text, setText] = useState('');
 
       useEffect(() => {
             const getText = async () => {
-                        const response = await fetch(`${serverHost}/api/posts/${postId}`);
+                        const response = await fetch(`${serverHost}/api/posts/${post_id}`);
                         const data = await response.json();
                         const postText = data[0]['post_text'];
                         console.log('@@@@@@@@@@@@@@@@@@@@@@ => ', postText); 
@@ -33,10 +33,10 @@ function PostTextEditor(params) {
             },
       }, [text]);
 
-  const saveText = async (postId) => {
+  const saveText = async (post_id) => {
 
       try {
-            const result = await fetch(`${serverHost}/api/posts/${postId}`, { 
+            const result = await fetch(`${serverHost}/api/posts/${post_id}`, { 
                   method: 'PUT',
                   headers: {
                         "Content-Type": "application/json"
@@ -89,7 +89,7 @@ function PostTextEditor(params) {
     </RichTextEditor>
     <DCButton 
             buttonId = "saveTextButton"
-            handleOnClick = {() => saveText(postId)}
+            handleOnClick = {() => saveText(post_id)}
             buttonClassName = "submit" 
             buttonText = "SavePost"
       />

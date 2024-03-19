@@ -34,10 +34,10 @@ export function NavbarSimpleColored() {
       data-active={item.label === active || undefined}
       href={item.link}
       key={item.label}
-      // onClick={(event) => {
-      //   event.preventDefault();
-      //   setActive(item.label);
-      // }}
+      onClick={(event) => {
+        //event.preventDefault();
+        setActive(item.label);
+      }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>

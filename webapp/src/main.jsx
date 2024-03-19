@@ -4,7 +4,7 @@ import HomePage from './components/HomePage'
 import Posts from './components/PostsPage'
 import Post from './components/PostPage'
 import NotFoundPage from './components/NotFoundPage/NotFoundPage'
-import Picture from './components/Picture'
+import Picture from './components/ui/Picture'
 import { Dashboard } from './components/Dashboard'
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
   },
   {
     path:'/image',
-    element: <Picture imageName='villa-15fa9e55-ebf2-4b7a-9c25-b7591d3f36b3.jpg'/>
+    element: <Picture imageName='file-cv.png'/>
   }
 ])
 const theme = createTheme({

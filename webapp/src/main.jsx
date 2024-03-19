@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import HomePage from './components/HomePage'
 import Posts from './components/PostsPage'
 import Post from './components/PostPage'
-import NotFoundPage from './components/NotFoundPage'
+import NotFoundPage from './components/NotFoundPage/NotFoundPage'
 import Picture from './components/Picture'
 import { Dashboard } from './components/Dashboard'
 import { MantineProvider, createTheme } from '@mantine/core';

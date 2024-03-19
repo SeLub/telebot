@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { Title } from '@mantine/core';
+import { Title, Divider } from '@mantine/core';
 import { Fragment, useState, useEffect } from "react";
 import PostTextEditor from './PostTextEditor';
 import Attach from './Attach';
@@ -24,9 +24,13 @@ const Post = () => {
       return(
             <Fragment>
                   <Title order={1}>Post {post_id}</Title>
-                  <CurrentAttachments postId={post_id} attachments={attachments} setAttachments={setAttachments}/>
+                  <Divider my="xs" label="Current attachments" labelPosition="center" />
+                  <CurrentAttachments attachments={attachments} setAttachments={setAttachments}/>
+                  <Divider my="xs" label="Add attachments" labelPosition="center" />
                   <Attach postId={post_id} attachments={attachments} setAttachments={setAttachments} />
+                  <Divider my="xs" label="Edit post" labelPosition="center" />
                   <PostTextEditor postId={post_id} />
+                  <Divider my="xs" label="Publish post" labelPosition="center" />
                   <SubmitForm  postId={post_id} />
             </Fragment>
       )

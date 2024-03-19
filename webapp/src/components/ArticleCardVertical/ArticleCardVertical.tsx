@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { IconEdit, IconCopy, IconTrash } from '@tabler/icons-react';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 import { isArrayEmpty } from '../../utils';
+import CurrentAttachments from '../CurrentAttachments';
 
 function ArticleCardVertical(props) {
       const { text, to, postId } = props;
@@ -20,34 +21,10 @@ function ArticleCardVertical(props) {
                   getAttachments();
             }, []);
 
-      const showImages = () => {
-            console.log(attachments);
-
-           return attachments.map((attachment, index) => {
-                  console.log(attachment);
-                  console.log(attachment.photo_filename);
-                           const imageURL = 'https://s3.tebi.io/telegram.backet/images/' + attachment.photo_filename;
-                  return (
-                        <Image
-                              src={imageURL}
-                              height={160}
-                              key={index}
-                        />
-                  )
-            })
-      }
   return (
     <Card withBorder radius="md" p={0} className={classes.card}>
       <Group wrap="nowrap" gap={0}>
-            { !isArrayEmpty(attachments) ? showImages() : null }
-        {/* <Image
-          src="https://s3.tebi.io/telegram.backet/images/9a33a9279175f390a8-e191196b-73e1-44ba-aaa6-419500af9c01.jpeg"
-          height={160}
-        />
-        <Image
-          src="https://s3.tebi.io/telegram.backet/images/9a33a9279175f390a8-e191196b-73e1-44ba-aaa6-419500af9c01.jpeg"
-          height={160}
-        /> */}
+            <CurrentAttachments attachments={attachments} setAttachments={setAttachments}/>
         <div className={classes.body}>
             <Group wrap="nowrap" gap="xs"justify="flex-end" >
                   <Text tt="uppercase" c="dimmed" fw={700} size="xs">

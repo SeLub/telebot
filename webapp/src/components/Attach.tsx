@@ -1,10 +1,10 @@
-import { Divider, Image, Flex  } from '@mantine/core';
+import { Image, Flex  } from '@mantine/core';
 import { Dropzone, FileWithPath } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import React, { useState, Fragment } from 'react';
 import addFilesImage from '../assets/add_files.png';
 import saveFileImage from '../assets/save_files.png';
-import { isArrayEmpty, getImageContentType ,generateUniqueFileName } from '../utils';
+import { isArrayEmpty, getImageContentType, generateUniqueFileName, getImageUrl } from '../utils';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 function Attach(props) {
@@ -13,6 +13,7 @@ function Attach(props) {
 
       const previews = files.map((file, index) => {
             const imageUrl = URL.createObjectURL(file);
+            console.log('imageUrl ', imageUrl);
             return (
                   <Image 
                         key={index} 
@@ -20,7 +21,7 @@ function Attach(props) {
                         onLoad={() => URL.revokeObjectURL(imageUrl)}
                         h={200}
                         w="auto"
-                        onClick={() => removeFile(index)}
+                        onDoubleClick={() => removeFile(index)}
                   />)
       });
 
@@ -101,7 +102,6 @@ function Attach(props) {
 
   return (
     <Fragment>
-      <Divider my="xs" label="Current attachments" labelPosition="center" />
       <Flex
             mih={50}
             gap="md"

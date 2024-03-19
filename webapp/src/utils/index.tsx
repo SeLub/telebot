@@ -45,3 +45,36 @@ export const generateUniqueFileName = (filename) => {
       const uniqueFileName = `${fileNameWithoutExtension.join('-')}-${UUID}.${fileExtension}`;
       return { UUID, uniqueFileName };
     }
+
+export const getImageUrl = (attachment) => {
+      const ext = '.' + attachment.photo_filename.toLowerCase().split('.').pop();
+      switch (ext) {
+      case '.jpg':
+      case '.jpeg':
+      case '.png':
+      case '.webp':
+            return 'https://s3.tebi.io/telegram.backet/images/' + attachment.photo_filename;
+      case '.csv': 
+            return 'https://s3.tebi.io/telegram.backet/images/file-cv.png';
+      // case '.txt':
+      //       return 'text/plain';
+      // case '.doc':
+      //       return 'application/msword';
+      // case '.pdf':
+      //       return 'application/pdf';
+      // case '.avi':
+      //       return 'video/x-msvideo';
+      // case '.mp3':
+      //       return 'audio/mpeg';
+      // case '.mp4':
+      //       return 'video/mp4';
+      // case '.mpeg':
+      //       return 'video/mpeg';
+      // case '.webm':
+      //       return 'video/webm';
+      // case '.xls':
+      //       return 'application/vnd.ms-excel';
+      default:
+            throw new Error('Unsupported file type');
+      }
+}

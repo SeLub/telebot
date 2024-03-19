@@ -1,5 +1,5 @@
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
-import React, { useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import DCButton from './ui/DCButton';
 import { notifications } from '@mantine/notifications';
 import { useEditor } from '@tiptap/react';
@@ -21,7 +21,7 @@ function PostTextEditor(params) {
                         console.log('@@@@@@@@@@@@@@@@@@@@@@ => ', postText); 
                         setText(postText) }
                   getText()
-      }, [])
+      }, [text])
 
       console.log('editorContent ', editorContent);
       
@@ -62,7 +62,7 @@ function PostTextEditor(params) {
     }
 
   return (
-      <>
+      <Fragment>
       <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
                   <RichTextEditor.ControlsGroup>
@@ -92,9 +92,8 @@ function PostTextEditor(params) {
             handleOnClick = {() => saveText(postId)}
             buttonClassName = "submit" 
             buttonText = "SavePost"
-            color="green"
       />
-    </>
+    </Fragment>
   );
 }
 export default PostTextEditor;

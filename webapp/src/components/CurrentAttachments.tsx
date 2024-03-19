@@ -1,6 +1,6 @@
-import React from "react";
-import { isArrayEmpty } from '../utils';
-import { Image } from '@mantine/core';
+import React, {Fragment} from "react";
+import { isArrayEmpty, getImageUrl } from '../utils';
+import { Image, Flex } from '@mantine/core';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 function CurrentAttachments(props){
@@ -23,7 +23,7 @@ function CurrentAttachments(props){
                   const deleteFileFromAttachments = (fileToDelete) => actualAttachment.filter((att) => att.photo_filename !== fileToDelete);
                   await fetchDeleteFile(attachment.post_id_photo, attachment.photo_filename);
                   const newAttachmentsState = deleteFileFromAttachments(attachment.photo_filename);
-                  setAttachments(actualAttachment);
+                  setAttachments(newAttachmentsState);
             } catch (error) {
                   console.log(error);
             }
@@ -33,7 +33,7 @@ function CurrentAttachments(props){
                   console.log(attachments);
       
                  return attachments.map((attachment, index) => {
-                                 const imageURL = 'https://s3.tebi.io/telegram.backet/images/' + attachment.photo_filename;
+                              const imageURL = getImageUrl(attachment);
                         return (
                               <Image
                                     src={imageURL}
@@ -47,9 +47,17 @@ function CurrentAttachments(props){
                   })
             }
 
-      return(<>
-                  { !isArrayEmpty(attachments) ? showImages() : null }
-            </>
+      return(<Fragment>
+                  <Flex
+                        mih={50}
+                        gap="md"
+                        justify="flex-start"
+                        align="flex-start"
+                        direction="row"
+                        wrap="wrap"
+                  >{ !isArrayEmpty(attachments) ? showImages() : null }
+                  </Flex>
+            </Fragment>
             )
 
 }

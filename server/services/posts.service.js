@@ -166,36 +166,21 @@ module.exports = {
             }
         },
         createPost: {
-            rest: "POST /",
+            rest: "POST /create",
             params: {
-                  post_text: { type: "string" },
-                  photo_filename: { type: "string", optional: true }
+                  post_text: { type: "string" }
               },
             async handler(ctx) {
-                const { post_text, photo_filename } = ctx.params;
+                const { post_text } = ctx.params;
                 const post_id = uuidv4();
-         
-                // If photo_filename is provided, create a new photo record
-                if (photo_filename !== "") {
-                    // Create a new post record
-                    await client.query(`
-                        INSERT INTO post (post_id, post_text) 
-                        VALUES ($1, $2);
-                    `, [post_id, post_text]);
 
-                    const post_id_photo = post_id;
-                    const photo_id = uuidv4()
-                    await client.query(`
-                        INSERT INTO photo (photo_id, post_id_photo, photo_filename) 
-                        VALUES ($1, $2, $3);
-                    `, [photo_id, post_id_photo, photo_filename]);
-                } else {
-                        // Create a new post record
-                        await client.query(`
-                            INSERT INTO post (post_id, post_text) 
-                            VALUES ($1, $2);
-                            `, [post_id, post_text]);
-                }
+                console.log('post_id: ', post_id, 'post_text: ', post_text);
+
+                await client.query(`
+                    INSERT INTO post (post_id, post_text) 
+                    VALUES ($1, $2);
+                `, [post_id, post_text]);
+
                 return await this.getPost(post_id);
             }
         },

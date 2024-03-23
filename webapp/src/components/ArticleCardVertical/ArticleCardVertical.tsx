@@ -1,8 +1,10 @@
 import { ActionIcon, Card, Group, Menu, Text, rem } from '@mantine/core';
-import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconTrash } from '@tabler/icons-react';
+import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconSend, IconTrash } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
 import Attachments from '../Attachments';
+import PublishPost from '../PublishPost';
+import MyButton from '../ui/MyButton';
 import classes from './ArticleCardVertical.module.css';
 
 type Props = {
@@ -19,17 +21,25 @@ function ArticleCardVertical(props: Props) {
             <Card.Section withBorder inheritPadding py="xs">
                 <Group justify="space-between">
                     <Group wrap="nowrap" gap="xs" justify="flex-end">
-                        <ActionIcon size={30}>
-                            <Link to={to}>
-                                <IconEdit style={{ width: rem(20), height: rem(20) }} />
-                            </Link>
-                        </ActionIcon>
-                        <ActionIcon>
-                            <IconCopy style={{ width: rem(20), height: rem(20) }} />
-                        </ActionIcon>
-                        <ActionIcon>
-                            <IconTrash style={{ width: rem(20), height: rem(20) }} />
-                        </ActionIcon>
+                        <MyButton
+                            rightSection={<IconEdit size={18} />}
+                            buttonText="Edit Post"
+                            color={'blue'}
+                            href={to}
+                        />
+                        <MyButton
+                            rightSection={<IconCopy size={18} />}
+                            buttonText="Clone Post"
+                            color={'yellow'}
+                            href={to}
+                        />
+                        <MyButton
+                            rightSection={<IconTrash size={18} />}
+                            buttonText="Delete Post"
+                            color={'purple'}
+                            href={to}
+                        />
+                        <PublishPost post_id={post_id} />
                     </Group>
                     <Menu withinPortal position="bottom-end" shadow="sm">
                         <Menu.Target>

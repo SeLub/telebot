@@ -88,15 +88,15 @@ function PostTextEditor(params) {
                         <RichTextEditor.Redo />
                         <RichTextEditor.ClearFormatting />
                     </RichTextEditor.ControlsGroup>
+                    <DCButton
+                        buttonId="saveTextButton"
+                        handleOnClick={() => saveText(post_id)}
+                        buttonClassName="submit"
+                        buttonText="SaveText"
+                    />
                 </RichTextEditor.Toolbar>
                 <RichTextEditor.Content />
             </RichTextEditor>
-            <DCButton
-                buttonId="saveTextButton"
-                handleOnClick={() => saveText(post_id)}
-                buttonClassName="submit"
-                buttonText="SaveText"
-            />
         </Fragment>
     );
 }

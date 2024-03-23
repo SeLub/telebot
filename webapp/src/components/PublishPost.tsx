@@ -1,4 +1,5 @@
 import { notifications } from '@mantine/notifications';
+import { IconSend } from '@tabler/icons-react';
 import { Fragment } from 'react';
 
 import DCButton from './ui/DCButton';
@@ -32,6 +33,7 @@ const PublishPost = (props: { post_id: string | undefined }) => {
         <Fragment>
             {post_id && (
                 <DCButton
+                    rightSection={<IconSend size={18} />}
                     handleOnClick={async (): Promise<void> => await publishPost(post_id)}
                     buttonText="Publish Post"
                     buttonId={undefined}

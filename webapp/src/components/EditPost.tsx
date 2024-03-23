@@ -1,10 +1,10 @@
-import { Divider, Title } from '@mantine/core';
+import { Card, Title } from '@mantine/core';
 import { Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Attachments from './Attachments';
 import PostTextEditor from './PostTextEditor';
-import SubmitForm from './SubmitForm';
+import SubmitForm from './PublishPost';
 
 const Post = () => {
     const { post_id } = useParams<{ post_id: string }>();
@@ -12,10 +12,15 @@ const Post = () => {
     return (
         <Fragment>
             <Title order={1}>Post {post_id}</Title>
-            <Attachments post_id={post_id} height={200} />
-            <PostTextEditor post_id={post_id} />
-            <Divider my="xs" label="Publish post" labelPosition="center" />
             <SubmitForm post_id={post_id} />
+            <Card withBorder radius="lg" shadow="sm">
+                <Card.Section inheritPadding py="xs">
+                    <PostTextEditor post_id={post_id} />
+                </Card.Section>
+                <Card.Section inheritPadding mt="sm" pb="md">
+                    <Attachments post_id={post_id} height={200} />
+                </Card.Section>
+            </Card>
         </Fragment>
     );
 };

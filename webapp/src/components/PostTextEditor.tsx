@@ -95,7 +95,7 @@ function PostTextEditor(params) {
                 buttonId="saveTextButton"
                 handleOnClick={() => saveText(post_id)}
                 buttonClassName="submit"
-                buttonText="SavePost"
+                buttonText="SaveText"
             />
         </Fragment>
     );

@@ -11,6 +11,7 @@ const PublishPost = (props: { post_id: string | undefined }) => {
     const publishPost = async (post_id: string): Promise<void> => {
         try {
             const result = await fetch(`${serverHost}/api/posts/publish/${post_id}`, { method: 'POST' });
+            console.log(result.status);
             if (result.ok) {
                 notifications.show({
                     title: 'Success',

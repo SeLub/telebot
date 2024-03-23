@@ -1,6 +1,5 @@
 import { SimpleGrid, Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import { IPost } from '../common/types';
 import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical';

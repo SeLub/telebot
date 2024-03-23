@@ -12,7 +12,7 @@ const Post = () => {
     return (
         <Fragment>
             <Title order={1}>Post {post_id}</Title>
-            <Attachments post_id={post_id} />
+            <Attachments post_id={post_id} height={200} />
             <PostTextEditor post_id={post_id} />
             <Divider my="xs" label="Publish post" labelPosition="center" />
             <SubmitForm post_id={post_id} />

@@ -11,8 +11,10 @@ import { generateUniqueFileName, getImageContentType, getImageUrl, getUploadUrl,
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function CurrentAttachments(props: { post_id: string }) {
-    const { post_id } = props;
+function CurrentAttachments(props: { post_id: string; height: number }) {
+    const { post_id, height } = props;
+    let imagesHeight = height;
+    if (!imagesHeight) imagesHeight = 200;
     const [attachments, setAttachments] = useState<IAttachment[]>([]);
     const [files, setFiles] = useState<FileWithPath[] | []>([]);
 
@@ -31,7 +33,7 @@ function CurrentAttachments(props: { post_id: string }) {
             return (
                 <Image
                     src={imageURL}
-                    h={200}
+                    h={imagesHeight}
                     w="auto"
                     fit="contain"
                     key={index}
@@ -86,7 +88,9 @@ function CurrentAttachments(props: { post_id: string }) {
     const previewUploads = () =>
         files.map((file: FileWithPath, index: number) => {
             const imageUrl: string = getUploadUrl(file);
-            return <Image key={index} src={imageUrl} h="auto" w="auto" onDoubleClick={() => removeUpload(index)} />;
+            return (
+                <Image key={index} src={imageUrl} h="imagesHeight" w="auto" onDoubleClick={() => removeUpload(index)} />
+            );
         });
 
     const removeUpload = (index: number) => {
@@ -187,10 +191,10 @@ function CurrentAttachments(props: { post_id: string }) {
         <Flex mih={50} gap="md" justify="flex-start" align="flex-start" direction="row" wrap="wrap">
             {noAttachments && showAttachments()}
             <Dropzone onDrop={setFiles}>
-                <Image src={addFilesImage} h={200} w="auto" />
+                <Image src={addFilesImage} h={imagesHeight} w="auto" />
             </Dropzone>
             {noFiles && previewUploads()}
-            {noFiles && <Image src={saveFileImage} h={200} w="auto" onDoubleClick={handleUploads} />}
+            {noFiles && <Image src={saveFileImage} h={imagesHeight} w="auto" onDoubleClick={handleUploads} />}
         </Flex>
     );
 }

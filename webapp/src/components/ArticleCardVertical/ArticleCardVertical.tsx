@@ -1,16 +1,4 @@
-import {
-    ActionIcon,
-    Avatar,
-    BackgroundImage,
-    Box,
-    Card,
-    Center,
-    Group,
-    Menu,
-    SimpleGrid,
-    Text,
-    rem,
-} from '@mantine/core';
+import { ActionIcon, Card, Group, Menu, Text, rem } from '@mantine/core';
 import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconTrash } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
@@ -30,7 +18,19 @@ function ArticleCardVertical(props: Props) {
         <Card withBorder radius="lg" shadow="sm" className={classes.card}>
             <Card.Section withBorder inheritPadding py="xs">
                 <Group justify="space-between">
-                    <Text fw={500}>Review pictures</Text>
+                    <Group wrap="nowrap" gap="xs" justify="flex-end">
+                        <ActionIcon size={30}>
+                            <Link to={to}>
+                                <IconEdit style={{ width: rem(20), height: rem(20) }} />
+                            </Link>
+                        </ActionIcon>
+                        <ActionIcon>
+                            <IconCopy style={{ width: rem(20), height: rem(20) }} />
+                        </ActionIcon>
+                        <ActionIcon>
+                            <IconTrash style={{ width: rem(20), height: rem(20) }} />
+                        </ActionIcon>
+                    </Group>
                     <Menu withinPortal position="bottom-end" shadow="sm">
                         <Menu.Target>
                             <ActionIcon variant="subtle" color="gray">
@@ -54,47 +54,12 @@ function ArticleCardVertical(props: Props) {
                         </Menu.Dropdown>
                     </Menu>
                 </Group>
-                <Group wrap="nowrap" gap="xs" justify="flex-end">
-                    <Text tt="uppercase" c="dimmed" fw={700} size="xs">
-                        technology
-                    </Text>
-                    <ActionIcon size={30}>
-                        <Link to={to}>
-                            <IconEdit style={{ width: rem(20), height: rem(20) }} />
-                        </Link>
-                    </ActionIcon>
-                    <ActionIcon>
-                        <IconCopy style={{ width: rem(20), height: rem(20) }} />
-                    </ActionIcon>
-                    <ActionIcon>
-                        <IconTrash style={{ width: rem(20), height: rem(20) }} />
-                    </ActionIcon>
-                </Group>
             </Card.Section>
             <Card.Section inheritPadding py="xs">
                 <Text className={classes.title} mt="xs" mb="md" dangerouslySetInnerHTML={{ __html: text }}></Text>
             </Card.Section>
-
-            {/* <div className={classes.body}>
-                
-                <Group wrap="nowrap" gap="xs">
-                    <Group gap="xs" wrap="nowrap">
-                        <Avatar
-                            size={20}
-                            src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
-                        />
-                        <Text size="xs">Elsa Typechecker</Text>
-                    </Group>
-                    <Text size="xs" c="dimmed">
-                        •
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                        Feb 6th
-                    </Text>
-                </Group>
-            </div> */}
             <Card.Section inheritPadding mt="sm" pb="md">
-                <Attachments post_id={post_id} />
+                <Attachments post_id={post_id} height={70} />
             </Card.Section>
         </Card>
     );

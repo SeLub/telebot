@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import addFilesImage from '../assets/appimg/actionsUI/add_files.png';
 import saveFileImage from '../assets/appimg/actionsUI/save_files.png';
 import { IAttachment } from '../common/types';
-import { generateUniqueFileName, getImageContentType, getImageUrl, getImageUrlPreview, isArrayEmpty } from '../utils';
+import { generateUniqueFileName, getImageContentType, getImageUrl, getUploadUrl, isArrayEmpty } from '../utils';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
@@ -83,19 +83,19 @@ function CurrentAttachments(props: { post_id: string }) {
     };
     // LINE
 
-    const previews = () =>
+    const previewUploads = () =>
         files.map((file: FileWithPath, index: number) => {
-            const imageUrl: string = getImageUrlPreview(file);
-            return <Image key={index} src={imageUrl} h={200} w="auto" onDoubleClick={() => removeFile(index)} />;
+            const imageUrl: string = getUploadUrl(file);
+            return <Image key={index} src={imageUrl} h="auto" w="auto" onDoubleClick={() => removeUpload(index)} />;
         });
 
-    const removeFile = (index: number) => {
+    const removeUpload = (index: number) => {
         const newFilesList = [...files];
         newFilesList.splice(index, 1);
         setFiles(newFilesList);
     };
 
-    const handleUpload = async () => {
+    const handleUploads = async () => {
         const id = notifications.show({
             loading: true,
             title: 'Loading started',
@@ -107,7 +107,7 @@ function CurrentAttachments(props: { post_id: string }) {
             let newFiles = [...files];
 
             for (const file of newFiles) {
-                const newFile = await saveFile(file);
+                const newFile = await saveFileToStorage(file);
                 newFiles = newFiles.filter((item) => item.name !== file.name);
                 setFiles(newFiles);
                 setAttachments((attachments) => [...attachments, ...newFile]);
@@ -136,7 +136,7 @@ function CurrentAttachments(props: { post_id: string }) {
         }
     };
 
-    const saveFile = async (file: FileWithPath) => {
+    const saveFileToStorage = async (file: FileWithPath) => {
         const contentType = getImageContentType(file.name);
         try {
             //Generate unique file name
@@ -180,14 +180,17 @@ function CurrentAttachments(props: { post_id: string }) {
         }
     };
 
+    const noFiles = !isArrayEmpty(files);
+    const noAttachments = !isArrayEmpty(attachments);
+
     return (
         <Flex mih={50} gap="md" justify="flex-start" align="flex-start" direction="row" wrap="wrap">
-            {!isArrayEmpty(attachments) && showAttachments()}
+            {noAttachments && showAttachments()}
             <Dropzone onDrop={setFiles}>
                 <Image src={addFilesImage} h={200} w="auto" />
             </Dropzone>
-            {!isArrayEmpty(files) && previews()}
-            {!isArrayEmpty(files) && <Image src={saveFileImage} h={200} w="auto" onClick={handleUpload} />}
+            {noFiles && previewUploads()}
+            {noFiles && <Image src={saveFileImage} h={200} w="auto" onDoubleClick={handleUploads} />}
         </Flex>
     );
 }

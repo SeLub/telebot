@@ -94,7 +94,7 @@ export const getImageUrl = (attachment) => {
     }
 };
 
-export const getImageUrlPreview = (file: FileWithPath) => {
+export const getUploadUrl = (file: FileWithPath) => {
     const appImagePath = storageEndpoint + '/' + storageBucket + '/' + appImagesFolder + '/fileTypes/';
     const ext = '.' + file.name.toLowerCase().split('.').pop();
     switch (ext) {

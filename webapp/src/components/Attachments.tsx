@@ -89,7 +89,7 @@ function CurrentAttachments(props: { post_id: string; height: number }) {
         files.map((file: FileWithPath, index: number) => {
             const imageUrl: string = getUploadUrl(file);
             return (
-                <Image key={index} src={imageUrl} h="imagesHeight" w="auto" onDoubleClick={() => removeUpload(index)} />
+                <Image key={index} src={imageUrl} h={imagesHeight} w="auto" onDoubleClick={() => removeUpload(index)} />
             );
         });
 

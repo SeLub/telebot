@@ -1,6 +1,6 @@
 import { ActionIcon, Card, Group, Menu, Text, rem } from '@mantine/core';
-import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconSend, IconTrash } from '@tabler/icons-react';
-import { Link } from 'react-router-dom';
+import { useDisclosure } from '@mantine/hooks';
+import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconToggleLeft, IconTrash } from '@tabler/icons-react';
 
 import Attachments from '../Attachments';
 import PublishPost from '../PublishPost';
@@ -11,22 +11,26 @@ type Props = {
     text: string;
     to: string;
     post_id: string;
+    showEditButton: boolean;
 };
 
 function ArticleCardVertical(props: Props) {
-    const { text, to, post_id } = props;
+    const { text, to, post_id, showEditButton } = props;
+    const [editorHTMLMode, handlers] = useDisclosure(false);
 
     return (
         <Card withBorder radius="lg" shadow="sm" className={classes.card}>
             <Card.Section withBorder inheritPadding py="xs">
                 <Group justify="space-between">
                     <Group wrap="nowrap" gap="xs" justify="flex-end">
-                        <MyButton
-                            rightSection={<IconEdit size={18} />}
-                            buttonText="Edit Post"
-                            color={'blue'}
-                            href={to}
-                        />
+                        {showEditButton && (
+                            <MyButton
+                                rightSection={<IconEdit size={18} />}
+                                buttonText="Edit Post"
+                                color={'blue'}
+                                href={to}
+                            />
+                        )}
                         <MyButton
                             rightSection={<IconCopy size={18} />}
                             buttonText="Clone Post"
@@ -38,6 +42,14 @@ function ArticleCardVertical(props: Props) {
                             buttonText="Delete Post"
                             color={'purple'}
                             href={to}
+                        />
+                        <MyButton
+                            rightSection={<IconToggleLeft size={18} />}
+                            buttonText="HTML / Text"
+                            color={'green'}
+                            onClick={() => {
+                                handlers.toggle();
+                            }}
                         />
                         <PublishPost post_id={post_id} />
                     </Group>
@@ -66,9 +78,15 @@ function ArticleCardVertical(props: Props) {
                 </Group>
             </Card.Section>
             <Card.Section inheritPadding py="xs">
-                <Text className={classes.title} mt="xs" mb="md" dangerouslySetInnerHTML={{ __html: text }}></Text>
+                {editorHTMLMode ? (
+                    <Text className={classes.text} mt="xs" mb="md" dangerouslySetInnerHTML={{ __html: text }}></Text>
+                ) : (
+                    <Text className={classes.text} mt="xs" mb="md">
+                        {text}
+                    </Text>
+                )}
             </Card.Section>
-            <Card.Section inheritPadding mt="sm" pb="md">
+            <Card.Section inheritPadding mt="sm" pb="md" className={classes.attachments}>
                 <Attachments post_id={post_id} height={70} />
             </Card.Section>
         </Card>

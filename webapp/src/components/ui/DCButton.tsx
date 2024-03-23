@@ -7,7 +7,7 @@ type Props = {
     handleOnClick: () => Promise<void> | undefined;
     buttonClassName: string | undefined;
     buttonText: string | undefined;
-    rightSection: any;
+    rightSection?: unknown;
 };
 
 function DCButton(props: Props) {

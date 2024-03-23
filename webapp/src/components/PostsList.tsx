@@ -28,6 +28,7 @@ function PostsList() {
             post_id={post.post_id}
             to={`/posts/${post.post_id}`}
             text={post.post_text}
+            showEditButton={true}
         />
     );
 

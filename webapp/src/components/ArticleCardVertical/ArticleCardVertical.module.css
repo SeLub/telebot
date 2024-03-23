@@ -13,14 +13,31 @@
     opacity: 0.1;
 }
 
-.title {
-    font-weight: bold;
-    font-family:
-        Greycliff CF,
-        var(--mantine-font-family);
-    line-height: 1.2;
+.text {
+    z-index: 1000;
 }
+blockquote,
+code {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+}
+blockquote:before,
+code:before {
+    color: #ccc;
 
+    font-size: 4em;
+    line-height: 0.1em;
+    vertical-align: -0.4em;
+}
+blockquote p,
+code p {
+    display: inline;
+}
+.attachments {
+    z-index: 1000;
+}
 .body {
     padding: var(--mantine-spacing-md);
 }

@@ -1,5 +1,4 @@
 import { Button } from '@mantine/core';
-import { Link } from 'react-router-dom';
 
 interface IMyButtonProps {
     buttonId?: string | undefined;
@@ -8,7 +7,7 @@ interface IMyButtonProps {
     buttonClassName?: string | undefined;
     color?: string | undefined;
     buttonText: string | undefined;
-    rightSection?: any;
+    rightSection?: unknown;
     href?: string;
 }
 

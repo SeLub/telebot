@@ -7,8 +7,6 @@ const {
 	GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { v4: uuidv4 } = require("uuid");
-const fs = require("fs");
 require("dotenv").config();
 
 const credentials = {

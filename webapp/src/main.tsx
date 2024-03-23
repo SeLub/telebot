@@ -39,7 +39,7 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <MantineProvider theme={theme}>
-        <Notifications />
+        <Notifications position="top-right" />
         <Dashboard>
             <RouterProvider router={router} />
         </Dashboard>

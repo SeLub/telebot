@@ -16,7 +16,7 @@ type Props = {
 
 function ArticleCardVertical(props: Props) {
     const { text, to, post_id, showEditButton } = props;
-    const [editorHTMLMode, handlers] = useDisclosure(false);
+    const [editorHTMLMode, handlers] = useDisclosure(true);
 
     return (
         <Card withBorder radius="lg" shadow="sm" className={classes.card}>

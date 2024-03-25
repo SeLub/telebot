@@ -1,4 +1,5 @@
 import { notifications } from '@mantine/notifications';
+import { IconSend } from '@tabler/icons-react';
 import { Fragment } from 'react';
 
 import DCButton from './ui/DCButton';
@@ -11,6 +12,7 @@ const PublishPost = (props: { post_id: string | undefined }) => {
     const publishPost = async (post_id: string): Promise<void> => {
         try {
             const result = await fetch(`${serverHost}/api/posts/publish/${post_id}`, { method: 'POST' });
+            console.log(result.status);
             if (result.ok) {
                 notifications.show({
                     title: 'Success',
@@ -31,6 +33,7 @@ const PublishPost = (props: { post_id: string | undefined }) => {
         <Fragment>
             {post_id && (
                 <DCButton
+                    rightSection={<IconSend size={18} />}
                     handleOnClick={async (): Promise<void> => await publishPost(post_id)}
                     buttonText="Publish Post"
                     buttonId={undefined}

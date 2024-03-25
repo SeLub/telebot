@@ -1,7 +1,7 @@
 import { AppShell, Burger, Group, Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import PostUp24Logo from '../assets/postup_logo_small_full.png';
+import PostUp24Logo from '../assets/appimg/logos/postup_logo_small_full.png';
 import { NavbarSimpleColored } from './NavbarSimpleColored/NavbarSimpleColored';
 
 export function Dashboard({ children }) {

@@ -5,6 +5,7 @@ import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Fragment, useEffect, useState } from 'react';
 
+import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical';
 import DCButton from './ui/DCButton';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
@@ -19,7 +20,6 @@ function PostTextEditor(params) {
             const response = await fetch(`${serverHost}/api/posts/${post_id}`);
             const data = await response.json();
             const postText = data[0]['post_text'];
-            console.log('@@@@@@@@@@@@@@@@@@@@@@ => ', postText);
             setText(postText);
         };
         getText();
@@ -33,6 +33,7 @@ function PostTextEditor(params) {
             content: text,
             onUpdate({ editor }) {
                 setEditorContent(editor.getHTML());
+                setText(editor.getHTML());
             },
         },
         [text],
@@ -67,8 +68,9 @@ function PostTextEditor(params) {
 
     return (
         <Fragment>
+            <ArticleCardVertical showEditButton={false} to={'#'} text={text} post_id={post_id} />
             <RichTextEditor editor={editor}>
-                <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                <RichTextEditor.Toolbar>
                     <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Bold />
                         <RichTextEditor.Italic />
@@ -88,15 +90,15 @@ function PostTextEditor(params) {
                         <RichTextEditor.Redo />
                         <RichTextEditor.ClearFormatting />
                     </RichTextEditor.ControlsGroup>
+                    <DCButton
+                        buttonId="saveTextButton"
+                        handleOnClick={() => saveText(post_id)}
+                        buttonClassName="submit"
+                        buttonText="SaveText"
+                    />
                 </RichTextEditor.Toolbar>
                 <RichTextEditor.Content />
             </RichTextEditor>
-            <DCButton
-                buttonId="saveTextButton"
-                handleOnClick={() => saveText(post_id)}
-                buttonClassName="submit"
-                buttonText="SavePost"
-            />
         </Fragment>
     );
 }

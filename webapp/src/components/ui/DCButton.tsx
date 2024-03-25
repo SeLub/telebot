@@ -7,10 +7,11 @@ type Props = {
     handleOnClick: () => Promise<void> | undefined;
     buttonClassName: string | undefined;
     buttonText: string | undefined;
+    rightSection?: unknown;
 };
 
 function DCButton(props: Props) {
-    const { buttonId, handleOnClick, buttonClassName, buttonText } = props;
+    const { buttonId, handleOnClick, buttonClassName, buttonText, rightSection } = props;
     const [color, setColor] = useState('teal');
     const [count, setCount] = useState(0);
 
@@ -26,7 +27,14 @@ function DCButton(props: Props) {
     };
 
     return (
-        <Button className={buttonClassName} id={buttonId} onClick={nextClickSubmit} variant="filled" color={color}>
+        <Button
+            rightSection={rightSection}
+            className={buttonClassName}
+            id={buttonId}
+            onClick={nextClickSubmit}
+            variant="filled"
+            color={color}
+        >
             {buttonText}
         </Button>
     );

@@ -9,14 +9,15 @@
         "lint": "eslint . --ext .ts,.tsx",
         "prettier": "prettier --write .",
         "preview": "vite preview",
-        "prepare": "husky"
+        "prepare": "cd .. && husky webapp/.husky",
+        "precommit": "lint-staged"
     },
     "dependencies": {
-        "@mantine/core": "^7.6.1",
-        "@mantine/dropzone": "^7.6.1",
-        "@mantine/hooks": "^7.6.1",
-        "@mantine/notifications": "^7.6.1",
-        "@mantine/tiptap": "^7.6.1",
+        "@mantine/core": "^7.6.2",
+        "@mantine/dropzone": "^7.6.2",
+        "@mantine/hooks": "^7.6.2",
+        "@mantine/notifications": "^7.6.2",
+        "@mantine/tiptap": "^7.6.2",
         "@tabler/icons-react": "^2.47.0",
         "@tiptap/extension-link": "^2.2.4",
         "@tiptap/extension-placeholder": "^2.2.4",
@@ -48,6 +49,9 @@
         "vite": "^5.1.0"
     },
     "lint-staged": {
-        "**/*": "prettier --write --ignore-unknown"
+        "src/**/*.{js,ts,jsx,tsx}": [
+            "prettier --write --ignore-unknown",
+            "eslint --fix"
+        ]
     }
 }

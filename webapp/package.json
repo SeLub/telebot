@@ -9,7 +9,8 @@
         "lint": "eslint . --ext .ts,.tsx",
         "prettier": "prettier --write .",
         "preview": "vite preview",
-        "prepare": "husky"
+        "prepare": "cd .. && husky webapp/.husky",
+        "precommit": "lint-staged"
     },
     "dependencies": {
         "@mantine/core": "^7.6.2",

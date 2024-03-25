@@ -12,11 +12,11 @@
         "prepare": "husky"
     },
     "dependencies": {
-        "@mantine/core": "^7.6.1",
-        "@mantine/dropzone": "^7.6.1",
+        "@mantine/core": "^7.6.2",
+        "@mantine/dropzone": "^7.6.2",
         "@mantine/hooks": "^7.6.2",
-        "@mantine/notifications": "^7.6.1",
-        "@mantine/tiptap": "^7.6.1",
+        "@mantine/notifications": "^7.6.2",
+        "@mantine/tiptap": "^7.6.2",
         "@tabler/icons-react": "^2.47.0",
         "@tiptap/extension-link": "^2.2.4",
         "@tiptap/extension-placeholder": "^2.2.4",
@@ -26,7 +26,8 @@
         "@tiptap/starter-kit": "^2.2.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-router-dom": "^6.22.0"
+        "react-router-dom": "^6.22.0",
+        "rxdb": "^15.13.2"
     },
     "devDependencies": {
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",

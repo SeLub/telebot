@@ -1,1 +1,2 @@
-cd .. && lint-staged
+npm run prettier
+npm run lint

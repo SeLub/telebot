@@ -27,17 +27,20 @@ function PostTextEditor(params) {
 
     console.log('editorContent ', editorContent);
 
-    const editor = useEditor(
-        {
-            extensions: [StarterKit, Link, Underline],
-            content: text,
-            onUpdate({ editor }) {
-                setEditorContent(editor.getHTML());
-                setText(editor.getHTML());
-            },
+    const editor = useEditor({
+        extensions: [StarterKit, Link, Underline],
+        content: text,
+        onBlur({ editor }) {
+            setEditorContent(editor.getHTML());
         },
-        [text],
-    );
+    });
+    useEffect(() => {
+        if (!editorContent) {
+            return;
+        }
+
+        setText(editorContent);
+    }, [editorContent]);
 
     const saveText = async (post_id) => {
         try {

@@ -44,6 +44,7 @@ REACT SPA, React Router v6.22
 
 ### Deployment
 
+Deployment status [![Netlify Status](https://api.netlify.com/api/v1/badges/de3cb262-c7e4-4eac-8e24-c97d6bf3151b/deploy-status)](https://app.netlify.com/sites/postup24/deploys)
 CI/CD with Netlify.
 To build and publish - just push in branch 'main'.
 Branch - webapp.

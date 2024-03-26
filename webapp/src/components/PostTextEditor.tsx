@@ -31,7 +31,7 @@ function PostTextEditor(params) {
         {
             extensions: [StarterKit, Link, Underline],
             content: text,
-            onUpdate({ editor }) {
+            onBlur({ editor }) {
                 setEditorContent(editor.getHTML());
                 setText(editor.getHTML());
             },

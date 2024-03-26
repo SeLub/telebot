@@ -9,7 +9,7 @@ services:
     env_file: docker-compose.env
     environment:
       SERVICES: api # Moleculer Runner will start only the 'api' service in this container
-      PORT: 3000    # Port of API gateway
+      PORT: 3000 # Port of API gateway
     depends_on:
       - nats
     labels:
@@ -80,8 +80,22 @@ services:
     image: nats:2
     networks:
       - internal
+  db:
+    image: postgres:latest
+    networks:
+      - internal
+    env_file: docker-compose.env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    restart: always
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 networks:
   internal:
 
 volumes:
-  data:
+  db_data:

@@ -40,7 +40,7 @@ function PostTextEditor(params) {
             return;
         }
 
-        setText(editor.getHTML());
+        setText(editorContent);
     }, [editorContent]);
 
     const saveText = async (post_id) => {

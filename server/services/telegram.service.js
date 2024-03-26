@@ -115,10 +115,12 @@ module.exports = {
 			const { text, mediaArray } = ctx.params;
 			// TODO: Move in separate method
 			const cleanTextFromUnsupportedHTMLtag = text
-				.replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, "")
-				.replace(/<\/p>|<br>/gm, "\n")
 				.replace(/<code>/gm, "<pre>")
 				.replace(/<\/code>/gm, "</pre>")
+				// .replace(/<p><\/p>/gm, "\n")
+				.replace(/<\/pre>[<p><\/p>n]*<pre>/gm, "\n")
+				.replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, "")
+				.replace(/<\/p>|<br>/gm, "\n")
 				.replace(/<\/p>|<li>/gm, "- ")
 				.replace(/<strong>/gm, "<b>")
 				.replace(/<\/strong>/gm, "</b>")

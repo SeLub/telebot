@@ -2,6 +2,7 @@ import { ActionIcon, Card, Group, Menu, Text, rem } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconToggleLeft, IconTrash } from '@tabler/icons-react';
 
+import { transpileHTMLtoTelegramHTML } from '../../utils';
 import Attachments from '../Attachments';
 import PublishPost from '../PublishPost';
 import MyButton from '../ui/MyButton';
@@ -16,6 +17,7 @@ type Props = {
 
 function ArticleCardVertical(props: Props) {
     const { text, to, post_id, showEditButton } = props;
+    const telegramHTML = transpileHTMLtoTelegramHTML(text);
     const [editorHTMLMode, handlers] = useDisclosure(true);
 
     return (
@@ -79,10 +81,15 @@ function ArticleCardVertical(props: Props) {
             </Card.Section>
             <Card.Section inheritPadding py="xs">
                 {editorHTMLMode ? (
-                    <Text className={classes.text} mt="xs" mb="md" dangerouslySetInnerHTML={{ __html: text }}></Text>
+                    <Text
+                        className={classes.text}
+                        mt="xs"
+                        mb="md"
+                        dangerouslySetInnerHTML={{ __html: telegramHTML }}
+                    ></Text>
                 ) : (
                     <Text className={classes.text} mt="xs" mb="md">
-                        {text}
+                        {telegramHTML}
                     </Text>
                 )}
             </Card.Section>

@@ -130,3 +130,19 @@ export const getUploadUrl = (file: FileWithPath) => {
             return appImagePath + 'file.png';
     }
 };
+
+export const transpileHTMLtoTelegramHTML = (text: string) => {
+    if (!text) return;
+    const cleanTextFromUnsupportedHTMLtags = text
+        .replace(/<code>/gm, '<pre>')
+        .replace(/<\/code>/gm, '</pre>')
+        // .replace(/<p><\/p>/gm, "\n")
+        .replace(/<\/pre>[<p><\/p>n]*<pre>/gm, '\n')
+        .replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, '')
+        .replace(/<\/p>|<br>/gm, '\n')
+        .replace(/<\/p>|<li>/gm, '- ')
+        .replace(/<strong>/gm, '<b>')
+        .replace(/<\/strong>/gm, '</b>')
+        .replace(/rel="noopener noreferrer nofollow" /gm, '');
+    return cleanTextFromUnsupportedHTMLtags;
+};

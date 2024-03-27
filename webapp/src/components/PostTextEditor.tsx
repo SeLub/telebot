@@ -5,6 +5,7 @@ import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Fragment, useEffect, useState } from 'react';
 
+import { transpileHTMLtoTelegramHTML } from '../utils';
 import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical';
 import DCButton from './ui/DCButton';
 

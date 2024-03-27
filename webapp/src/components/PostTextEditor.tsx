@@ -21,36 +21,32 @@ function PostTextEditor(params) {
             const data = await response.json();
             const postText = data[0]['post_text'];
             setText(postText);
+            setEditorContent(postText);
         };
         getText();
-    }, [post_id]);
-
-    console.log('editorContent ', editorContent);
-
-    const editor = useEditor({
-        extensions: [StarterKit, Link, Underline],
-        content: text,
-        onUpdate({ editor }) {
-            setEditorContent(editor.getHTML());
-        },
     });
 
-    useEffect(() => {
-        if (!editorContent) {
-            return;
-        }
-
-        setText(editorContent);
-    }, [editorContent]);
+    const editor = useEditor(
+        {
+            extensions: [StarterKit, Link, Underline],
+            content: editorContent,
+            onUpdate({ editor }) {
+                setText(editor.getHTML());
+            },
+        },
+        [editorContent],
+    );
 
     const saveText = async (post_id) => {
+        console.log('text ', text);
+        console.log('editorContent');
         try {
             const result = await fetch(`${serverHost}/api/posts/${post_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ post_text: editorContent }),
+                body: JSON.stringify({ post_text: text }),
             });
 
             if (result.ok) {

@@ -6,12 +6,13 @@ import '@mantine/tiptap/styles.css';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import { Dashboard } from './components/Dashboard';
-import EditPost from './components/EditPost';
+import { Dashboard } from './components/Dashboard/Dashboard';
 import HomePage from './components/HomePage';
 import NotFoundPage from './components/NotFoundPage/NotFoundPage';
-import PostsList from './components/PostsList';
-import PublishersList from './components/PublishersList';
+import EditPost from './components/Posts/EditPost';
+import PostsList from './components/Posts/PostsList';
+import PublishersList from './components/Publishers/PublishersList';
+import Settings from './components/Settings/Settings';
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
     {
         path: '/publishers',
         element: <PublishersList />,
+        errorElement: <NotFoundPage />,
+    },
+    {
+        path: '/setting',
+        element: <Settings />,
         errorElement: <NotFoundPage />,
     },
 ]);

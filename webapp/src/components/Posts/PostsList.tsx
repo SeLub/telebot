@@ -1,8 +1,8 @@
 import { SimpleGrid, Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 
-import { IPost } from '../common/types';
-import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical';
+import { IPost } from '../../common/types';
+import PostItem from './PostItem/PostItem';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
@@ -23,7 +23,7 @@ function PostsList() {
     }, [posts]);
 
     const listPost = (post) => (
-        <ArticleCardVertical
+        <PostItem
             key={post.post_id}
             post_id={post.post_id}
             to={`/posts/${post.post_id}`}

@@ -11,7 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-import classes from './NavbarSimpleColored.module.css';
+import classes from './Navbar.module.css';
 
 const data = [
     { link: '/', label: 'Databases', icon: IconDatabaseImport },
@@ -21,10 +21,10 @@ const data = [
     { link: '', label: 'SSH Keys', icon: IconKey },
 
     { link: '', label: 'Authentication', icon: Icon2fa },
-    { link: '', label: 'Other Settings', icon: IconSettings },
+    { link: '/setting', label: 'Other Settings', icon: IconSettings },
 ];
 
-export function NavbarSimpleColored() {
+export function Navbar() {
     const [active, setActive] = useState('Billing');
 
     const links = data.map((item) => (
@@ -34,7 +34,7 @@ export function NavbarSimpleColored() {
             href={item.link}
             key={item.label}
             onClick={() => {
-                //event.preventDefault();
+                console.log('item.label');
                 setActive(item.label);
             }}
         >

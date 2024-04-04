@@ -4,10 +4,10 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
-import addFilesImage from '../assets/appimg/actionsUI/add_files.png';
-import saveFileImage from '../assets/appimg/actionsUI/save_files.png';
-import { IAttachment } from '../common/types';
-import { generateUniqueFileName, getImageContentType, getImageUrl, getUploadUrl, isArrayEmpty } from '../utils';
+import addFilesImage from '../../assets/appimg/actionsUI/add_files.png';
+import saveFileImage from '../../assets/appimg/actionsUI/save_files.png';
+import { IAttachment } from '../../common/types';
+import { generateUniqueFileName, getImageContentType, getImageUrl, getUploadUrl, isArrayEmpty } from '../../utils';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
@@ -27,7 +27,6 @@ function CurrentAttachments(props: { post_id: string; height: number }) {
     }, [post_id, attachments.length]);
 
     const showAttachments = () => {
-        console.log('showAttachments', attachments);
         return attachments.map((attachment, index) => {
             const imageURL = getImageUrl(attachment);
             return (

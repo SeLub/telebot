@@ -21,3 +21,10 @@ export interface ICurrentAttachmentsProps {
     // eslint-disable-next-line no-unused-vars
     deleteAttachment: (attachment: IAttachment) => void;
 }
+
+export interface IPublishers {
+    publisher_id: string;
+    publisher_name: string;
+    publisher_bots: string;
+    publisher_channels: string;
+}

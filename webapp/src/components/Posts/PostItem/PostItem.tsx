@@ -2,11 +2,11 @@ import { ActionIcon, Card, Group, Menu, Text, rem } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconToggleLeft, IconTrash } from '@tabler/icons-react';
 
-import { transpileHTMLtoTelegramHTML } from '../../utils';
+import { transpileHTMLtoTelegramHTML } from '../../../utils';
+import MyButton from '../../ui/MyButton';
 import Attachments from '../Attachments';
 import PublishPost from '../PublishPost';
-import MyButton from '../ui/MyButton';
-import classes from './ArticleCardVertical.module.css';
+import classes from './PostItem.module.css';
 
 type Props = {
     text: string;
@@ -15,7 +15,7 @@ type Props = {
     showEditButton: boolean;
 };
 
-function ArticleCardVertical(props: Props) {
+function PostItem(props: Props) {
     const { text, to, post_id, showEditButton } = props;
     const telegramHTML = transpileHTMLtoTelegramHTML(text);
     const [editorHTMLMode, handlers] = useDisclosure(true);
@@ -100,4 +100,4 @@ function ArticleCardVertical(props: Props) {
     );
 }
 
-export default ArticleCardVertical;
+export default PostItem;

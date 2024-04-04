@@ -2,7 +2,7 @@ import { notifications } from '@mantine/notifications';
 import { IconSend } from '@tabler/icons-react';
 import { Fragment } from 'react';
 
-import DCButton from './ui/DCButton';
+import DCButton from '../ui/DCButton';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 

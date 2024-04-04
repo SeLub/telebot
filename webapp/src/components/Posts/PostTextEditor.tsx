@@ -5,9 +5,9 @@ import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Fragment, useEffect, useState } from 'react';
 
-import { transpileHTMLtoTelegramHTML } from '../utils';
-import ArticleCardVertical from './ArticleCardVertical/ArticleCardVertical';
-import DCButton from './ui/DCButton';
+import { transpileHTMLtoTelegramHTML } from '../../utils';
+import DCButton from '../ui/DCButton';
+import ArticleCardVertical from './PostItem/PostItem';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 

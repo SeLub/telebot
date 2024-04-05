@@ -7,6 +7,7 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import { Dashboard } from './components/Dashboard/Dashboard';
+import Databases from './components/Databases/Databases';
 import HomePage from './components/HomePage';
 import NotFoundPage from './components/NotFoundPage/NotFoundPage';
 import EditPost from './components/Posts/EditPost';
@@ -17,7 +18,7 @@ import Settings from './components/Settings/Settings';
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <HomePage />,
+        element: <Databases />,
         errorElement: <NotFoundPage />,
     },
     {

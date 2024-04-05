@@ -19,7 +19,6 @@ const data = [
     { link: '/image', label: 'Billing', icon: IconReceipt2 },
     { link: '/publishers', label: 'Publishers', icon: IconRobot },
     { link: '', label: 'SSH Keys', icon: IconKey },
-
     { link: '', label: 'Authentication', icon: Icon2fa },
     { link: '/setting', label: 'Other Settings', icon: IconSettings },
 ];
@@ -33,8 +32,8 @@ export function Navbar() {
             data-active={item.label === active || undefined}
             href={item.link}
             key={item.label}
-            onClick={() => {
-                console.log('item.label');
+            onClick={(event) => {
+                console.log(item.label);
                 setActive(item.label);
             }}
         >

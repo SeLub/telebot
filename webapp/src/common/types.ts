@@ -28,3 +28,8 @@ export interface IPublishers {
     publisher_bots: string;
     publisher_channels: string;
 }
+
+export interface IDatabases {
+    database_id: string;
+    database_name: string;
+}

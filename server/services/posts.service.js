@@ -74,10 +74,10 @@ module.exports = {
 				created = true;
 				await client.query(`
                     CREATE TABLE ${attachmentsTable} (
-                        photo_id UUID PRIMARY KEY,
-                        post_id_photo UUID,
-                        photo_filename TEXT,
-                        FOREIGN KEY (post_id_photo) REFERENCES post(post_id)
+                        attachment_id UUID PRIMARY KEY,
+                        post_id_attachment UUID,
+                        attachment_filename TEXT,
+                        FOREIGN KEY (post_id_attachment) REFERENCES post(post_id)
                     );
                 `);
 				await client.query(`
@@ -87,11 +87,27 @@ module.exports = {
 			}
 			return created;
 		},
-		async getDatabses() {
+		async getDatabases() {
 			const res = await client.query(`
                 SELECT * FROM databases;
             `);
 			return res.rows;
+		},
+		async getDatabase(id) {
+			const res = await client.query(`
+                  	SELECT database_name FROM databases WHERE database_id = '${id}';
+            	`);
+			return res.rows[0];
+		},
+		async editPost(database_name, post_id, post_text) {
+			const postsTable = database_name + "_posts";
+			await client.query(
+				`
+				UPDATE ${postsTable} SET post_text = $1 
+				WHERE post_id = $2;`,
+				[post_text, post_id]
+			);
+			return await this.getPost(database_name, post_id);
 		},
 		async deleteDatabase(name) {
 			try {
@@ -173,12 +189,19 @@ module.exports = {
 				console.log("Created 'photo' table");
 			}
 		},
-		async checkPostExists(postId) {
+		async checkPostExists(database_name, post_id) {
+			const postsTable = database_name + "_posts";
+			const response = await client.query(`
+				SELECT * FROM INFORMATION_SCHEMA.TABLES 
+				WHERE TABLE_NAME LIKE '${postsTable}'`);
+			if (!response.rowCount)
+				return Promise.reject(
+					new MoleculerError("database not found!", 404)
+				);
 			const res = await client.query(
 				`
-                SELECT COUNT(*) FROM post WHERE post_id = $1;
-            `,
-				[postId]
+                		SELECT COUNT(*) FROM ${postsTable} WHERE post_id = $1;`,
+				[post_id]
 			);
 			const postExists = !!Number(res.rows[0].count);
 			if (!postExists)
@@ -186,14 +209,30 @@ module.exports = {
 					new MoleculerError("Post not found!", 404)
 				);
 		},
-		async getPost(postId) {
-			// Check if the post exists
-			await this.checkPostExists(postId);
-			const res = await client.query(
+		async createPost(database_name, post_text) {
+			const postsTable = database_name + "_posts";
+			const post_id = uuidv4();
+			await client.query(
 				`
-            SELECT * FROM post WHERE post_id = $1;
-        `,
-				[postId]
+                		INSERT INTO ${postsTable} (post_id, post_text)
+                		VALUES ($1, $2);`,
+				[post_id, post_text]
+			);
+			return await this.getPost(database_name, post_id);
+		},
+		async getPosts(database_name) {
+			const postsTable = database_name + "_posts";
+			const res = await client.query(`
+                    SELECT * FROM ${postsTable};
+                `);
+			return res.rows;
+		},
+		async getPost(database_name, post_id) {
+			const postsTable = database_name + "_posts";
+			await this.checkPostExists(database_name, post_id);
+			const res = await client.query(
+				`SELECT * FROM ${postsTable} WHERE post_id = $1;`,
+				[post_id]
 			);
 			return res.rows;
 		},
@@ -230,14 +269,76 @@ module.exports = {
 		},
 	},
 	actions: {
-		listPosts: {
-			rest: "GET /",
-			// SELECT * FROM post LEFT JOIN photo ON post.post_id=photo.post_id_photo
+		createPost: {
+			rest: "POST /createPost",
+			params: {
+				database_name: { type: "string" },
+				post_text: { type: "string" },
+			},
 			async handler(ctx) {
-				const res = await client.query(`
-                    SELECT * FROM post
-                `);
-				return res.rows;
+				const { database_name, post_text } = ctx.params;
+				return await this.createPost(database_name, post_text);
+			},
+		},
+		getPosts: {
+			rest: "GET /all",
+			params: {
+				database_name: { type: "string" },
+			},
+			async handler(ctx) {
+				const { database_name } = ctx.params;
+				return await this.getPosts(database_name);
+			},
+		},
+		getPost: {
+			rest: "GET /",
+			params: {
+				post_id: { type: "uuid" },
+				database_name: { type: "string" },
+			},
+			async handler(ctx) {
+				const { database_name, post_id } = ctx.params;
+				return await this.getPost(database_name, post_id);
+			},
+		},
+		editPost: {
+			rest: "PUT /editPost",
+			params: {
+				database_name: { type: "string" },
+				post_id: { type: "uuid" },
+				post_text: { type: "string" },
+			},
+			async handler(ctx) {
+				const { database_name, post_id, post_text } = ctx.params;
+				await this.checkPostExists(database_name, post_id);
+				return await this.editPost(database_name, post_id, post_text);
+			},
+		},
+		deletePost: {
+			rest: "DELETE /",
+			params: {
+				database_name: { type: "string" },
+				post_id: { type: "uuid" },
+			},
+			async handler(ctx) {
+				const { database_name, post_id } = ctx.params;
+				const postsTable = database_name + "_posts";
+				const attachmentsTable = database_name + "_attachments";
+				try {
+					await this.checkPostExists(database_name, post_id);
+					await client.query(
+						`DELETE FROM ${attachmentsTable} WHERE post_id_attachment = $1;`,
+						[post_id]
+					);
+					await client.query(
+						`DELETE FROM ${postsTable} WHERE post_id = $1;`,
+						[post_id]
+					);
+					return true;
+				} catch (error) {
+					console.log(error);
+					return false;
+				}
 			},
 		},
 		listPhotos: {
@@ -249,16 +350,6 @@ module.exports = {
 				return res.rows;
 			},
 		},
-		getPosts: {
-			rest: "GET /:post_id",
-			params: {
-				post_id: { type: "uuid" },
-			},
-			async handler(ctx) {
-				const { post_id } = ctx.params;
-				return await this.getPost(post_id);
-			},
-		},
 		getPhotos: {
 			rest: "GET /photos/:post_id",
 			params: {
@@ -267,28 +358,6 @@ module.exports = {
 			async handler(ctx) {
 				const { post_id } = ctx.params;
 				return await this.getPhotos(post_id);
-			},
-		},
-		createPost: {
-			rest: "POST /create",
-			params: {
-				post_text: { type: "string" },
-			},
-			async handler(ctx) {
-				const { post_text } = ctx.params;
-				const post_id = uuidv4();
-
-				console.log("post_id: ", post_id, "post_text: ", post_text);
-
-				await client.query(
-					`
-                    INSERT INTO post (post_id, post_text) 
-                    VALUES ($1, $2);
-                `,
-					[post_id, post_text]
-				);
-
-				return await this.getPost(post_id);
 			},
 		},
 		addPhotoToPost: {
@@ -333,52 +402,6 @@ module.exports = {
 				}
 			},
 		},
-		put: {
-			rest: "PUT /:id",
-			params: {
-				id: { type: "uuid" },
-				post_text: { type: "string" },
-			},
-			async handler(ctx) {
-				const { id, post_text } = ctx.params;
-				// Check if the post exists
-				await this.checkPostExists(id);
-				await client.query(
-					`
-                    UPDATE post SET post_text = $1 
-                    WHERE post_id = $2;`,
-					[post_text, id]
-				);
-				return await this.getPost(id);
-			},
-		},
-		delete: {
-			rest: "DELETE /:id",
-			params: {
-				id: { type: "uuid" },
-			},
-			async handler(ctx) {
-				const { id } = ctx.params;
-				// Check if the post exists
-				await this.checkPostExists(id);
-				// Delete photos of post record
-				await client.query(
-					`
-                DELETE FROM photo WHERE post_id_photo = $1;
-                `,
-					[id]
-				);
-				// Delete the post record
-				await client.query(
-					`
-                    DELETE FROM post WHERE post_id = $1;
-                    `,
-					[id]
-				);
-
-				return { deletedPostId: id };
-			},
-		},
 		publishPost: {
 			rest: "POST /publish/:id",
 			params: {
@@ -414,7 +437,18 @@ module.exports = {
 		getDatabases: {
 			rest: "GET /databases",
 			async handler(ctx) {
-				const result = await this.getDatabses();
+				const result = await this.getDatabases();
+				return result;
+			},
+		},
+		getDatabase: {
+			rest: "GET /database/:id",
+			params: {
+				id: { type: "string" },
+			},
+			async handler(ctx) {
+				const { id } = ctx.params;
+				const result = await this.getDatabase(id);
 				return result;
 			},
 		},

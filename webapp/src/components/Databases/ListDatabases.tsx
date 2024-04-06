@@ -3,6 +3,7 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { IDatabases } from '../../common/types';
+import EditDatabase from './EditDatabase';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
@@ -29,9 +30,9 @@ const ListDatabases = (props) => {
                         <Grid.Col span={5}>{database.database_id}</Grid.Col>
                         <Grid.Col span={5}>{database.database_name}</Grid.Col>
                         <Grid.Col span={2}>
-                            <ActionIcon>
-                                <IconEdit size={18} onClick={() => console.log('!')} />
-                            </ActionIcon>
+                            <ActionIcon component="a" href={`/database/${database.database_id}`}>
+                                <IconEdit size={18} />
+                            </ActionIcon>{' '}
                             <ActionIcon>
                                 <IconTrash size={18} onDoubleClick={() => handleDelete(database.database_name)} />
                             </ActionIcon>

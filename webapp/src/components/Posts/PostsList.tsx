@@ -6,21 +6,24 @@ import PostItem from './PostItem/PostItem';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function PostsList() {
+function PostsList(props) {
+    const { database_id } = props;
     const [posts, setPosts] = useState<IPost[] | []>([]);
 
     useEffect(() => {
         const prevPosts = posts;
-        async function getPosts() {
-            const response = await fetch(`${serverHost}/api/posts`);
-            const currentPosts = await response.json();
+        async function getData() {
+            const response = await fetch(`${serverHost}/api/posts/database/${database_id}`);
+            const { database_name: dbname } = await response.json();
+            const response2 = await fetch(`${serverHost}/api/posts/?database_name=${dbname}`);
+            const currentPosts = response2.ok ? await response2.json() : [];
             if (JSON.stringify(prevPosts) === JSON.stringify(currentPosts)) {
                 return;
             }
             setPosts(currentPosts);
         }
-        getPosts();
-    }, [posts]);
+        getData();
+    }, [database_id, posts]);
 
     const listPost = (post) => (
         <PostItem

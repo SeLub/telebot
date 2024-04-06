@@ -14,7 +14,7 @@ import { useState } from 'react';
 import classes from './Navbar.module.css';
 
 const data = [
-    { link: '/', label: 'Databases', icon: IconDatabaseImport },
+    { link: '/database', label: 'Databases', icon: IconDatabaseImport },
     { link: '/posts', label: 'Posts', icon: IconBellRinging },
     { link: '/image', label: 'Billing', icon: IconReceipt2 },
     { link: '/publishers', label: 'Publishers', icon: IconRobot },

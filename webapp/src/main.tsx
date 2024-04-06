@@ -8,6 +8,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import { Dashboard } from './components/Dashboard/Dashboard';
 import Databases from './components/Databases/Databases';
+import EditDatabase from './components/Databases/EditDatabase';
 import HomePage from './components/HomePage';
 import NotFoundPage from './components/NotFoundPage/NotFoundPage';
 import EditPost from './components/Posts/EditPost';
@@ -17,9 +18,13 @@ import Settings from './components/Settings/Settings';
 
 const router = createBrowserRouter([
     {
-        path: '/',
+        path: '/database',
         element: <Databases />,
         errorElement: <NotFoundPage />,
+    },
+    {
+        path: 'database/:database_id',
+        element: <EditDatabase />,
     },
     {
         path: '/posts',

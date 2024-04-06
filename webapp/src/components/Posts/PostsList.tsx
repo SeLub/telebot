@@ -7,15 +7,16 @@ import PostItem from './PostItem/PostItem';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 function PostsList(props) {
-    const { database_id } = props;
+    const { database_id, dbname } = props;
     const [posts, setPosts] = useState<IPost[] | []>([]);
 
     useEffect(() => {
         const prevPosts = posts;
         async function getData() {
-            const response = await fetch(`${serverHost}/api/posts/database/${database_id}`);
-            const { database_name: dbname } = await response.json();
-            const response2 = await fetch(`${serverHost}/api/posts/?database_name=${dbname}`);
+            // const response = await fetch(`${serverHost}/api/posts/database/${database_id}`);
+            // const { database_name } = await response.json();
+            // setDbname(database_name);
+            const response2 = await fetch(`${serverHost}/api/posts/all/?database_name=${dbname}`);
             const currentPosts = response2.ok ? await response2.json() : [];
             if (JSON.stringify(prevPosts) === JSON.stringify(currentPosts)) {
                 return;
@@ -23,11 +24,12 @@ function PostsList(props) {
             setPosts(currentPosts);
         }
         getData();
-    }, [database_id, posts]);
+    }, [database_id, dbname, posts]);
 
     const listPost = (post) => (
         <PostItem
             key={post.post_id}
+            dbname={dbname}
             post_id={post.post_id}
             to={`/posts/${post.post_id}`}
             text={post.post_text}

@@ -77,7 +77,7 @@ module.exports = {
                         attachment_id UUID PRIMARY KEY,
                         post_id_attachment UUID,
                         attachment_filename TEXT,
-                        FOREIGN KEY (post_id_attachment) REFERENCES post(post_id)
+                        FOREIGN KEY (post_id_attachment) REFERENCES ${postsTable}(post_id)
                     );
                 `);
 				await client.query(`
@@ -98,16 +98,6 @@ module.exports = {
                   	SELECT database_name FROM databases WHERE database_id = '${id}';
             	`);
 			return res.rows[0];
-		},
-		async editPost(database_name, post_id, post_text) {
-			const postsTable = database_name + "_posts";
-			await client.query(
-				`
-				UPDATE ${postsTable} SET post_text = $1 
-				WHERE post_id = $2;`,
-				[post_text, post_id]
-			);
-			return await this.getPost(database_name, post_id);
 		},
 		async deleteDatabase(name) {
 			try {
@@ -191,10 +181,14 @@ module.exports = {
 		},
 		async checkPostExists(database_name, post_id) {
 			const postsTable = database_name + "_posts";
-			const response = await client.query(`
+			const attachmentsTable = database_name + "_attachments";
+			const response1 = await client.query(`
 				SELECT * FROM INFORMATION_SCHEMA.TABLES 
 				WHERE TABLE_NAME LIKE '${postsTable}'`);
-			if (!response.rowCount)
+			const response2 = await client.query(`
+				SELECT * FROM INFORMATION_SCHEMA.TABLES 
+				WHERE TABLE_NAME LIKE '${postsTable}'`);
+			if (!response1.rowCount || !response2.rowCount)
 				return Promise.reject(
 					new MoleculerError("database not found!", 404)
 				);
@@ -236,14 +230,63 @@ module.exports = {
 			);
 			return res.rows;
 		},
-		async getPhotos(photoId) {
+		async editPost(database_name, post_id, post_text) {
+			const postsTable = database_name + "_posts";
+			await client.query(
+				`
+				UPDATE ${postsTable} SET post_text = $1 
+				WHERE post_id = $2;`,
+				[post_text, post_id]
+			);
+			return await this.getPost(database_name, post_id);
+		},
+		async deletePost(database_name, post_id) {
+			const postsTable = database_name + "_posts";
+			const attachmentsTable = database_name + "_attachments";
+			try {
+				await this.checkPostExists(database_name, post_id);
+				await client.query(
+					`DELETE FROM ${attachmentsTable} WHERE post_id_attachment = $1;`,
+					[post_id]
+				);
+				await client.query(
+					`DELETE FROM ${postsTable} WHERE post_id = $1;`,
+					[post_id]
+				);
+				return true;
+			} catch (error) {
+				console.log(error);
+				return false;
+			}
+		},
+		async getAttachments(database_name, post_id) {
+			const attachmentsTable = database_name + "_attachments";
 			const res = await client.query(
 				`
-            SELECT * FROM photo WHERE post_id_photo = $1;
-        `,
-				[photoId]
+				SELECT * FROM ${attachmentsTable} WHERE post_id_attachment = $1;`,
+				[post_id]
 			);
 			return res.rows;
+		},
+		async addAttachmentToPost(
+			database_name,
+			attachment_id,
+			post_id,
+			attachment_filename
+		) {
+			const attachmentsTable = database_name + "_attachments";
+			try {
+				await client.query(
+					`
+				INSERT INTO ${attachmentsTable} (attachment_id, post_id_attachment, attachment_filename)
+				VALUES ($1, $2, $3);`,
+					[attachment_id, post_id, attachment_filename]
+				);
+				return true;
+			} catch (error) {
+				console.log(error);
+				return false;
+			}
 		},
 		authorize(ctx, route, req, res) {
 			// Read the token from header
@@ -322,83 +365,71 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const { database_name, post_id } = ctx.params;
-				const postsTable = database_name + "_posts";
-				const attachmentsTable = database_name + "_attachments";
-				try {
-					await this.checkPostExists(database_name, post_id);
-					await client.query(
-						`DELETE FROM ${attachmentsTable} WHERE post_id_attachment = $1;`,
-						[post_id]
-					);
-					await client.query(
-						`DELETE FROM ${postsTable} WHERE post_id = $1;`,
-						[post_id]
-					);
-					return true;
-				} catch (error) {
-					console.log(error);
-					return false;
-				}
+				return await this.deletePost(database_name, post_id);
 			},
 		},
-		listPhotos: {
-			rest: "GET /photos",
-			async handler(ctx) {
-				const res = await client.query(`
-                    SELECT * FROM photo;
-                `);
-				return res.rows;
-			},
-		},
-		getPhotos: {
-			rest: "GET /photos/:post_id",
+		getAttachments: {
+			rest: "GET /attachments",
 			params: {
 				post_id: { type: "uuid" },
+				database_name: { type: "string" },
 			},
 			async handler(ctx) {
-				const { post_id } = ctx.params;
-				return await this.getPhotos(post_id);
+				const { database_name, post_id } = ctx.params;
+				await this.checkPostExists(database_name, post_id);
+				return await this.getAttachments(database_name, post_id);
 			},
 		},
-		addPhotoToPost: {
-			rest: "POST /photos/:post_id",
+		addAttachmentToPost: {
+			rest: "POST /attachments",
 			params: {
+				database_name: { type: "string" },
 				post_id: { type: "string" },
-				photo_id: { type: "string" },
-				photo_filename: { type: "string", optional: true },
+				attachment_id: { type: "string" },
+				attachment_filename: { type: "string" },
 			},
 			async handler(ctx) {
-				const { post_id, photo_id, photo_filename } = ctx.params;
-				await this.checkPostExists(post_id);
-				await client.query(
-					`
-                    INSERT INTO photo (photo_id, post_id_photo, photo_filename) 
-                    VALUES ($1, $2, $3);
-                    `,
-					[photo_id, post_id, photo_filename]
+				const {
+					database_name,
+					attachment_id,
+					post_id,
+					attachment_filename,
+				} = ctx.params;
+				await this.checkPostExists(database_name, post_id);
+				return await this.addAttachmentToPost(
+					database_name,
+					attachment_id,
+					post_id,
+					attachment_filename
 				);
-				return await this.getPost(post_id);
 			},
 		},
-		deletePhotoFromPost: {
-			rest: "DELETE /photos/:post_id",
+		deleteAttachmentFromPost: {
+			rest: "DELETE /attachment",
 			params: {
+				database_name: { type: "string" },
 				post_id: { type: "string" },
-				photo_filename: { type: "string", optional: true },
+				attachment_filename: { type: "string" },
 			},
 			async handler(ctx) {
-				const { post_id, photo_filename } = ctx.params;
-				await this.checkPostExists(post_id);
+				const { database_name, post_id, attachment_filename } =
+					ctx.params;
+				//await this.checkPostExists(database_name, post_id);
+				const attachmentsTable = database_name + "_attachments";
+				console.log({ database_name, post_id, attachment_filename });
 				try {
 					await ctx.call("storage.deleteFile", {
-						filename: photo_filename,
+						filename: attachment_filename,
 					});
-
-					await client.query(`
-                    DELETE FROM photo WHERE post_id_photo='${post_id}' AND photo_filename='${photo_filename}'`);
+					await client.query(
+						`
+						DELETE FROM ${attachmentsTable} WHERE post_id_attachment = $1 AND attachment_filename = $2;`,
+						[post_id, attachment_filename]
+					);
 					return "Deleted From DB and Storage";
-				} catch (e) {
-					return e;
+				} catch (error) {
+					console.log(error);
+					return error;
 				}
 			},
 		},

@@ -3,7 +3,6 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { IDatabases } from '../../common/types';
-import EditDatabase from './EditDatabase';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 

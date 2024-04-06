@@ -4,9 +4,9 @@ export interface IPost {
 }
 
 export interface IAttachment {
-    photo_id: string;
-    post_id_photo: string;
-    photo_filename: string;
+    attachment_id: string;
+    post_id_attachment: string;
+    attachment_filename: string;
 }
 
 export interface IAttachmentsProps {

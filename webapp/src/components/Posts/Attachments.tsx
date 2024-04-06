@@ -11,20 +11,19 @@ import { generateUniqueFileName, getImageContentType, getImageUrl, getUploadUrl,
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function CurrentAttachments(props: { post_id: string; height: number }) {
-    const { post_id, height } = props;
+function CurrentAttachments(props: { post_id: string; dbname: string; height: number }) {
+    const { post_id, dbname, height } = props;
     let imagesHeight = height;
     if (!imagesHeight) imagesHeight = 200;
     const [attachments, setAttachments] = useState<IAttachment[]>([]);
     const [files, setFiles] = useState<FileWithPath[] | []>([]);
 
     useEffect(() => {
-        fetch(`${serverHost}/api/posts/photos/${post_id}`)
+        fetch(`${serverHost}/api/posts/attachments?post_id=${post_id}&database_name=${dbname}`)
             .then((response) => response.json())
             .then((data) => setAttachments(data))
             .catch((error) => console.error(error));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [post_id, attachments.length]);
+    }, [post_id, attachments.length, dbname]);
 
     const showAttachments = () => {
         return attachments.map((attachment, index) => {
@@ -44,23 +43,27 @@ function CurrentAttachments(props: { post_id: string; height: number }) {
 
     const deleteAttachment = async (attachment: IAttachment): Promise<void> => {
         const fetchDeleteFile = async (post_id: string, filename: string) => {
-            return await fetch(`${serverHost}/api/posts/photos/${post_id}`, {
+            return await fetch(`${serverHost}/api/posts/attachment`, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 method: 'DELETE',
                 body: JSON.stringify({
-                    photo_filename: filename,
+                    database_name: dbname,
+                    post_id,
+                    attachment_filename: filename,
                 }),
             });
         };
         const deleteFileFromAttachments = (fileToDelete: string) => {
-            return [...attachments].filter((attachment: IAttachment) => attachment.photo_filename !== fileToDelete);
+            return [...attachments].filter(
+                (attachment: IAttachment) => attachment.attachment_filename !== fileToDelete,
+            );
         };
         try {
-            const result = await fetchDeleteFile(attachment.post_id_photo, attachment.photo_filename);
+            const result = await fetchDeleteFile(attachment.post_id_attachment, attachment.attachment_filename);
             if (result.ok) {
-                const newAttachmentsState = deleteFileFromAttachments(attachment.photo_filename);
+                const newAttachmentsState = deleteFileFromAttachments(attachment.attachment_filename);
                 setAttachments(() => newAttachmentsState);
                 notifications.show({
                     color: 'teal',
@@ -158,22 +161,24 @@ function CurrentAttachments(props: { post_id: string; height: number }) {
                 body: file,
             });
 
-            await fetch(`${serverHost}/api/posts/photos/${post_id}`, {
+            await fetch(`${serverHost}/api/posts/attachments`, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 method: 'POST',
                 body: JSON.stringify({
-                    photo_id: UUID,
-                    photo_filename: uniqueFileName,
+                    database_name: dbname,
+                    attachment_id: UUID,
+                    post_id,
+                    attachment_filename: uniqueFileName,
                 }),
             });
 
             const newFile = await [
                 {
-                    photo_id: UUID,
-                    post_id_photo: post_id,
-                    photo_filename: uniqueFileName,
+                    attachment_id: UUID,
+                    post_id_attachment: post_id,
+                    attachment_filename: uniqueFileName,
                 },
             ];
 

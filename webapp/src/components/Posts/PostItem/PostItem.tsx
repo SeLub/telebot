@@ -11,12 +11,13 @@ import classes from './PostItem.module.css';
 type Props = {
     text: string;
     to: string;
+    dbname: string;
     post_id: string;
     showEditButton: boolean;
 };
 
 function PostItem(props: Props) {
-    const { text, to, post_id, showEditButton } = props;
+    const { text, to, dbname, post_id, showEditButton } = props;
     const telegramHTML = transpileHTMLtoTelegramHTML(text);
     const [editorHTMLMode, handlers] = useDisclosure(true);
 
@@ -94,7 +95,7 @@ function PostItem(props: Props) {
                 )}
             </Card.Section>
             <Card.Section inheritPadding mt="sm" pb="md" className={classes.attachments}>
-                <Attachments post_id={post_id} height={70} />
+                <Attachments dbname={dbname} post_id={post_id} height={70} />
             </Card.Section>
         </Card>
     );

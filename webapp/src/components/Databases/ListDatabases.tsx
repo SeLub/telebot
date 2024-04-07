@@ -13,14 +13,11 @@ const removeDatabase = async (name) => {
     return await response.json();
 };
 
-const ListDatabases = (props) => {
-    const { databases, setDatabases } = props;
-
+const ListDatabases = ({ databases, setDatabases }) => {
     const handleDelete = async (name) => {
         await removeDatabase(name);
         setDatabases(databases.filter((database: IDatabases) => database.database_name !== name));
     };
-
     return (
         <Fragment>
             {databases.map((database) => (
@@ -29,7 +26,10 @@ const ListDatabases = (props) => {
                         <Grid.Col span={5}>{database.database_id}</Grid.Col>
                         <Grid.Col span={5}>{database.database_name}</Grid.Col>
                         <Grid.Col span={2}>
-                            <ActionIcon component="a" href={`/database/${database.database_id}`}>
+                            <ActionIcon
+                                component="a"
+                                href={`/database/name/${database.database_name}/id/${database.database_id}`}
+                            >
                                 <IconEdit size={18} />
                             </ActionIcon>{' '}
                             <ActionIcon>

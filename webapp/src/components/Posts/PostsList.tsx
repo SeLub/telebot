@@ -1,46 +1,42 @@
-import { SimpleGrid, Title } from '@mantine/core';
+import { Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { IPost } from '../../common/types';
 import PostItem from './PostItem/PostItem';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function PostsList(props) {
-    const { database_id, dbname } = props;
+function PostsList() {
+    const { database_id, database_name } = useParams<{ database_id: string; database_name: string }>();
     const [posts, setPosts] = useState<IPost[] | []>([]);
 
     useEffect(() => {
         const prevPosts = posts;
-        async function getData() {
-            // const response = await fetch(`${serverHost}/api/posts/database/${database_id}`);
-            // const { database_name } = await response.json();
-            // setDbname(database_name);
-            const response2 = await fetch(`${serverHost}/api/posts/all/?database_name=${dbname}`);
-            const currentPosts = response2.ok ? await response2.json() : [];
+        async function getPosts() {
+            const response = await fetch(`${serverHost}/api/posts/all/?database_name=${database_name}`);
+            const currentPosts = response.ok ? await response.json() : [];
             if (JSON.stringify(prevPosts) === JSON.stringify(currentPosts)) {
                 return;
             }
             setPosts(currentPosts);
         }
-        getData();
-    }, [database_id, dbname, posts]);
-
-    const listPost = (post) => (
-        <PostItem
-            key={post.post_id}
-            dbname={dbname}
-            post_id={post.post_id}
-            to={`/posts/${post.post_id}`}
-            text={post.post_text}
-            showEditButton={true}
-        />
-    );
+        getPosts();
+    }, [database_id, database_name, posts]);
 
     return (
         <Fragment>
-            <Title order={1}>Posts Page</Title>
-            <SimpleGrid cols={1}>{posts.map((post) => listPost(post))}</SimpleGrid>
+            <Title order={1}>Posts</Title>
+            {posts.map((post) => (
+                <PostItem
+                    key={post.post_id}
+                    dbname={database_name}
+                    post_id={post.post_id}
+                    to={`/posts/${post.post_id}`}
+                    text={post.post_text}
+                    showEditButton={true}
+                />
+            ))}
         </Fragment>
     );
 }

@@ -11,7 +11,7 @@ const channels = ['BisonTeamChannel', 'OneMoreChannel'];
 
 const CreatePublisherForm = (props) => {
     const { publishers, setPublishers } = props;
-    const [pubname, setPubname] = useState('Create new Publisher');
+    const [pubname, setPubname] = useState('');
     const [saved, setSaved] = useState(true);
     const [bot, setBot] = useState(bots[0]);
     const [channel, setChannel] = useState(channels[0]);

@@ -1,9 +1,9 @@
 import { Box, NavLink } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { IconDatabaseImport, IconRobot, IconSettings } from '@tabler/icons-react';
+import { IconDatabaseSmile, IconRobot, IconSettings } from '@tabler/icons-react';
 
 const data = [
-    { link: '/database', label: 'PostLines', icon: IconDatabaseImport, description: 'Workshop for your Posts.' },
+    { link: '/database', label: 'PostLines', icon: IconDatabaseSmile, description: 'Workshop for your Posts.' },
     { link: '/publishers', label: 'Publishers', icon: IconRobot, description: 'Robots to publish Posts.' },
     { link: '/setting', label: 'Settings', icon: IconSettings, description: 'Wild territory.' },
 ];

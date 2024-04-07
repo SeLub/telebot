@@ -7,6 +7,7 @@ const InputPublisherName = (props) => {
     return (
         <Input
             value={dbname}
+            placeholder="Create new PostLine"
             onChange={(event) => {
                 setSaved(false);
                 setDbname(event.currentTarget.value);

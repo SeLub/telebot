@@ -7,6 +7,7 @@ const InputPublisherName = (props) => {
     return (
         <Input
             value={pubname}
+            placeholder="Create new Publisher"
             onChange={(event) => {
                 setSaved(false);
                 setPubname(event.currentTarget.value);

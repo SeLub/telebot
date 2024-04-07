@@ -1,5 +1,5 @@
 import { ActionIcon, Grid } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconDatabaseSmile, IconEdit, IconTrash } from '@tabler/icons-react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { IDatabases } from '../../common/types';
@@ -23,9 +23,11 @@ const ListDatabases = ({ databases, setDatabases }) => {
             {databases.map((database) => (
                 <div key={database.database_id}>
                     <Grid key={database.database_id}>
-                        <Grid.Col span={5}>{database.database_id}</Grid.Col>
-                        <Grid.Col span={5}>{database.database_name}</Grid.Col>
-                        <Grid.Col span={2}>
+                        <Grid.Col span={5}>
+                            <IconDatabaseSmile size={18} /> {database.database_name}
+                        </Grid.Col>
+                        {/* <Grid.Col span={5}>{database.database_id}</Grid.Col> */}
+                        <Grid.Col span={4}>
                             <ActionIcon
                                 component="a"
                                 href={`/database/name/${database.database_name}/id/${database.database_id}`}

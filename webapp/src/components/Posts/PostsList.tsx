@@ -8,7 +8,7 @@ import PostItem from './PostItem/PostItem';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 function PostsList() {
-    const { database_id, database_name } = useParams<{ database_id: string; database_name: string }>();
+    const { database_name } = useParams<{ database_name: string }>();
     const [posts, setPosts] = useState<IPost[] | []>([]);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ function PostsList() {
             setPosts(currentPosts);
         }
         getPosts();
-    }, [database_id, database_name, posts]);
+    }, [database_name, posts]);
 
     return (
         <Fragment>
@@ -32,7 +32,7 @@ function PostsList() {
                     key={post.post_id}
                     dbname={database_name}
                     post_id={post.post_id}
-                    to={`/posts/${post.post_id}`}
+                    to={`/database/name/${database_name}/post/${post.post_id}`}
                     text={post.post_text}
                     showEditButton={true}
                 />

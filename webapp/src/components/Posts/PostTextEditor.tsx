@@ -5,20 +5,19 @@ import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Fragment, useEffect, useState } from 'react';
 
-import { transpileHTMLtoTelegramHTML } from '../../utils';
 import DCButton from '../ui/DCButton';
 import ArticleCardVertical from './PostItem/PostItem';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 function PostTextEditor(params) {
-    const { post_id } = params;
+    const { post_id, database_name } = params;
     const [editorContent, setEditorContent] = useState('');
     const [text, setText] = useState('');
 
     useEffect(() => {
         const getText = async () => {
-            const response = await fetch(`${serverHost}/api/posts/${post_id}`);
+            const response = await fetch(`${serverHost}/api/posts/?post_id=${post_id}&database_name=${database_name}`);
             const data = await response.json();
             const postText = data[0]['post_text'];
             setText(postText);
@@ -38,16 +37,16 @@ function PostTextEditor(params) {
         [editorContent],
     );
 
-    const saveText = async (post_id) => {
+    const saveText = async (post_id, database_name) => {
         console.log('text ', text);
         console.log('editorContent');
         try {
-            const result = await fetch(`${serverHost}/api/posts/${post_id}`, {
+            const result = await fetch(`${serverHost}/api/posts/editPost`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ post_text: text }),
+                body: JSON.stringify({ database_name, post_id, post_text: text }),
             });
 
             if (result.ok) {
@@ -69,7 +68,7 @@ function PostTextEditor(params) {
 
     return (
         <Fragment>
-            <ArticleCardVertical showEditButton={false} to={'#'} text={text} post_id={post_id} />
+            <ArticleCardVertical dbname={database_name} showEditButton={false} to={'#'} text={text} post_id={post_id} />
             <RichTextEditor editor={editor}>
                 <RichTextEditor.Toolbar>
                     <RichTextEditor.ControlsGroup>
@@ -93,7 +92,7 @@ function PostTextEditor(params) {
                     </RichTextEditor.ControlsGroup>
                     <DCButton
                         buttonId="saveTextButton"
-                        handleOnClick={() => saveText(post_id)}
+                        handleOnClick={() => saveText(post_id, database_name)}
                         buttonClassName="submit"
                         buttonText="SaveText"
                     />

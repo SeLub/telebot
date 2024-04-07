@@ -23,8 +23,12 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
     },
     {
-        path: 'database/name/:database_name/id/:database_id',
+        path: 'database/name/:database_name',
         element: <PostsList />,
+    },
+    {
+        path: 'database/name/:database_name/post/:post_id',
+        element: <EditPost />,
     },
     {
         path: '/publishers',

@@ -28,10 +28,7 @@ const ListDatabases = ({ databases, setDatabases }) => {
                         </Grid.Col>
                         {/* <Grid.Col span={5}>{database.database_id}</Grid.Col> */}
                         <Grid.Col span={4}>
-                            <ActionIcon
-                                component="a"
-                                href={`/database/name/${database.database_name}/id/${database.database_id}`}
-                            >
+                            <ActionIcon component="a" href={`/database/name/${database.database_name}`}>
                                 <IconEdit size={18} />
                             </ActionIcon>{' '}
                             <ActionIcon>

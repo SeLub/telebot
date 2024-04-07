@@ -6,7 +6,7 @@ import SaveDatabaseButton from './SaveDatabaseButton';
 
 const CreateDatabaseForm = (props) => {
     const { databases, setDatabases } = props;
-    const [dbname, setDbname] = useState('Create new Database');
+    const [dbname, setDbname] = useState('Create new PostLine');
     const [saved, setSaved] = useState(true);
 
     return (

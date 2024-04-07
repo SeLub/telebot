@@ -28,7 +28,7 @@ function Databases() {
 
     return (
         <Fragment>
-            <Title order={1}>Databases</Title>
+            <Title order={1}>PostLines</Title>
             <Paper shadow="lg" withBorder p="xl">
                 <CreateDatabaseForm databases={databases} setDatabases={setDatabases} />
                 <Divider my="md" />

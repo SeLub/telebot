@@ -60,14 +60,14 @@ export const generateUniqueFileName = (filename: string) => {
 export const getImageUrl = (attachment) => {
     const appImagePath = storageEndpoint + '/' + storageBucket + '/' + appImagesFolder + '/fileTypes/';
     const attachmentsPath = storageEndpoint + '/' + storageBucket + '/' + attachmentsFolder + '/';
-    const ext = '.' + attachment.photo_filename.toLowerCase().split('.').pop();
+    const ext = '.' + attachment.attachment_filename.toLowerCase().split('.').pop();
     switch (ext) {
         case '.jpg':
         case '.jpeg':
         case '.png':
         case '.gif':
         case '.webp':
-            return attachmentsPath + attachment.photo_filename;
+            return attachmentsPath + attachment.attachment_filename;
         case '.csv':
             return appImagePath + 'csv.png';
         case '.txt':
@@ -129,4 +129,20 @@ export const getUploadUrl = (file: FileWithPath) => {
         default:
             return appImagePath + 'file.png';
     }
+};
+
+export const transpileHTMLtoTelegramHTML = (text: string) => {
+    if (!text) return;
+    const cleanTextFromUnsupportedHTMLtags = text
+        .replace(/<code>/gm, '<pre>')
+        .replace(/<\/code>/gm, '</pre>')
+        // .replace(/<p><\/p>/gm, "\n")
+        .replace(/<\/pre>[<p><\/p>n]*<pre>/gm, '\n')
+        .replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, '')
+        .replace(/<\/p>|<br>/gm, '\n')
+        .replace(/<\/p>|<li>/gm, '- ')
+        .replace(/<strong>/gm, '<b>')
+        .replace(/<\/strong>/gm, '</b>')
+        .replace(/rel="noopener noreferrer nofollow" /gm, '');
+    return cleanTextFromUnsupportedHTMLtags;
 };

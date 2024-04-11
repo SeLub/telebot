@@ -4,9 +4,9 @@ export interface IPost {
 }
 
 export interface IAttachment {
-    photo_id: string;
-    post_id_photo: string;
-    photo_filename: string;
+    attachment_id: string;
+    post_id_attachment: string;
+    attachment_filename: string;
 }
 
 export interface IAttachmentsProps {
@@ -20,4 +20,16 @@ export interface ICurrentAttachmentsProps {
     attachments: Array<IAttachment>;
     // eslint-disable-next-line no-unused-vars
     deleteAttachment: (attachment: IAttachment) => void;
+}
+
+export interface IPublishers {
+    publisher_id: string;
+    publisher_name: string;
+    publisher_bots: string;
+    publisher_channels: string;
+}
+
+export interface IDatabases {
+    database_id: string;
+    database_name: string;
 }

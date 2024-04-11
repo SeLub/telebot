@@ -12,9 +12,10 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@mantine/core": "^7.6.2",
+    "@mantine/core": "^7.7.1",
+    "@mantine/dates": "^7.7.1",
     "@mantine/dropzone": "^7.6.2",
-    "@mantine/hooks": "^7.6.2",
+    "@mantine/hooks": "^7.7.1",
     "@mantine/notifications": "^7.6.2",
     "@mantine/tiptap": "^7.6.2",
     "@tabler/icons-react": "^2.47.0",

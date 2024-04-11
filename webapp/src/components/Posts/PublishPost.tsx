@@ -2,16 +2,35 @@ import { notifications } from '@mantine/notifications';
 import { IconSend } from '@tabler/icons-react';
 import { Fragment } from 'react';
 
-import DCButton from './ui/DCButton';
+import DCButton from '../ui/DCButton';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-const PublishPost = (props: { post_id: string | undefined }) => {
-    const { post_id } = props;
+const PublishPost = (props: { database_name: string; post_id: string }) => {
+    const { database_name, post_id } = props;
 
     const publishPost = async (post_id: string): Promise<void> => {
         try {
-            const result = await fetch(`${serverHost}/api/posts/publish/${post_id}`, { method: 'POST' });
+            console.log({
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    database_name,
+                    post_id,
+                }),
+            });
+            const result = await fetch(`${serverHost}/api/posts/publish`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    database_name,
+                    post_id,
+                }),
+            });
             console.log(result.status);
             if (result.ok) {
                 notifications.show({

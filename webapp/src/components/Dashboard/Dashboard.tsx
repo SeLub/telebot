@@ -1,8 +1,8 @@
 import { AppShell, Burger, Group, Image } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-import PostUp24Logo from '../assets/appimg/logos/postup_logo_small_full.png';
-import { NavbarSimpleColored } from './NavbarSimpleColored/NavbarSimpleColored';
+import PostUp24Logo from '../../assets/appimg/logos/postup_logo_small_full.png';
+import { Navbar } from './Navbar/Navbar';
 
 export function Dashboard({ children }) {
     const [opened, { toggle }] = useDisclosure();
@@ -20,7 +20,7 @@ export function Dashboard({ children }) {
                 </Group>
             </AppShell.Header>
             <AppShell.Navbar p="md">
-                <NavbarSimpleColored />
+                <Navbar />
             </AppShell.Navbar>
             <AppShell.Main>{children}</AppShell.Main>
         </AppShell>

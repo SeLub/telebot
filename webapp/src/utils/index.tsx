@@ -60,14 +60,14 @@ export const generateUniqueFileName = (filename: string) => {
 export const getImageUrl = (attachment) => {
     const appImagePath = storageEndpoint + '/' + storageBucket + '/' + appImagesFolder + '/fileTypes/';
     const attachmentsPath = storageEndpoint + '/' + storageBucket + '/' + attachmentsFolder + '/';
-    const ext = '.' + attachment.photo_filename.toLowerCase().split('.').pop();
+    const ext = '.' + attachment.attachment_filename.toLowerCase().split('.').pop();
     switch (ext) {
         case '.jpg':
         case '.jpeg':
         case '.png':
         case '.gif':
         case '.webp':
-            return attachmentsPath + attachment.photo_filename;
+            return attachmentsPath + attachment.attachment_filename;
         case '.csv':
             return appImagePath + 'csv.png';
         case '.txt':

@@ -1,4 +1,4 @@
-import { Button, Group, Paper, Stepper, Title } from '@mantine/core';
+import { Button, Divider, Group, Paper, Stepper, Title } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { Fragment } from 'react';
@@ -39,6 +39,7 @@ const Home = () => {
                     </Stepper.Step>
                     <Stepper.Completed>Completed, click back button to get to previous step</Stepper.Completed>
                 </Stepper>
+                <Divider my="md" />
 
                 <Group justify="center" mt="xl">
                     <Button variant="default" onClick={prevStep}>

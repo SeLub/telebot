@@ -21,32 +21,30 @@ function PostTextEditor(params) {
             const data = await response.json();
             const postText = data[0]['post_text'];
             setText(postText);
-            setEditorContent(postText);
         };
         getText();
-    });
+    }, [database_name, post_id]);
 
     const editor = useEditor(
         {
             extensions: [StarterKit, Link, Underline],
-            content: editorContent,
-            onUpdate({ editor }) {
+            content: text,
+            onBlur({ editor }) {
+                setEditorContent(editor.getHTML());
                 setText(editor.getHTML());
             },
         },
-        [editorContent],
+        [text],
     );
 
     const saveText = async (post_id, database_name) => {
-        console.log('text ', text);
-        console.log('editorContent');
         try {
             const result = await fetch(`${serverHost}/api/posts/editPost`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ database_name, post_id, post_text: text }),
+                body: JSON.stringify({ database_name, post_id, post_text: editorContent }),
             });
 
             if (result.ok) {

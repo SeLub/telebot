@@ -187,7 +187,9 @@ module.exports = {
 				WHERE TABLE_NAME LIKE '${postsTable}'`);
 			const response2 = await client.query(`
 				SELECT * FROM INFORMATION_SCHEMA.TABLES 
-				WHERE TABLE_NAME LIKE '${postsTable}'`);
+				WHERE TABLE_NAME LIKE '${attachmentsTable}'`);
+			console.log(response1.rowCount);
+			console.log(response2.rowCount);
 			if (!response1.rowCount || !response2.rowCount)
 				return Promise.reject(
 					new MoleculerError("database not found!", 404)
@@ -434,19 +436,24 @@ module.exports = {
 			},
 		},
 		publishPost: {
-			rest: "POST /publish/:id",
+			rest: "POST /publish",
 			params: {
-				id: { type: "uuid" },
+				post_id: { type: "uuid" },
+				database_name: { type: "string" },
 			},
 			async handler(ctx) {
-				const { id } = ctx.params;
+				const { database_name, post_id } = ctx.params;
 				try {
-					const result1 = await this.getPost(id);
-					const { post_text: text } = result1[0];
-					const result = await this.getPhotos(id);
-					const mediaArray = result.map(
-						(element) => element.photo_filename
+					const post = await this.getPost(database_name, post_id);
+					const { post_text: text } = post[0];
+					const attachments = await this.getAttachments(
+						database_name,
+						post_id
 					);
+					const mediaArray = attachments.map(
+						(element) => element.attachment_filename
+					);
+					console.log({ text, mediaArray });
 					await ctx.call("telegram.sendPost", { text, mediaArray });
 					return mediaArray;
 				} catch (error) {

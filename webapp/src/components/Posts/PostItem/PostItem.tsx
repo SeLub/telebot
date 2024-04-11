@@ -2,7 +2,6 @@ import { ActionIcon, Card, Group, Menu, Text, rem } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconToggleLeft, IconTrash } from '@tabler/icons-react';
 
-import { transpileHTMLtoTelegramHTML } from '../../../utils';
 import MyButton from '../../ui/MyButton';
 import Attachments from '../Attachments';
 import PublishPost from '../PublishPost';
@@ -18,7 +17,6 @@ type Props = {
 
 function PostItem(props: Props) {
     const { text, to, dbname, post_id, showEditButton } = props;
-    const telegramHTML = transpileHTMLtoTelegramHTML(text);
     const [editorHTMLMode, handlers] = useDisclosure(true);
 
     return (
@@ -54,7 +52,7 @@ function PostItem(props: Props) {
                                 handlers.toggle();
                             }}
                         />
-                        <PublishPost post_id={post_id} />
+                        <PublishPost database_name={dbname} post_id={post_id} />
                     </Group>
                     <Menu withinPortal position="bottom-end" shadow="sm">
                         <Menu.Target>
@@ -82,15 +80,10 @@ function PostItem(props: Props) {
             </Card.Section>
             <Card.Section inheritPadding py="xs">
                 {editorHTMLMode ? (
-                    <Text
-                        className={classes.text}
-                        mt="xs"
-                        mb="md"
-                        dangerouslySetInnerHTML={{ __html: telegramHTML }}
-                    ></Text>
+                    <Text className={classes.text} mt="xs" mb="md" dangerouslySetInnerHTML={{ __html: text }}></Text>
                 ) : (
                     <Text className={classes.text} mt="xs" mb="md">
-                        {telegramHTML}
+                        {text}
                     </Text>
                 )}
             </Card.Section>

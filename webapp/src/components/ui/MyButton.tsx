@@ -8,15 +8,26 @@ interface IMyButtonProps {
     color?: string | undefined;
     buttonText: string | undefined;
     rightSection?: unknown;
+    leftSection?: unknown;
     href?: string;
 }
 
 function MyButton(props: IMyButtonProps) {
-    const { buttonId, onClick, buttonClassName, color = 'teal', buttonText = 'Submit', rightSection, href } = props;
+    const {
+        buttonId,
+        onClick,
+        buttonClassName,
+        color = 'teal',
+        buttonText = 'Submit',
+        rightSection,
+        leftSection,
+        href,
+    } = props;
     return (
         <Button
             className={buttonClassName}
             rightSection={rightSection}
+            leftSection={leftSection}
             id={buttonId}
             onClick={onClick}
             variant="filled"

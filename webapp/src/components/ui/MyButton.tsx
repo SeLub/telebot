@@ -2,6 +2,7 @@ import { Button } from '@mantine/core';
 
 interface IMyButtonProps {
     buttonId?: string | undefined;
+    disabled?: boolean | undefined;
     onClick?: () => void | undefined;
     handleOnClick?: () => void | undefined;
     buttonClassName?: string | undefined;
@@ -15,6 +16,7 @@ interface IMyButtonProps {
 function MyButton(props: IMyButtonProps) {
     const {
         buttonId,
+        disabled,
         onClick,
         buttonClassName,
         color = 'teal',
@@ -25,6 +27,7 @@ function MyButton(props: IMyButtonProps) {
     } = props;
     return (
         <Button
+            disabled={disabled}
             className={buttonClassName}
             rightSection={rightSection}
             leftSection={leftSection}

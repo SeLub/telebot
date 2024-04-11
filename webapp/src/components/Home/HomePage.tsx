@@ -3,6 +3,8 @@ import { useLocalStorage } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { Fragment } from 'react';
 
+import Spep1 from './Steps/Step1';
+
 const Home = () => {
     const [active, setActive] = useLocalStorage({
         key: 'homeActiveStepper',
@@ -21,7 +23,7 @@ const Home = () => {
             <Paper shadow="lg" withBorder p="xl">
                 <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false}>
                     <Stepper.Step label="Step 1" description="Create channels and bots">
-                        Step 1 content: Create channels and bots
+                        <Spep1 />
                     </Stepper.Step>
                     <Stepper.Step label="Step 2" description="Create PostLines and prepare posts">
                         Step 2 content: Create PostLines and prepare posts

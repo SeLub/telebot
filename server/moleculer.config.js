@@ -1,8 +1,8 @@
 "use strict";
 const os = require("os");
+//const { transports } = require("./helpers/logger");
 const winston = require("winston");
 const Sentry = require("winston-transport-sentry-node").default;
-
 require("dotenv").config();
 const SentryDSN = process.env.SENTRY_DSN || "";
 const SentryEnvironment = process.env.SENTRY_ENV || "production";
@@ -25,15 +25,30 @@ if (SentryDSN) {
 	transports.push(new Sentry(sentryOptions));
 }
 
+// const myCustomLevels = {
+// 	levels: {
+// 		foo: 0,
+// 		bar: 1,
+// 		baz: 2,
+// 		foobar: 3,
+// 	},
+// 	colors: {
+// 		foo: "blue",
+// 		bar: "green",
+// 		baz: "yellow",
+// 		foobar: "red",
+// 	},
+// };
+
 const winstonLogger = winston.createLogger({
-	levels: winston.config.syslog.levels,
+	// levels: myCustomLevels.levels,
 	format: winston.format.combine(
 		winston.format.colorize(),
 		winston.format.printf((msg) => {
 			return `${msg.level}: ${msg.message}`;
 		})
 	),
-	transports: transports,
+	transports,
 });
 
 /**
@@ -70,18 +85,13 @@ module.exports = {
 	nodeID: os.hostname().toLowerCase() + "-" + process.pid,
 	// Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
 	metadata: {},
-
-	// Enable/disable logging or use custom logger. More info: https://moleculer.services/docs/0.14/logging.html
-	// Available logger types: "Console", "File", "Pino", "Winston", "Bunyan", "debug", "Log4js", "Datadog"
 	logger: {
 		type: "Winston",
 		options: {
+			level: "info",
 			winston: winstonLogger,
 		},
 	},
-	// Default log level for built-in console logger. It can be overwritten in logger options above.
-	// Available values: trace, debug, info, warn, error, fatal
-	logLevel: "info",
 
 	// Define transporter.
 	// More info: https://moleculer.services/docs/0.14/networking.html

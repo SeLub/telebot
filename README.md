@@ -139,3 +139,27 @@ service docker start
 docker tag postup:latest selub/postup:latest
 
 docker push selub/postup:latest
+
+# Winston & Sentry logging
+
+## Server
+
+Add to .env for development:
+
+SENTRY_DSN=https://....ingest.us.sentry.io/4506868529168384
+SENTRY_ENV=development
+
+For production
+
+SENTRY_DSN=https://....ingest.us.sentry.io/4506868529168384
+SENTRY_ENV=production
+
+## Webapp
+
+Add to .env for development:
+VITE_SENTRY_DSN=https://....ingest.us.sentry.io/4507072471891968
+VITE_SENTRY_ENV=development
+
+For production
+VITE_SENTRY_DSN=https://....ingest.us.sentry.io/4507072471891968
+VITE_SENTRY_ENV=production

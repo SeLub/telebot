@@ -16,8 +16,12 @@ import PostsList from './components/Posts/PostsList';
 import PublishersList from './components/Publishers/PublishersList';
 import Settings from './components/Settings/Settings';
 
+const dsn = import.meta.env.SENTRY_DSN;
+const environment = import.meta.env.SENTRY_ENV;
+
 Sentry.init({
-    dsn: 'https://e5ce66e62f8e6c01a356bf45ee2685db@o4504631757832192.ingest.us.sentry.io/4507072471891968',
+    dsn,
+    environment,
     integrations: [],
 });
 

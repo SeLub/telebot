@@ -2,30 +2,34 @@ const { Client } = require("pg");
 require("dotenv").config();
 const { v4: uuidv4 } = require("uuid");
 
-// PostgreSQL connection configuration
-const pgConfig = {
-	connectionString: process.env.DATABASE_URL,
-	ssl: {
-		rejectUnauthorized: false,
-	},
-};
-
-// Create a PostgreSQL client
-const client = new Client(pgConfig);
-
-// Connect to the PostgreSQL database
-client
-	.connect()
-	.then(() => console.log("Connected to PostgreSQL database"))
-	.catch((err) => console.error("Error connecting to PostgreSQL:", err));
-
 module.exports = {
 	name: "publisher",
 	settings: {},
 	async started() {
 		try {
-			// Check if the tables exist, create them if not
-			await this.createTables();
+			// PostgreSQL connection configuration
+			const pgConfig = {
+				connectionString: process.env.DATABASE_URL,
+				ssl: {
+					rejectUnauthorized: false,
+				},
+			};
+
+			// Create a PostgreSQL client
+			const client = new Client(pgConfig);
+
+			// Connect to the PostgreSQL database
+			client
+				.connect()
+				.then(() => {
+					this.metadata.client = client;
+					this.logger.info("Connected to PostgreSQL database");
+				})
+				.catch((err) =>
+					this.logger.error(
+						`Error connecting to PostgreSQL:\n ${err}`
+					)
+				);
 		} catch (err) {
 			console.error("Error creating tables:", err);
 		}
@@ -33,7 +37,7 @@ module.exports = {
 	methods: {
 		async createTables() {
 			// Check if the "publishers" table exists
-			let res = await client.query(`
+			let res = await this.metadata.client.query(`
 			    SELECT EXISTS (
 			        SELECT FROM information_schema.tables
 			        WHERE table_schema = 'public'
@@ -43,7 +47,7 @@ module.exports = {
 
 			// If the "publishers" table doesn't exist, create it
 			if (!res.rows[0].exists) {
-				await client.query(`
+				await this.metadata.client.query(`
 			        CREATE TABLE publishers (
 			            publisher_id UUID PRIMARY KEY,
 			            publisher_name TEXT,
@@ -55,7 +59,7 @@ module.exports = {
 			}
 
 			//Check if the "plans" table exists
-			res = await client.query(`
+			res = await this.metadata.client.query(`
                 SELECT EXISTS (
                     SELECT FROM information_schema.tables 
                     WHERE table_schema = 'public' 
@@ -65,7 +69,7 @@ module.exports = {
 
 			// If the "plans" table doesn't exist, create it
 			if (!res.rows[0].exists) {
-				await client.query(`
+				await this.metadata.client.query(`
                     CREATE TABLE plans (
                         id SERIAL PRIMARY KEY,
 				publisher_id UUID,
@@ -82,11 +86,13 @@ module.exports = {
 			}
 		},
 		async getPublishers() {
-			const res = await client.query("SELECT * FROM publishers");
+			const res = await this.metadata.client.query(
+				"SELECT * FROM publishers"
+			);
 			return res.rows;
 		},
 		async getPublisher(id) {
-			const res = await client.query(
+			const res = await this.metadata.client.query(
 				"SELECT * FROM publishers WHERE publisher_id = $1",
 				[id]
 			);
@@ -101,7 +107,7 @@ module.exports = {
 				publisher_name = "Publisher " + publisher_id;
 			}
 
-			const res = await client.query(
+			const res = await this.metadata.client.query(
 				`
 				INSERT INTO publishers (publisher_id, publisher_name, publisher_bots, publisher_channels) 
 				VALUES ($1, $2, $3, $4) 
@@ -122,7 +128,7 @@ module.exports = {
 				publisher_bots,
 				publisher_channels,
 			} = publisher;
-			const res = await client.query(
+			const res = await this.metadata.client.query(
 				`
 				UPDATE publishers SET publisher_name = $1, publisher_bots = $2, publisher_channels = $3
 				WHERE publisher_id = $4
@@ -137,7 +143,7 @@ module.exports = {
 			return res.rows[0];
 		},
 		async deletePublisher(id) {
-			const res = await client.query(
+			const res = await this.metadata.client.query(
 				"DELETE FROM publishers WHERE publisher_id = $1",
 				[id]
 			);

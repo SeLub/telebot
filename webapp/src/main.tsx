@@ -3,6 +3,7 @@ import '@mantine/core/styles.css';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import '@mantine/tiptap/styles.css';
+import * as Sentry from '@sentry/react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
@@ -14,6 +15,15 @@ import EditPost from './components/Posts/EditPost';
 import PostsList from './components/Posts/PostsList';
 import PublishersList from './components/Publishers/PublishersList';
 import Settings from './components/Settings/Settings';
+
+const dsn = import.meta.env.SENTRY_DSN;
+const environment = import.meta.env.SENTRY_ENV;
+
+Sentry.init({
+    dsn,
+    environment,
+    integrations: [],
+});
 
 const router = createBrowserRouter([
     {

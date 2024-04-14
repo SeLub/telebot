@@ -1,5 +1,5 @@
 import { Input } from '@mantine/core';
-import { IconDatabaseImport } from '@tabler/icons-react';
+import { IconDatabaseSmile } from '@tabler/icons-react';
 
 const InputPublisherName = (props) => {
     const { dbname, setDbname, saved, setSaved } = props;
@@ -12,7 +12,7 @@ const InputPublisherName = (props) => {
                 setSaved(false);
                 setDbname(event.currentTarget.value);
             }}
-            leftSection={<IconDatabaseImport size={20} color={saved ? 'green' : 'red'} />}
+            leftSection={<IconDatabaseSmile size={20} color={saved ? 'green' : 'red'} />}
         />
     );
 };

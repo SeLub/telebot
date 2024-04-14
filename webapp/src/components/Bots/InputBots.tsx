@@ -1,7 +1,8 @@
-import { Group, TextInput } from '@mantine/core';
+import { Divider, Group, TextInput, Title } from '@mantine/core';
 import { IconCirclePlus, IconRobotFace, IconSquareKey } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Fragment } from 'react/jsx-runtime';
+import { IBot } from '../../common/types';
 
 import * as message from '../../common/notification';
 import MyButton from '../ui/MyButton';
@@ -9,9 +10,7 @@ import BotsList from './BotsList';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-const InputBots = () => {
-    const [bots, setBots] = useState([]);
-
+const InputBots = ({ bots, setBots }) => {
     useEffect(() => {
         async function getBots() {
             const response = await fetch(serverHost + '/api/bots');
@@ -19,12 +18,12 @@ const InputBots = () => {
             setBots(data);
         }
         getBots();
-    }, [bots.length]);
+    }, [bots.length, setBots]);
 
     const refName = useRef<HTMLInputElement>(null);
     const refToken = useRef<HTMLInputElement>(null);
 
-    const saveBotToDatabase = (bot: any) => {
+    const saveBotToDatabase = (bot: IBot) => {
         fetch(serverHost + '/api/bots', {
             method: 'POST',
             headers: {
@@ -47,6 +46,8 @@ const InputBots = () => {
 
     return (
         <Fragment>
+            <Title order={2}>Bots</Title>
+            <Divider my="md" />
             <Group justify="flex-start" mt="md" mb="xs">
                 <TextInput
                     required

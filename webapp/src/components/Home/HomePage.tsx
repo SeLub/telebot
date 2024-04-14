@@ -1,7 +1,7 @@
 import { Button, Divider, Group, Paper, Stepper, Title } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 
 import Spep1 from './Steps/Step1';
 
@@ -10,6 +10,7 @@ const Home = () => {
         key: 'homeActiveStepper',
         defaultValue: 0,
     });
+    const [disabled, setDisabled] = useState(true);
     const nextStep = () =>
         setActive((current) => {
             if (current !== 0) notifications.show({ message: 'Step ' + current + ' finished successfully.' });
@@ -23,7 +24,7 @@ const Home = () => {
             <Paper shadow="lg" withBorder p="xl">
                 <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false}>
                     <Stepper.Step label="Step 1" description="Create channels and bots">
-                        <Spep1 />
+                        <Spep1 setDisabled={setDisabled} />
                     </Stepper.Step>
                     <Stepper.Step label="Step 2" description="Create PostLines and prepare posts">
                         Step 2 content: Create PostLines and prepare posts
@@ -45,7 +46,9 @@ const Home = () => {
                     <Button variant="default" onClick={prevStep}>
                         Back
                     </Button>
-                    <Button onClick={nextStep}>Next step</Button>
+                    <Button onClick={nextStep} disabled={disabled}>
+                        Next step
+                    </Button>
                 </Group>
             </Paper>
         </Fragment>

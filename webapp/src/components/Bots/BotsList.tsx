@@ -3,19 +3,20 @@ import { IconTrash } from '@tabler/icons-react';
 import { Fragment } from 'react/jsx-runtime';
 
 import * as message from '../../common/notification';
+import { IBot } from '../../common/types';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const ListBots = ({ bots, setBots }) => {
-    const deleteBotFromDatabase = (botId) => {
+    const deleteBotFromDatabase = (botId: string) => {
         fetch(`${serverHost}/api/bots/${botId}`, { method: 'DELETE' });
     };
 
-    const handleDelete = (botId) => {
+    const handleDelete = (botId: string) => {
         const id = message.start('Start delete bot.');
         try {
             deleteBotFromDatabase(botId);
-            setBots(bots.filter((bot) => bot.bot_id !== botId));
+            setBots(bots.filter((bot: IBot) => bot.bot_id !== botId));
             message.success('Bot deleted.', id);
         } catch (error) {
             message.error('Bot not deleted.', id);
@@ -25,7 +26,7 @@ const ListBots = ({ bots, setBots }) => {
 
     return (
         <Fragment>
-            {bots.map((bot, index) => (
+            {bots.map((bot: IBot, index: number) => (
                 <Fragment key={index}>
                     <Divider my="md" />
                     <div key={bot.bot_id}>

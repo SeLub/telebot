@@ -1,18 +1,24 @@
 import { Divider, Switch, Text, Title } from '@mantine/core';
 import { Fragment, useState } from 'react';
 
+import { isArrayEmpty } from '../../../utils';
 import InputBots from '../../Bots/InputBots';
+import InputChannels from '../../Channels/InputChannels';
 import Auth from './Auth';
 
-const Step1 = () => {
+const Step1 = ({ setDisabled }) => {
     const [ihavebots, setIhavebots] = useState(false);
+    const [bots, setBots] = useState([]);
+    const [channels, setChannels] = useState([]);
+    if (!isArrayEmpty(bots) && !isArrayEmpty(channels)) {
+        setDisabled(false);
+    } else {
+        setDisabled(true);
+    }
     return (
         <Fragment>
             <Title order={3}>Step 1: Create channels and bots</Title>
-            <Text size="md">
-                Here you can create channeles and bots. You can do this manually in your Telegram App or right here in
-                our application. If your channels and bots has already created just add them below.
-            </Text>
+            <Text size="md">Define channeles and bots.</Text>
             <Switch
                 checked={ihavebots}
                 size="lg"
@@ -21,7 +27,12 @@ const Step1 = () => {
             />
             <Divider my="md" />
             {ihavebots && <Auth />}
-            {!ihavebots && <InputBots />}
+            {!ihavebots && (
+                <>
+                    <InputBots bots={bots} setBots={setBots} />{' '}
+                    <InputChannels channels={channels} setChannels={setChannels} />
+                </>
+            )}
         </Fragment>
     );
 };

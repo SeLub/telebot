@@ -22,18 +22,17 @@ module.exports = {
 			.connect()
 			.then(async () => {
 				await this.logger.info("Connected to PostgreSQL database");
-				await this.createTables();
+				await this.createBotsTable();
 			})
 			.catch((err) =>
 				this.logger.error(`Error connecting to PostgreSQL:\n ${err}`)
 			);
 	},
 	methods: {
-		async createTables() {
+		async createBotsTable() {
 			let created = false;
 			try {
 				const botsTable = "bots";
-				const channelsTable = "channels";
 
 				// Check if the "bots" table exists
 				res = await this.metadata.client.query(`
@@ -53,25 +52,7 @@ module.exports = {
 								bot_token TEXT
 							);
 						    `);
-					// Check if the "channels" table exists
-					res = await this.metadata.client.query(`
-						SELECT EXISTS (
-							SELECT FROM information_schema.tables 
-							WHERE table_schema = 'public' 
-							AND table_name = '${channelsTable}'
-						);
-					`);
-
-					// If the "channels" table doesn't exist, create it
-					if (!res.rows[0].exists) {
-						await this.metadata.client.query(`
-							CREATE TABLE ${channelsTable} (
-								channel_id UUID PRIMARY KEY,
-								channel_name TEXT,
-								channel_token TEXT
-							);
-						`);
-					}
+					created = true;
 					return created;
 				}
 			} catch (err) {

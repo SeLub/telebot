@@ -6,14 +6,14 @@ import InputBots from '../../Bots/InputBots';
 import InputChannels from '../../Channels/InputChannels';
 import Auth from './Auth';
 
-const Step1 = ({ setDisabled }) => {
+const Step1 = ({ setDisabledNext }) => {
     const [ihavebots, setIhavebots] = useState(false);
     const [bots, setBots] = useState([]);
     const [channels, setChannels] = useState([]);
     if (!isArrayEmpty(bots) && !isArrayEmpty(channels)) {
-        setDisabled(false);
+        setDisabledNext(false);
     } else {
-        setDisabled(true);
+        setDisabledNext(true);
     }
     return (
         <Fragment>

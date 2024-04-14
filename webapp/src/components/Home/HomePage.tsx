@@ -10,13 +10,30 @@ const Home = () => {
         key: 'homeActiveStepper',
         defaultValue: 0,
     });
-    const [disabled, setDisabled] = useState(true);
+    const [disabledNext, setDisabledNext] = useState(true);
+    const [disabledPrev, setDisabledPrev] = useState(true);
     const nextStep = () =>
         setActive((current) => {
-            if (current !== 0) notifications.show({ message: 'Step ' + current + ' finished successfully.' });
+            const stepNumber = current + 1;
+            if (current === 0) {
+                setDisabledPrev(false);
+            }
+
+            if (stepNumber !== 5) {
+                notifications.show({ message: `Step ${stepNumber} finished successfully.` });
+            } else {
+                notifications.show({ message: 'All steps completed successfully.' });
+                setDisabledNext(true);
+            }
             return current < 5 ? current + 1 : current;
         });
-    const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+    const prevStep = () =>
+        setActive((current) => {
+            if (current === 1) {
+                setDisabledPrev(true);
+            }
+            return current > 0 ? current - 1 : current;
+        });
 
     return (
         <Fragment>
@@ -24,12 +41,12 @@ const Home = () => {
             <Paper shadow="lg" withBorder p="xl">
                 <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false}>
                     <Stepper.Step label="Step 1" description="Create channels and bots">
-                        <Spep1 setDisabled={setDisabled} />
+                        <Spep1 setDisabledNext={setDisabledNext} />
                     </Stepper.Step>
                     <Stepper.Step label="Step 2" description="Create PostLines and prepare posts">
                         Step 2 content: Create PostLines and prepare posts
                     </Stepper.Step>
-                    <Stepper.Step label="Step 3" description="Plan Posting">
+                    <Stepper.Step label="Step 3" desdisabledPrevcription="Plan Posting">
                         Step 3 content: Plan Posting
                     </Stepper.Step>
                     <Stepper.Step label="Step 4" description="Arrange the Publishers">
@@ -43,10 +60,10 @@ const Home = () => {
                 <Divider my="md" />
 
                 <Group justify="center" mt="xl">
-                    <Button variant="default" onClick={prevStep}>
+                    <Button variant="default" onClick={prevStep} disabled={disabledPrev}>
                         Back
                     </Button>
-                    <Button onClick={nextStep} disabled={disabled}>
+                    <Button onClick={nextStep} disabled={disabledNext}>
                         Next step
                     </Button>
                 </Group>

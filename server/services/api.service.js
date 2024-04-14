@@ -56,18 +56,6 @@ module.exports = {
 				// The gateway will dynamically build the full routes from service schema.
 				autoAliases: true,
 
-				aliases: {
-					//"REST /posts": "posts",
-					// "GET /": "posts.listPosts",
-					"GET /photos": "posts.listPhotos",
-					// "GET /": "posts.getPosts",
-					"GET /photos": "posts.getPhotos",
-					// "POST /posts": "posts.createPost",
-					"POST /photos": "posts.addPhotoToPost",
-					"GET /storage": "storage.getURL",
-					"POST /posts": "posts.publishPost",
-				},
-
 				/**
 				 * Before call hook. You can check the request.
 				 * @param {Context} ctx

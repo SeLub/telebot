@@ -17,8 +17,6 @@
   ],
   "author": "",
   "devDependencies": {
-    "jest": "^27.5.1",
-    "jest-cli": "^27.5.1",
     "moleculer-repl": "^0.7.3"
   },
   "dependencies": {

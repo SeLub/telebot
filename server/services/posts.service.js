@@ -44,52 +44,52 @@ module.exports = {
 			const uniqueDatabaseName = dbname; // + "_" + databaseId;
 			const postsTable = uniqueDatabaseName + "_posts";
 			const attachmentsTable = uniqueDatabaseName + "_attachments";
+
 			let created = false;
 			// Check if the "post" table exists
 			let res = await this.metadata.client.query(`
-                SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
-                    WHERE table_schema = 'public' 
-                    AND table_name = '${postsTable}'
-                );
-            `);
+				SELECT EXISTS (
+					SELECT FROM information_schema.tables 
+					WHERE table_schema = 'public' 
+					AND table_name = '${postsTable}'
+				);
+				`);
 
 			// If the "posts" table doesn't exist, create it
 			if (!res.rows[0].exists) {
 				await this.metadata.client.query(`
-                    CREATE TABLE ${postsTable} (
-                        post_id UUID PRIMARY KEY,
-                        post_text TEXT
-                    );
+					CREATE TABLE ${postsTable} (
+						post_id UUID PRIMARY KEY,
+						post_text TEXT
+					);
                 `);
 			}
 
 			// Check if the "attachments" table exists
 			res = await this.metadata.client.query(`
-                SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
-                    WHERE table_schema = 'public' 
-                    AND table_name = '${attachmentsTable}'
-                );
-            `);
+				SELECT EXISTS (
+					SELECT FROM information_schema.tables 
+					WHERE table_schema = 'public' 
+					AND table_name = '${attachmentsTable}'
+				);
+            	`);
 
-			// If the "photo" table doesn't exist, create it
+			// If the "attachments" table doesn't exist, create it
 			if (!res.rows[0].exists) {
 				created = true;
 				await this.metadata.client.query(`
-                    CREATE TABLE ${attachmentsTable} (
-                        attachment_id UUID PRIMARY KEY,
-                        post_id_attachment UUID,
-                        attachment_filename TEXT,
-                        FOREIGN KEY (post_id_attachment) REFERENCES ${postsTable}(post_id)
-                    );
-                `);
+					CREATE TABLE ${attachmentsTable} (
+						attachment_id UUID PRIMARY KEY,
+						post_id_attachment UUID,
+						attachment_filename TEXT,
+						FOREIGN KEY (post_id_attachment) REFERENCES ${postsTable}(post_id)
+					);
+                		`);
 				await this.metadata.client.query(`
-                INSERT INTO databases (database_id, database_name)
-                VALUES ('${databaseId}', '${uniqueDatabaseName}');
-                `);
+                		INSERT INTO databases (database_id, database_name)
+                		VALUES ('${databaseId}', '${uniqueDatabaseName}');
+                	`);
 			}
-			return created;
 		},
 		async getDatabases() {
 			const res = await this.metadata.client.query(`

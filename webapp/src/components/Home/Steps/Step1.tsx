@@ -1,8 +1,8 @@
 import { Divider, Switch, Text, Title } from '@mantine/core';
 import { Fragment, useState } from 'react';
 
+import InputBots from '../../Bots/InputBots';
 import Auth from './Auth';
-import InputBots from './InputBots';
 
 const Step1 = () => {
     const [ihavebots, setIhavebots] = useState(false);

@@ -12,8 +12,8 @@ const Home = () => {
         key: 'homeActiveStepper',
         defaultValue: 0,
     });
-    const [disabledNext, setDisabledNext] = useState(true);
-    const [disabledPrev, setDisabledPrev] = useState(true);
+    const [disabledNext, setDisabledNext] = useState(false);
+    const [disabledPrev, setDisabledPrev] = useState(false);
     const nextStep = () =>
         setActive((current) => {
             const stepNumber = current + 1;

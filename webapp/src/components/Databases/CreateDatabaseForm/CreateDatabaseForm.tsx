@@ -11,6 +11,7 @@ const CreateDatabaseForm = (props) => {
 
     return (
         <Flex mih={50} gap="md" justify="flex-start" align="center" direction="row" wrap="wrap">
+            <InputDatabaseName dbname={dbname} saved={saved} setSaved={setSaved} setDbname={setDbname} />
             <SaveDatabaseButton
                 dbname={dbname}
                 databases={databases}
@@ -18,7 +19,6 @@ const CreateDatabaseForm = (props) => {
                 saved={saved}
                 setSaved={setSaved}
             />
-            <InputDatabaseName dbname={dbname} saved={saved} setSaved={setSaved} setDbname={setDbname} />
         </Flex>
     );
 };

@@ -2,6 +2,7 @@ import { Divider, Paper, Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 
 import { IDatabases } from '../../common/types';
+import { isArrayEmpty } from '../../utils';
 import CreateDatabaseForm from './CreateDatabaseForm/CreateDatabaseForm';
 import ListDatabases from './ListDatabases';
 
@@ -12,8 +13,14 @@ const fetchDatabases = async () => {
     return response.ok ? await response.json() : [];
 };
 
-function Databases() {
+function Databases({ setDisabledNext }) {
     const [databases, setDatabases] = useState<IDatabases[] | []>([]);
+
+    useEffect(() => {
+        if (setDisabledNext !== undefined) {
+            setDisabledNext(isArrayEmpty(databases));
+        }
+    }, [databases, setDisabledNext]);
 
     useEffect(() => {
         const prevDatabase = databases;
@@ -28,7 +35,7 @@ function Databases() {
 
     return (
         <Fragment>
-            <Title order={1}>PostLines</Title>
+            <Title order={2}>PostLines</Title>
             <Paper shadow="lg" withBorder p="xl">
                 <CreateDatabaseForm databases={databases} setDatabases={setDatabases} />
                 <Divider my="md" />

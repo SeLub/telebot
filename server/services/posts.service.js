@@ -108,14 +108,14 @@ module.exports = {
 				const postsTable = name + "_posts";
 				const attachmentsTable = name + "_attachments";
 				await this.metadata.client.query(`
-                    DROP TABLE IF EXISTS ${postsTable};
-                    `);
+					DROP TABLE IF EXISTS ${attachmentsTable};
+					`);
 				await this.metadata.client.query(`
-                    DROP TABLE IF EXISTS ${attachmentsTable};
-                    `);
+					DROP TABLE IF EXISTS ${postsTable};
+					`);
 				await this.metadata.client.query(`
-                    DELETE FROM databases WHERE database_name = '${name}';
-                    `);
+					DELETE FROM databases WHERE database_name = '${name}';
+					`);
 				return true;
 			} catch (err) {
 				this.logger.error(

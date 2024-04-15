@@ -90,6 +90,7 @@ module.exports = {
                 		VALUES ('${databaseId}', '${uniqueDatabaseName}');
                 	`);
 			}
+			return databaseId;
 		},
 		async getDatabases() {
 			const res = await this.metadata.client.query(`
@@ -99,7 +100,7 @@ module.exports = {
 		},
 		async getDatabase(id) {
 			const res = await this.metadata.client.query(`
-                  	SELECT database_name FROM databases WHERE database_id = '${id}';
+                  	SELECT * FROM databases WHERE database_id = '${id}';
             	`);
 			return res.rows[0];
 		},
@@ -406,15 +407,15 @@ module.exports = {
 				}
 			},
 		},
-		createDatabse: {
+		createDatabase: {
 			rest: "POST /database",
 			params: {
 				dbname: { type: "string" },
 			},
 			async handler(ctx) {
 				const { dbname } = ctx.params;
-				const result = await this.createDatabase(dbname);
-				return result;
+				const dbId = await this.createDatabase(dbname);
+				return await this.getDatabase(dbId);
 			},
 		},
 		getDatabases: {

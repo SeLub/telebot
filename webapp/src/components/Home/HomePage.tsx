@@ -1,9 +1,11 @@
 import { Button, Divider, Group, Paper, Stepper, Title } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
+import { IconCalendarMonth, IconDatabaseSmile, IconRobot, IconRobotFace, IconRun } from '@tabler/icons-react';
 import { Fragment, useState } from 'react';
 
-import Spep1 from './Steps/Step1';
+import Step1 from './Steps/Step1';
+import Step2 from './Steps/Step2';
 
 const Home = () => {
     const [active, setActive] = useLocalStorage({
@@ -40,19 +42,27 @@ const Home = () => {
             <Title order={1}>Home</Title>
             <Paper shadow="lg" withBorder p="xl">
                 <Stepper active={active} onStepClick={setActive} allowNextStepsSelect={false}>
-                    <Stepper.Step label="Step 1" description="Create channels and bots">
-                        <Spep1 setDisabledNext={setDisabledNext} />
+                    <Stepper.Step
+                        label="Step 1"
+                        description="Create channels and bots"
+                        icon={<IconRobotFace size={24} />}
+                    >
+                        <Step1 setDisabledNext={setDisabledNext} />
                     </Stepper.Step>
-                    <Stepper.Step label="Step 2" description="Create PostLines and prepare posts">
-                        Step 2 content: Create PostLines and prepare posts
+                    <Stepper.Step
+                        label="Step 2"
+                        description="Create PostLines and prepare posts"
+                        icon={<IconDatabaseSmile size={26} />}
+                    >
+                        <Step2 setDisabledNext={setDisabledNext} />
                     </Stepper.Step>
-                    <Stepper.Step label="Step 3" desdisabledPrevcription="Plan Posting">
+                    <Stepper.Step label="Step 3" description="Plan Posting" icon={<IconCalendarMonth size={26} />}>
                         Step 3 content: Plan Posting
                     </Stepper.Step>
-                    <Stepper.Step label="Step 4" description="Arrange the Publishers">
+                    <Stepper.Step label="Step 4" description="Arrange the Publishers" icon={<IconRobot size={26} />}>
                         Step 4 content: Arrange the Publishers
                     </Stepper.Step>
-                    <Stepper.Step label="Step 5" description="Start and control process">
+                    <Stepper.Step label="Step 5" description="Start and control process" icon={<IconRun size={26} />}>
                         Step 5 content: Start and control process
                     </Stepper.Step>
                     <Stepper.Completed>Completed, click back button to get to previous step</Stepper.Completed>

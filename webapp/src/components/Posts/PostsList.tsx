@@ -1,8 +1,10 @@
-import { Title } from '@mantine/core';
+import { Divider, Grid, Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { IPost } from '../../common/types';
+import CreatePostForm from './CreatePostForm/CreatePostForm';
+import ImportFileForm from './ImportFileForm';
 import PostItem from './PostItem/PostItem';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
@@ -27,6 +29,16 @@ function PostsList() {
     return (
         <Fragment>
             <Title order={1}>Posts</Title>
+            <Divider my="md" />
+            <Grid>
+                <Grid.Col span={6}>
+                    <CreatePostForm database_name={database_name} posts={posts} setPosts={setPosts} />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <ImportFileForm />
+                </Grid.Col>
+            </Grid>
+            <Divider my="md" />
             {posts.map((post) => (
                 <PostItem
                     key={post.post_id}
@@ -34,6 +46,8 @@ function PostsList() {
                     post_id={post.post_id}
                     to={`/database/name/${database_name}/post/${post.post_id}`}
                     text={post.post_text}
+                    posts={posts}
+                    setPosts={setPosts}
                     showEditButton={true}
                 />
             ))}

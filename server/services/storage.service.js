@@ -4,6 +4,7 @@ const {
 	PutObjectCommand,
 	DeleteObjectCommand,
 	ListObjectsV2Command,
+	GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 require("dotenv").config();
@@ -92,21 +93,22 @@ module.exports = {
 				console.error(err);
 			}
 		},
-		getUrl: {
-			rest: "GET /geturl",
+		putUrl: {
+			rest: "GET /puturl",
 			params: {
 				file: { type: "string" },
+				folder: { type: "string" },
 			},
 			async handler(ctx) {
-				const { file } = ctx.params;
+				const { file, folder } = ctx.params;
 
-				const fileNameWithPath = `images/${decodeURIComponent(file)}`;
-				const ContentType = this.getImageContentType(fileNameWithPath);
+				const fileNameWithPath = `${decodeURIComponent(
+					folder
+				)}/${decodeURIComponent(file)}`;
 
 				const commandParams = {
 					Bucket,
 					Key: fileNameWithPath,
-					//ContentType, // Set the content type here
 					ACL: "public-read",
 				};
 
@@ -116,6 +118,38 @@ module.exports = {
 					const presignedURL = await getSignedUrl(
 						s3Client,
 						putCommand,
+						{ expiresIn: 3600 }
+					);
+					return { presignedURL };
+				} catch (error) {
+					console.log("Error during presigned URL", error);
+				}
+			},
+		},
+		getUrl: {
+			rest: "GET /geturl",
+			params: {
+				file: { type: "string" },
+				folder: { type: "string" },
+			},
+			async handler(ctx) {
+				const { file, folder } = ctx.params;
+
+				const fileNameWithPath = `${decodeURIComponent(
+					folder
+				)}/${decodeURIComponent(file)}`;
+
+				const commandParams = {
+					Bucket,
+					Key: fileNameWithPath,
+					ACL: "public-read",
+				};
+				const getCommand = new GetObjectCommand(commandParams);
+
+				try {
+					const presignedURL = await getSignedUrl(
+						s3Client,
+						getCommand,
 						{ expiresIn: 3600 }
 					);
 					return { presignedURL };

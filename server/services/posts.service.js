@@ -3,6 +3,8 @@ const { Client } = require("pg");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 const { MoleculerError } = require("moleculer").Errors;
+const csvParser = require("csv-parser");
+const { Readable } = require("node:stream");
 
 //const notFoundError = (id) => { throw new MoleculerError(`Record with ${id} not found.`, 404, "ERR_NOTFOUND"); }
 
@@ -236,6 +238,38 @@ module.exports = {
 				return false;
 			}
 		},
+		async fetchAndParseCSV(url) {
+			try {
+				// Fetch the CSV file from the server
+				const response = await fetch(url);
+
+				// Check if the response is OK
+				if (!response.ok) {
+					throw new Error(
+						`Failed to fetch CSV: ${response.statusText}`
+					);
+				}
+
+				// Create a readable stream from the response body
+				const bodyStream = Readable.from(await response.text());
+
+				// Create a promise to parse the CSV
+				const csvData = new Promise((resolve, reject) => {
+					const results = [];
+					bodyStream
+						.pipe(csvParser())
+						.on("data", (data) => results.push(data))
+						.on("end", () => resolve(results))
+						.on("error", (error) => reject(error));
+				});
+
+				// Wait for the CSV to be parsed and return the array of objects
+				return await csvData;
+			} catch (error) {
+				console.error("Error fetching or parsing CSV:", error);
+				throw error; // You may handle this error according to your application's logic
+			}
+		},
 		authorize(ctx, route, req, res) {
 			// Read the token from header
 			let auth = req.headers["authorization"];
@@ -445,6 +479,30 @@ module.exports = {
 				const { name } = ctx.params;
 				const result = await this.deleteDatabase(name);
 				return result;
+			},
+		},
+		import: {
+			rest: "POST /import",
+			params: {
+				database_name: { type: "string" },
+				import_file: { type: "string" },
+			},
+			async handler(ctx) {
+				const { database_name, import_file } = ctx.params;
+				const { presignedURL } = await ctx.call("storage.getUrl", {
+					file: import_file,
+					folder: "import",
+				});
+				await this.fetchAndParseCSV(presignedURL)
+					.then((data) => {
+						console.log("Parsed CSV data:", data);
+						data.forEach((row) => {
+							this.createPost(database_name, row.post_text);
+						});
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+					});
 			},
 		},
 	},

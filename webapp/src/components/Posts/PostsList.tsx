@@ -35,7 +35,7 @@ function PostsList() {
                     <CreatePostForm database_name={database_name} posts={posts} setPosts={setPosts} />
                 </Grid.Col>
                 <Grid.Col span={6}>
-                    <ImportFileForm />
+                    <ImportFileForm database_name={database_name} />
                 </Grid.Col>
             </Grid>
             <Divider my="md" />

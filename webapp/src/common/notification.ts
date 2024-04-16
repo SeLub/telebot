@@ -20,7 +20,7 @@ export function start(message: string) {
     return id;
 }
 
-export function success(message: string, id) {
+export function success({ message, id }) {
     if (id !== undefined) {
         notifications.update({
             id,
@@ -44,7 +44,7 @@ export function success(message: string, id) {
     }
 }
 
-export function error(message: string, id) {
+export function error({ message, id }) {
     if (id !== undefined) {
         notifications.update({
             id,

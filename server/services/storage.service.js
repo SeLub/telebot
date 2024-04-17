@@ -101,14 +101,15 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const { file, folder } = ctx.params;
-
-				const fileNameWithPath = `${decodeURIComponent(
-					folder
-				)}/${decodeURIComponent(file)}`;
+				const dfolder = decodeURIComponent(folder);
+				const dfile = decodeURIComponent(file);
+				const fileNameWithPath = `${dfolder}/${dfile}`;
+				const ContentType = this.getImageContentType(fileNameWithPath);
 
 				const commandParams = {
 					Bucket,
 					Key: fileNameWithPath,
+					ContentType,
 					ACL: "public-read",
 				};
 
@@ -134,14 +135,15 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const { file, folder } = ctx.params;
-
-				const fileNameWithPath = `${decodeURIComponent(
-					folder
-				)}/${decodeURIComponent(file)}`;
+				const dfolder = decodeURIComponent(folder);
+				const dfile = decodeURIComponent(file);
+				const fileNameWithPath = `${dfolder}/${dfile}`;
+				const ContentType = this.getImageContentType(fileNameWithPath);
 
 				const commandParams = {
 					Bucket,
 					Key: fileNameWithPath,
+					ContentType,
 					ACL: "public-read",
 				};
 				const getCommand = new GetObjectCommand(commandParams);
@@ -164,11 +166,11 @@ module.exports = {
 				filename: { type: "string" },
 			},
 			async handler(ctx) {
+				const { file, folder } = ctx.params;
+				const dfolder = decodeURIComponent(folder);
+				const dfile = decodeURIComponent(file);
+				const fileNameWithPath = `${dfolder}/${dfile}`;
 				const { filename } = ctx.params;
-
-				const fileNameWithPath = `images/${decodeURIComponent(
-					filename
-				)}`;
 
 				const commandParams = {
 					Bucket,

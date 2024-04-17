@@ -1,4 +1,4 @@
-const telegrambot = require("node-telegram-bot-api");
+const { Telegraf } = require("telegraf");
 require("dotenv").config();
 
 module.exports = {
@@ -13,9 +13,12 @@ module.exports = {
 			"/" +
 			process.env.STORAGE_ATTACHMENTS_FOLDER +
 			"/";
-		this.bot = new telegrambot(token, { polling: true });
-		this.bot.close();
-		//this.bot.logOut();
+		this.bot = new Telegraf(token);
+		this.bot.launch();
+
+		// Enable graceful stop
+		process.once("SIGINT", () => this.bot.stop("SIGINT"));
+		process.once("SIGTERM", () => this.bot.stop("SIGTERM"));
 	},
 	methods: {
 		isArrayEmpty(arr) {
@@ -37,9 +40,9 @@ module.exports = {
 				case ".xls":
 				case ".xlsx":
 					return "document";
-				case ".avi":
+				//case ".avi":
 				case ".mp4":
-				case ".mpeg":
+				//case ".mpeg":
 				case ".webm":
 					return "video";
 				case ".mp3":
@@ -88,6 +91,17 @@ module.exports = {
 						return;
 				}
 			});
+
+			const mediaGroup = this.addTextToMediaGroup(text, {
+				mediaPhotosAndVideos,
+				mediaDocuments,
+				mediaAudios,
+			});
+			return mediaGroup;
+		},
+		addTextToMediaGroup(text, mediaGroup) {
+			const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } =
+				mediaGroup;
 			let capthionAdded = false;
 			if (mediaPhotosAndVideos[0] !== undefined) {
 				mediaPhotosAndVideos[0]["caption"] = text;
@@ -103,70 +117,78 @@ module.exports = {
 				mediaAudios[0]["caption"] = text;
 				capthionAdded = true;
 			}
-
-			return { mediaPhotosAndVideos, mediaDocuments, mediaAudios };
+			return mediaGroup;
+		},
+		cleanTextFromUnsupportedHTMLtag(text) {
+			return (
+				text
+					.replace(/<code>/gm, "<pre>")
+					.replace(/<\/code>/gm, "</pre>")
+					// .replace(/<p><\/p>/gm, "\n")
+					.replace(/<\/pre>[<p><\/p>n]*<pre>/gm, "\n")
+					.replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, "")
+					.replace(/<\/p>|<br>/gm, "\n")
+					.replace(/<\/p>|<li>/gm, "- ")
+					.replace(/<strong>/gm, "<b>")
+					.replace(/<\/strong>/gm, "</b>")
+					.replace(/rel="noopener noreferrer nofollow" /gm, "")
+			);
 		},
 	},
 	actions: {
 		getMe() {
-			return this.bot.getMe();
+			return this.bot.telegram.getMe();
 		},
-		sendPost(ctx) {
+		async sendPost(ctx) {
 			const { text, mediaArray } = ctx.params;
-			// TODO: Move in separate method
-			const cleanTextFromUnsupportedHTMLtag = text
-				.replace(/<code>/gm, "<pre>")
-				.replace(/<\/code>/gm, "</pre>")
-				// .replace(/<p><\/p>/gm, "\n")
-				.replace(/<\/pre>[<p><\/p>n]*<pre>/gm, "\n")
-				.replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, "")
-				.replace(/<\/p>|<br>/gm, "\n")
-				.replace(/<\/p>|<li>/gm, "- ")
-				.replace(/<strong>/gm, "<b>")
-				.replace(/<\/strong>/gm, "</b>")
-				.replace(/rel="noopener noreferrer nofollow" /gm, "");
-			console.log(
-				"cleanTextFromUnsupportedHTMLtag:",
-				cleanTextFromUnsupportedHTMLtag
-			);
-			const sendJustText = this.isArrayEmpty(mediaArray);
+
 			try {
+				const cleanText = this.cleanTextFromUnsupportedHTMLtag(
+					text.trim()
+				);
+
+				const sendJustText = await this.isArrayEmpty(mediaArray);
 				if (sendJustText) {
-					this.bot.sendMessage(
+					await this.bot.telegram.sendMessage(
 						this.chatId,
-						cleanTextFromUnsupportedHTMLtag,
-						{ parse_mode: "HTML" }
+						cleanText,
+						{
+							parse_mode: "HTML",
+						}
 					);
 				} else {
 					const {
 						mediaPhotosAndVideos,
 						mediaDocuments,
 						mediaAudios,
-					} = this.composeMediaGroup(
-						cleanTextFromUnsupportedHTMLtag,
-						mediaArray
-					);
+					} = await this.composeMediaGroup(cleanText, mediaArray);
 
 					console.log(
-						"!!!!!!",
+						`Telegram Service => MediaArrays:\nmediaPhotosAndVideos: `,
 						mediaPhotosAndVideos,
+						`\nmediaDocuments`,
 						mediaDocuments,
+						`\nmediaAudios`,
 						mediaAudios
 					);
 
 					if (!this.isArrayEmpty(mediaDocuments))
-						this.bot.sendMediaGroup(this.chatId, mediaDocuments);
+						this.bot.telegram.sendMediaGroup(
+							this.chatId,
+							mediaDocuments
+						);
 
 					if (!this.isArrayEmpty(mediaAudios))
-						this.bot.sendMediaGroup(this.chatId, mediaAudios);
-
-					console.log(
-						"!!!!!!!!!!!",
-						this.isArrayEmpty(mediaPhotosAndVideos)
-					);
+						this.bot.telegram.sendMediaGroup(
+							this.chatId,
+							mediaAudios
+						);
 
 					if (!this.isArrayEmpty(mediaPhotosAndVideos));
-					this.bot.sendMediaGroup(this.chatId, mediaPhotosAndVideos);
+					this.bot.telegram.sendMediaGroup(
+						this.chatId,
+						mediaPhotosAndVideos
+					);
 				}
 			} catch (error) {
 				console.log("Error in sendPost:", error);

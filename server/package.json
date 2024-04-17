@@ -28,8 +28,8 @@
     "moleculer-db": "^0.8.25",
     "moleculer-web": "^0.10.4",
     "nats": "^2.19.0",
-    "node-telegram-bot-api": "^0.64.0",
     "pg": "^8.11.3",
+    "telegraf": "^4.16.3",
     "uuid": "^9.0.1",
     "winston": "^3.13.0",
     "winston-transport-sentry-node": "^2.7.1"

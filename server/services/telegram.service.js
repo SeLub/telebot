@@ -5,7 +5,7 @@ module.exports = {
 	name: "telegram",
 	async started() {
 		const token = process.env.TELEGRAM_BOT_TOKEN;
-		this.chatId = process.env.TELEGRAM_CHAT_ID;
+		this.metadata.chatId = process.env.TELEGRAM_CHAT_ID;
 		this.storagePath =
 			process.env.STORAGE_ENDPOINT +
 			"/" +
@@ -52,36 +52,36 @@ module.exports = {
 			}
 		},
 		composeMediaGroup(text, mediaArray) {
-			let mediaPhotosAndVideos = [];
-			let mediaDocuments = [];
-			let mediaAudios = [];
+			this.metadata.mediaPhotosAndVideos = [];
+			this.metadata.mediaDocuments = [];
+			this.metadata.mediaAudios = [];
 
 			mediaArray.forEach((fileName) => {
 				const type = this.getMediaContentType(fileName);
 				switch (type) {
 					case "photo":
-						mediaPhotosAndVideos.push({
+						this.metadata.mediaPhotosAndVideos.push({
 							type: "photo",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
 						});
 						return;
 					case "video":
-						mediaPhotosAndVideos.push({
+						this.metadata.mediaPhotosAndVideos.push({
 							type: "video",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
 						});
 						return;
 					case "document":
-						mediaDocuments.push({
+						this.metadata.mediaDocuments.push({
 							type: "document",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
 						});
 						return;
 					case "audio":
-						mediaAudios.push({
+						this.metadata.mediaAudios.push({
 							type: "audio",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
@@ -92,32 +92,35 @@ module.exports = {
 				}
 			});
 
-			const mediaGroup = this.addTextToMediaGroup(text, {
-				mediaPhotosAndVideos,
-				mediaDocuments,
-				mediaAudios,
-			});
+			this.addTextToMediaGroup(text);
+			const mediaGroup = [];
+			if (this.metadata.mediaPhotosAndVideos.length > 0)
+				mediaGroup.push(this.metadata.mediaPhotosAndVideos);
+			if (this.metadata.mediaDocuments.length > 0)
+				mediaGroup.push(this.metadata.mediaDocuments);
+			if (this.metadata.mediaAudios.length > 0)
+				mediaGroup.push(this.metadata.mediaAudios);
 			return mediaGroup;
 		},
-		addTextToMediaGroup(text, mediaGroup) {
-			const { mediaPhotosAndVideos, mediaDocuments, mediaAudios } =
-				mediaGroup;
+		addTextToMediaGroup(text) {
 			let capthionAdded = false;
-			if (mediaPhotosAndVideos[0] !== undefined) {
-				mediaPhotosAndVideos[0]["caption"] = text;
+			if (this.metadata.mediaPhotosAndVideos[0] !== undefined) {
+				this.metadata.mediaPhotosAndVideos[0]["caption"] = text;
 				capthionAdded = true;
 			}
 
-			if (mediaDocuments[0] !== undefined && !capthionAdded) {
-				mediaDocuments[0]["caption"] = text;
+			if (
+				this.metadata.mediaDocuments[0] !== undefined &&
+				!capthionAdded
+			) {
+				this.metadata.mediaDocuments[0]["caption"] = text;
 				capthionAdded = true;
 			}
 
-			if (mediaAudios[0] !== undefined && !capthionAdded) {
-				mediaAudios[0]["caption"] = text;
+			if (this.metadata.mediaAudios[0] !== undefined && !capthionAdded) {
+				this.metadata.mediaAudios[0]["caption"] = text;
 				capthionAdded = true;
 			}
-			return mediaGroup;
 		},
 		cleanTextFromUnsupportedHTMLtag(text) {
 			return (
@@ -141,57 +144,67 @@ module.exports = {
 		},
 		async sendPost(ctx) {
 			const { text, mediaArray } = ctx.params;
+			console.log("mediaArray ", Array.isArray(mediaArray));
+			this.metadata.text = this.cleanTextFromUnsupportedHTMLtag(text);
 
-			try {
-				const cleanText = this.cleanTextFromUnsupportedHTMLtag(
-					text.trim()
+			const sendJustText = this.isArrayEmpty(mediaArray);
+
+			let status = "",
+				message = "";
+
+			if (sendJustText) {
+				this.bot.telegram
+					.sendMessage(this.metadata.chatId, this.metadata.text, {
+						parse_mode: "HTML",
+					})
+					.then((result) => {
+						console.log("result ", result);
+						status = 200;
+						message = "OK";
+					})
+					.catch((err) => {
+						if (!err.response.ok) {
+							status = 500;
+							message = err.response.description;
+						}
+					})
+					.finally(() => {
+						console.log("status ", status);
+						console.log("message ", message);
+						return { status, message };
+					});
+			} else {
+				this.metadata.mediaArray = mediaArray;
+
+				this.metadata.mediaGroup = await this.composeMediaGroup(
+					this.metadata.text,
+					this.metadata.mediaArray
 				);
 
-				const sendJustText = await this.isArrayEmpty(mediaArray);
-				if (sendJustText) {
-					await this.bot.telegram.sendMessage(
-						this.chatId,
-						cleanText,
-						{
-							parse_mode: "HTML",
-						}
-					);
-				} else {
-					const {
-						mediaPhotosAndVideos,
-						mediaDocuments,
-						mediaAudios,
-					} = await this.composeMediaGroup(cleanText, mediaArray);
-
-					console.log(
-						`Telegram Service => MediaArrays:\nmediaPhotosAndVideos: `,
-						mediaPhotosAndVideos,
-						`\nmediaDocuments`,
-						mediaDocuments,
-						`\nmediaAudios`,
-						mediaAudios
-					);
-
-					if (!this.isArrayEmpty(mediaDocuments))
-						this.bot.telegram.sendMediaGroup(
-							this.chatId,
-							mediaDocuments
-						);
-
-					if (!this.isArrayEmpty(mediaAudios))
-						this.bot.telegram.sendMediaGroup(
-							this.chatId,
-							mediaAudios
-						);
-
-					if (!this.isArrayEmpty(mediaPhotosAndVideos));
+				this.metadata.mediaGroup.map((media) => {
 					this.bot.telegram.sendMediaGroup(
-						this.chatId,
-						mediaPhotosAndVideos
+						this.metadata.chatId,
+						media
 					);
-				}
-			} catch (error) {
-				console.log("Error in sendPost:", error);
+					// .then((result) => {
+					// 	//console.log("result ", result);
+					// 	status = 200;
+					// 	message = "OK";
+					// })
+					// .catch((err) => {
+					// 	if (!err.response.ok) {
+					// 		status = 500;
+					// 		message = err.response.description;
+					// 	}
+					// })
+					// .finally(() => {
+					// 	//console.log("status ", status);
+					// 	//console.log("message ", message);
+					// 	return { status, message };
+					// });
+				});
+
+				return { status, message };
 			}
 		},
 	},

@@ -1,11 +1,11 @@
-const telegrambot = require("node-telegram-bot-api");
+const { Telegraf } = require("telegraf");
 require("dotenv").config();
 
 module.exports = {
 	name: "telegram",
 	async started() {
 		const token = process.env.TELEGRAM_BOT_TOKEN;
-		this.chatId = process.env.TELEGRAM_CHAT_ID;
+		this.metadata.chatId = process.env.TELEGRAM_CHAT_ID;
 		this.storagePath =
 			process.env.STORAGE_ENDPOINT +
 			"/" +
@@ -13,9 +13,12 @@ module.exports = {
 			"/" +
 			process.env.STORAGE_ATTACHMENTS_FOLDER +
 			"/";
-		this.bot = new telegrambot(token, { polling: true });
-		this.bot.close();
-		//this.bot.logOut();
+		this.bot = new Telegraf(token);
+		this.bot.launch();
+
+		// Enable graceful stop
+		process.once("SIGINT", () => this.bot.stop("SIGINT"));
+		process.once("SIGTERM", () => this.bot.stop("SIGTERM"));
 	},
 	methods: {
 		isArrayEmpty(arr) {
@@ -37,9 +40,9 @@ module.exports = {
 				case ".xls":
 				case ".xlsx":
 					return "document";
-				case ".avi":
+				//case ".avi":
 				case ".mp4":
-				case ".mpeg":
+				//case ".mpeg":
 				case ".webm":
 					return "video";
 				case ".mp3":
@@ -49,36 +52,36 @@ module.exports = {
 			}
 		},
 		composeMediaGroup(text, mediaArray) {
-			let mediaPhotosAndVideos = [];
-			let mediaDocuments = [];
-			let mediaAudios = [];
+			this.metadata.mediaPhotosAndVideos = [];
+			this.metadata.mediaDocuments = [];
+			this.metadata.mediaAudios = [];
 
 			mediaArray.forEach((fileName) => {
 				const type = this.getMediaContentType(fileName);
 				switch (type) {
 					case "photo":
-						mediaPhotosAndVideos.push({
+						this.metadata.mediaPhotosAndVideos.push({
 							type: "photo",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
 						});
 						return;
 					case "video":
-						mediaPhotosAndVideos.push({
+						this.metadata.mediaPhotosAndVideos.push({
 							type: "video",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
 						});
 						return;
 					case "document":
-						mediaDocuments.push({
+						this.metadata.mediaDocuments.push({
 							type: "document",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
 						});
 						return;
 					case "audio":
-						mediaAudios.push({
+						this.metadata.mediaAudios.push({
 							type: "audio",
 							media: this.storagePath + fileName,
 							parse_mode: "HTML",
@@ -88,88 +91,120 @@ module.exports = {
 						return;
 				}
 			});
+
+			this.addTextToMediaGroup(text);
+			const mediaGroup = [];
+			if (this.metadata.mediaPhotosAndVideos.length > 0)
+				mediaGroup.push(this.metadata.mediaPhotosAndVideos);
+			if (this.metadata.mediaDocuments.length > 0)
+				mediaGroup.push(this.metadata.mediaDocuments);
+			if (this.metadata.mediaAudios.length > 0)
+				mediaGroup.push(this.metadata.mediaAudios);
+			return mediaGroup;
+		},
+		addTextToMediaGroup(text) {
 			let capthionAdded = false;
-			if (mediaPhotosAndVideos[0] !== undefined) {
-				mediaPhotosAndVideos[0]["caption"] = text;
+			if (this.metadata.mediaPhotosAndVideos[0] !== undefined) {
+				this.metadata.mediaPhotosAndVideos[0]["caption"] = text;
 				capthionAdded = true;
 			}
 
-			if (mediaDocuments[0] !== undefined && !capthionAdded) {
-				mediaDocuments[0]["caption"] = text;
+			if (
+				this.metadata.mediaDocuments[0] !== undefined &&
+				!capthionAdded
+			) {
+				this.metadata.mediaDocuments[0]["caption"] = text;
 				capthionAdded = true;
 			}
 
-			if (mediaAudios[0] !== undefined && !capthionAdded) {
-				mediaAudios[0]["caption"] = text;
+			if (this.metadata.mediaAudios[0] !== undefined && !capthionAdded) {
+				this.metadata.mediaAudios[0]["caption"] = text;
 				capthionAdded = true;
 			}
-
-			return { mediaPhotosAndVideos, mediaDocuments, mediaAudios };
+		},
+		cleanTextFromUnsupportedHTMLtag(text) {
+			return (
+				text
+					.replace(/<code>/gm, "<pre>")
+					.replace(/<\/code>/gm, "</pre>")
+					// .replace(/<p><\/p>/gm, "\n")
+					.replace(/<\/pre>[<p><\/p>n]*<pre>/gm, "\n")
+					.replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, "")
+					.replace(/<\/p>|<br>/gm, "\n")
+					.replace(/<\/p>|<li>/gm, "- ")
+					.replace(/<strong>/gm, "<b>")
+					.replace(/<\/strong>/gm, "</b>")
+					.replace(/rel="noopener noreferrer nofollow" /gm, "")
+			);
 		},
 	},
 	actions: {
 		getMe() {
-			return this.bot.getMe();
+			return this.bot.telegram.getMe();
 		},
-		sendPost(ctx) {
+		async sendPost(ctx) {
 			const { text, mediaArray } = ctx.params;
-			// TODO: Move in separate method
-			const cleanTextFromUnsupportedHTMLtag = text
-				.replace(/<code>/gm, "<pre>")
-				.replace(/<\/code>/gm, "</pre>")
-				// .replace(/<p><\/p>/gm, "\n")
-				.replace(/<\/pre>[<p><\/p>n]*<pre>/gm, "\n")
-				.replace(/<p>|<ol>|<\/ol>|<\/li>|<ul>|<\/ul>/gm, "")
-				.replace(/<\/p>|<br>/gm, "\n")
-				.replace(/<\/p>|<li>/gm, "- ")
-				.replace(/<strong>/gm, "<b>")
-				.replace(/<\/strong>/gm, "</b>")
-				.replace(/rel="noopener noreferrer nofollow" /gm, "");
-			console.log(
-				"cleanTextFromUnsupportedHTMLtag:",
-				cleanTextFromUnsupportedHTMLtag
-			);
+			console.log("mediaArray ", Array.isArray(mediaArray));
+			this.metadata.text = this.cleanTextFromUnsupportedHTMLtag(text);
+
 			const sendJustText = this.isArrayEmpty(mediaArray);
-			try {
-				if (sendJustText) {
-					this.bot.sendMessage(
-						this.chatId,
-						cleanTextFromUnsupportedHTMLtag,
-						{ parse_mode: "HTML" }
+
+			let status = "",
+				message = "";
+
+			if (sendJustText) {
+				this.bot.telegram
+					.sendMessage(this.metadata.chatId, this.metadata.text, {
+						parse_mode: "HTML",
+					})
+					.then((result) => {
+						console.log("result ", result);
+						status = 200;
+						message = "OK";
+					})
+					.catch((err) => {
+						if (!err.response.ok) {
+							status = 500;
+							message = err.response.description;
+						}
+					})
+					.finally(() => {
+						console.log("status ", status);
+						console.log("message ", message);
+						return { status, message };
+					});
+			} else {
+				this.metadata.mediaArray = mediaArray;
+
+				this.metadata.mediaGroup = await this.composeMediaGroup(
+					this.metadata.text,
+					this.metadata.mediaArray
+				);
+
+				this.metadata.mediaGroup.map((media) => {
+					this.bot.telegram.sendMediaGroup(
+						this.metadata.chatId,
+						media
 					);
-				} else {
-					const {
-						mediaPhotosAndVideos,
-						mediaDocuments,
-						mediaAudios,
-					} = this.composeMediaGroup(
-						cleanTextFromUnsupportedHTMLtag,
-						mediaArray
-					);
+					// .then((result) => {
+					// 	//console.log("result ", result);
+					// 	status = 200;
+					// 	message = "OK";
+					// })
+					// .catch((err) => {
+					// 	if (!err.response.ok) {
+					// 		status = 500;
+					// 		message = err.response.description;
+					// 	}
+					// })
+					// .finally(() => {
+					// 	//console.log("status ", status);
+					// 	//console.log("message ", message);
+					// 	return { status, message };
+					// });
+				});
 
-					console.log(
-						"!!!!!!",
-						mediaPhotosAndVideos,
-						mediaDocuments,
-						mediaAudios
-					);
-
-					if (!this.isArrayEmpty(mediaDocuments))
-						this.bot.sendMediaGroup(this.chatId, mediaDocuments);
-
-					if (!this.isArrayEmpty(mediaAudios))
-						this.bot.sendMediaGroup(this.chatId, mediaAudios);
-
-					console.log(
-						"!!!!!!!!!!!",
-						this.isArrayEmpty(mediaPhotosAndVideos)
-					);
-
-					if (!this.isArrayEmpty(mediaPhotosAndVideos));
-					this.bot.sendMediaGroup(this.chatId, mediaPhotosAndVideos);
-				}
-			} catch (error) {
-				console.log("Error in sendPost:", error);
+				return { status, message };
 			}
 		},
 	},

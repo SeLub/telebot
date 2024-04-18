@@ -4,6 +4,7 @@ import { IconCopy, IconEdit, IconToggleLeft, IconTrash } from '@tabler/icons-rea
 
 import MyButton from '../../ui/MyButton';
 import Attachments from '../Attachments';
+import PublishPost from '../PublishPost';
 import classes from './PostItem.module.css';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
@@ -56,7 +57,7 @@ function PostItem(props: Props) {
                                 handlers.toggle();
                             }}
                         />
-                        {/* <PublishPost database_name={dbname} post_id={post_id} /> */}
+                        <PublishPost database_name={dbname} post_id={post_id} />
                     </Group>
                     <Group wrap="nowrap" gap="xs" justify="flex-end">
                         <ActionIcon variant="filled" color={'yellow'} aria-label="Clone Post">

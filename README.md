@@ -86,6 +86,24 @@ Find bot **@userinfobot**
 Push /start
 You`ll receive message with Id: ..., First: ..., Last: ..., Lang: ... .
 
+## How to get channel id?
+
+@jsondumpbot or search for JSON Dump Bot on Telegram.
+Forward a message from that channel to the **@jsondumpbot** telegram bot.
+You should see something like:
+
+```
+"forward_from_chat": {
+      "id": -1002014566944,
+      "title": "Соски венеры",
+      "username": "siteup24",
+      "type": "channel"
+    },
+```
+
+Add to .env:
+TELEGRAM_CHAT_ID=-1002014566944
+
 ## How to get database url (DATABASE_URL in .env)?
 
 Go to https://dashboard.render.com/

@@ -149,7 +149,7 @@ function CurrentAttachments(props: { post_id: string; dbname: string; height: nu
             const { UUID, uniqueFileName } = generateUniqueFileName(file.name);
             //Make a request to get signedURL
             const getPresignedURL = await fetch(
-                `${serverHost}/api/storage/geturl?` + new URLSearchParams({ file: uniqueFileName }),
+                `${serverHost}/api/storage/puturl?` + new URLSearchParams({ file: uniqueFileName, folder: 'images' }),
             );
             const { presignedURL } = await getPresignedURL.json();
             await fetch(presignedURL, {
@@ -194,7 +194,24 @@ function CurrentAttachments(props: { post_id: string; dbname: string; height: nu
     return (
         <Flex mih={50} gap="md" justify="flex-start" align="flex-start" direction="row" wrap="wrap">
             {noAttachments && showAttachments()}
-            <Dropzone onDrop={setFiles}>
+            <Dropzone
+                onDrop={setFiles}
+                accept={[
+                    'image/png',
+                    'image/jpeg',
+                    'image/gif',
+                    'image/webp',
+                    // 'text/csv',
+                    // 'text/plain',
+                    'audio/mpeg',
+                    'video/webm',
+                    'video/mp4',
+                    'application/pdf',
+                    // 'application/msword',
+                    // 'application/vnd.ms-excel',
+                    // 'application/vnd.ms-powerpoint',
+                ]}
+            >
                 <Image src={addFilesImage} h={imagesHeight} w="auto" />
             </Dropzone>
             {noFiles && previewUploads()}

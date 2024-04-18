@@ -136,8 +136,6 @@ module.exports = {
 			const response2 = await this.metadata.client.query(`
 				SELECT * FROM INFORMATION_SCHEMA.TABLES 
 				WHERE TABLE_NAME LIKE '${attachmentsTable}'`);
-			console.log(response1.rowCount);
-			console.log(response2.rowCount);
 			if (!response1.rowCount || !response2.rowCount)
 				return Promise.reject(
 					new MoleculerError("database not found!", 404)
@@ -433,7 +431,6 @@ module.exports = {
 					const mediaArray = attachments.map(
 						(element) => element.attachment_filename
 					);
-					console.log({ text, mediaArray });
 					await ctx.call("telegram.sendPost", { text, mediaArray });
 					return mediaArray;
 				} catch (error) {

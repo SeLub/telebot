@@ -17,21 +17,22 @@
   ],
   "author": "",
   "devDependencies": {
-    "jest": "^27.5.1",
-    "jest-cli": "^27.5.1",
     "moleculer-repl": "^0.7.3"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",
     "@aws-sdk/s3-request-presigner": "^3.515.0",
+    "csv-parser": "^3.0.0",
     "dotenv": "^16.4.1",
     "moleculer": "^0.14.26",
     "moleculer-db": "^0.8.25",
     "moleculer-web": "^0.10.4",
     "nats": "^2.19.0",
-    "node-telegram-bot-api": "^0.64.0",
     "pg": "^8.11.3",
-    "uuid": "^9.0.1"
+    "telegraf": "^4.16.3",
+    "uuid": "^9.0.1",
+    "winston": "^3.13.0",
+    "winston-transport-sentry-node": "^2.7.1"
   },
   "engines": {
     "node": ">= 16.x.x"

@@ -1,11 +1,13 @@
-import { ActionIcon, Card, Group, Menu, Text, rem } from '@mantine/core';
+import { ActionIcon, Card, Group, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCopy, IconDots, IconEdit, IconEye, IconFileZip, IconToggleLeft, IconTrash } from '@tabler/icons-react';
+import { IconCopy, IconEdit, IconToggleLeft, IconTrash } from '@tabler/icons-react';
 
 import MyButton from '../../ui/MyButton';
 import Attachments from '../Attachments';
 import PublishPost from '../PublishPost';
 import classes from './PostItem.module.css';
+
+const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 type Props = {
     text: string;
@@ -13,11 +15,26 @@ type Props = {
     dbname: string;
     post_id: string;
     showEditButton: boolean;
+    posts: any;
+    setPosts: any;
 };
 
 function PostItem(props: Props) {
-    const { text, to, dbname, post_id, showEditButton } = props;
+    const { text, to, dbname, post_id, posts, setPosts, showEditButton } = props;
     const [editorHTMLMode, handlers] = useDisclosure(true);
+
+    const deletePost = async () => {
+        try {
+            const response = await fetch(`${serverHost}/api/posts/?database_name=${dbname}&post_id=${post_id}`, {
+                method: 'DELETE',
+            });
+            const newPosts = posts.filter((post) => post.post_id !== post_id);
+            setPosts(newPosts);
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <Card withBorder radius="lg" shadow="sm" className={classes.card}>
@@ -33,18 +50,6 @@ function PostItem(props: Props) {
                             />
                         )}
                         <MyButton
-                            rightSection={<IconCopy size={18} />}
-                            buttonText="Clone Post"
-                            color={'yellow'}
-                            href={to}
-                        />
-                        <MyButton
-                            rightSection={<IconTrash size={18} />}
-                            buttonText="Delete Post"
-                            color={'purple'}
-                            href={to}
-                        />
-                        <MyButton
                             rightSection={<IconToggleLeft size={18} />}
                             buttonText="HTML / Text"
                             color={'green'}
@@ -54,28 +59,14 @@ function PostItem(props: Props) {
                         />
                         <PublishPost database_name={dbname} post_id={post_id} />
                     </Group>
-                    <Menu withinPortal position="bottom-end" shadow="sm">
-                        <Menu.Target>
-                            <ActionIcon variant="subtle" color="gray">
-                                <IconDots style={{ width: rem(16), height: rem(16) }} />
-                            </ActionIcon>
-                        </Menu.Target>
-
-                        <Menu.Dropdown>
-                            <Menu.Item leftSection={<IconFileZip style={{ width: rem(14), height: rem(14) }} />}>
-                                Download zip
-                            </Menu.Item>
-                            <Menu.Item leftSection={<IconEye style={{ width: rem(14), height: rem(14) }} />}>
-                                Preview all
-                            </Menu.Item>
-                            <Menu.Item
-                                leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}
-                                color="red"
-                            >
-                                Delete all
-                            </Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
+                    <Group wrap="nowrap" gap="xs" justify="flex-end">
+                        <ActionIcon variant="filled" color={'yellow'} aria-label="Clone Post">
+                            <IconCopy size={18} />
+                        </ActionIcon>
+                        <ActionIcon variant="filled" color={'red'} aria-label="Delete Post">
+                            <IconTrash size={18} onDoubleClick={() => deletePost()} />
+                        </ActionIcon>
+                    </Group>
                 </Group>
             </Card.Section>
             <Card.Section inheritPadding py="xs">

@@ -86,6 +86,24 @@ Find bot **@userinfobot**
 Push /start
 You`ll receive message with Id: ..., First: ..., Last: ..., Lang: ... .
 
+## How to get channel id?
+
+@jsondumpbot or search for JSON Dump Bot on Telegram.
+Forward a message from that channel to the **@jsondumpbot** telegram bot.
+You should see something like:
+
+```
+"forward_from_chat": {
+      "id": -1002014566944,
+      "title": "Соски венеры",
+      "username": "siteup24",
+      "type": "channel"
+    },
+```
+
+Add to .env:
+TELEGRAM_CHAT_ID=-1002014566944
+
 ## How to get database url (DATABASE_URL in .env)?
 
 Go to https://dashboard.render.com/
@@ -139,3 +157,27 @@ service docker start
 docker tag postup:latest selub/postup:latest
 
 docker push selub/postup:latest
+
+# Winston & Sentry logging
+
+## Server
+
+Add to .env for development:
+
+SENTRY_DSN=https://....ingest.us.sentry.io/4506868529168384
+SENTRY_ENV=development
+
+For production
+
+SENTRY_DSN=https://....ingest.us.sentry.io/4506868529168384
+SENTRY_ENV=production
+
+## Webapp
+
+Add to .env for development:
+VITE_SENTRY_DSN=https://....ingest.us.sentry.io/4507072471891968
+VITE_SENTRY_ENV=development
+
+For production
+VITE_SENTRY_DSN=https://....ingest.us.sentry.io/4507072471891968
+VITE_SENTRY_ENV=production

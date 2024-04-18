@@ -3,33 +3,39 @@ const { Client } = require("pg");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 const { MoleculerError } = require("moleculer").Errors;
+const csvParser = require("csv-parser");
+const { Readable } = require("node:stream");
 
 //const notFoundError = (id) => { throw new MoleculerError(`Record with ${id} not found.`, 404, "ERR_NOTFOUND"); }
-
-// PostgreSQL connection configuration
-const pgConfig = {
-	connectionString: process.env.DATABASE_URL,
-	ssl: {
-		rejectUnauthorized: false,
-	},
-};
-
-// Create a PostgreSQL client
-const client = new Client(pgConfig);
-
-// Connect to the PostgreSQL database
-client
-	.connect()
-	.then(() => console.log("Connected to PostgreSQL database"))
-	.catch((err) => console.error("Error connecting to PostgreSQL:", err));
 
 module.exports = {
 	name: "posts",
 	settings: {},
 	async started() {
 		try {
-			// Check if the tables exist, create them if not
-			await this.createTables();
+			// PostgreSQL connection configuration
+			const pgConfig = {
+				connectionString: process.env.DATABASE_URL,
+				ssl: {
+					rejectUnauthorized: false,
+				},
+			};
+
+			// Create a PostgreSQL client
+			const client = new Client(pgConfig);
+
+			// Connect to the PostgreSQL database
+			client
+				.connect()
+				.then(() => {
+					this.metadata.client = client;
+					this.logger.info("Connected to PostgreSQL database");
+				})
+				.catch((err) =>
+					this.logger.error(
+						`Error connecting to PostgreSQL:\n ${err}`
+					)
+				);
 		} catch (err) {
 			console.error("Error creating tables:", err);
 		}
@@ -40,62 +46,63 @@ module.exports = {
 			const uniqueDatabaseName = dbname; // + "_" + databaseId;
 			const postsTable = uniqueDatabaseName + "_posts";
 			const attachmentsTable = uniqueDatabaseName + "_attachments";
+
 			let created = false;
 			// Check if the "post" table exists
-			let res = await client.query(`
-                SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
-                    WHERE table_schema = 'public' 
-                    AND table_name = '${postsTable}'
-                );
-            `);
+			let res = await this.metadata.client.query(`
+				SELECT EXISTS (
+					SELECT FROM information_schema.tables 
+					WHERE table_schema = 'public' 
+					AND table_name = '${postsTable}'
+				);
+				`);
 
 			// If the "posts" table doesn't exist, create it
 			if (!res.rows[0].exists) {
-				await client.query(`
-                    CREATE TABLE ${postsTable} (
-                        post_id UUID PRIMARY KEY,
-                        post_text TEXT
-                    );
+				await this.metadata.client.query(`
+					CREATE TABLE ${postsTable} (
+						post_id UUID PRIMARY KEY,
+						post_text TEXT
+					);
                 `);
 			}
 
 			// Check if the "attachments" table exists
-			res = await client.query(`
-                SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
-                    WHERE table_schema = 'public' 
-                    AND table_name = '${attachmentsTable}'
-                );
-            `);
+			res = await this.metadata.client.query(`
+				SELECT EXISTS (
+					SELECT FROM information_schema.tables 
+					WHERE table_schema = 'public' 
+					AND table_name = '${attachmentsTable}'
+				);
+            	`);
 
-			// If the "photo" table doesn't exist, create it
+			// If the "attachments" table doesn't exist, create it
 			if (!res.rows[0].exists) {
 				created = true;
-				await client.query(`
-                    CREATE TABLE ${attachmentsTable} (
-                        attachment_id UUID PRIMARY KEY,
-                        post_id_attachment UUID,
-                        attachment_filename TEXT,
-                        FOREIGN KEY (post_id_attachment) REFERENCES ${postsTable}(post_id)
-                    );
-                `);
-				await client.query(`
-                INSERT INTO databases (database_id, database_name)
-                VALUES ('${databaseId}', '${uniqueDatabaseName}');
-                `);
+				await this.metadata.client.query(`
+					CREATE TABLE ${attachmentsTable} (
+						attachment_id UUID PRIMARY KEY,
+						post_id_attachment UUID,
+						attachment_filename TEXT,
+						FOREIGN KEY (post_id_attachment) REFERENCES ${postsTable}(post_id)
+					);
+                		`);
+				await this.metadata.client.query(`
+                		INSERT INTO databases (database_id, database_name)
+                		VALUES ('${databaseId}', '${uniqueDatabaseName}');
+                	`);
 			}
-			return created;
+			return databaseId;
 		},
 		async getDatabases() {
-			const res = await client.query(`
+			const res = await this.metadata.client.query(`
                 SELECT * FROM databases;
             `);
 			return res.rows;
 		},
 		async getDatabase(id) {
-			const res = await client.query(`
-                  	SELECT database_name FROM databases WHERE database_id = '${id}';
+			const res = await this.metadata.client.query(`
+                  	SELECT * FROM databases WHERE database_id = '${id}';
             	`);
 			return res.rows[0];
 		},
@@ -103,98 +110,37 @@ module.exports = {
 			try {
 				const postsTable = name + "_posts";
 				const attachmentsTable = name + "_attachments";
-				await client.query(`
-                    DROP TABLE IF EXISTS ${postsTable};
-                    `);
-				await client.query(`
-                    DROP TABLE IF EXISTS ${attachmentsTable};
-                    `);
-				await client.query(`
-                    DELETE FROM databases WHERE database_name = '${name}';
-                    `);
+				await this.metadata.client.query(`
+					DROP TABLE IF EXISTS ${attachmentsTable};
+					`);
+				await this.metadata.client.query(`
+					DROP TABLE IF EXISTS ${postsTable};
+					`);
+				await this.metadata.client.query(`
+					DELETE FROM databases WHERE database_name = '${name}';
+					`);
 				return true;
-			} catch (error) {
-				console.log(error);
+			} catch (err) {
+				this.logger.error(
+					`Error in method: 'posts.deleteDatabase' :\n ${err}`
+				);
 				return false;
-			}
-		},
-		async createTables() {
-			// Check if the "databases" table exists
-			let res = await client.query(`
-                                    SELECT EXISTS (
-                                        SELECT FROM information_schema.tables 
-                                        WHERE table_schema = 'public' 
-                                        AND table_name = 'databases'
-                                    );
-                                `);
-
-			// If the "databases" table doesn't exist, create it
-			if (!res.rows[0].exists) {
-				await client.query(`
-                                        CREATE TABLE databases (
-                                            database_id UUID PRIMARY KEY,
-                                            database_name TEXT
-                                        );
-                                    `);
-			}
-			// Check if the "post" table exists
-			res = await client.query(`
-                SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
-                    WHERE table_schema = 'public' 
-                    AND table_name = 'post'
-                );
-            `);
-
-			// If the "post" table doesn't exist, create it
-			if (!res.rows[0].exists) {
-				await client.query(`
-                    CREATE TABLE post (
-                        post_id UUID PRIMARY KEY,
-                        post_text TEXT
-                    );
-                `);
-				console.log("Created 'post' table");
-			}
-
-			// Check if the "photo" table exists
-			res = await client.query(`
-                SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
-                    WHERE table_schema = 'public' 
-                    AND table_name = 'photo'
-                );
-            `);
-
-			// If the "photo" table doesn't exist, create it
-			if (!res.rows[0].exists) {
-				await client.query(`
-                    CREATE TABLE photo (
-                        photo_id UUID PRIMARY KEY,
-                        post_id_photo UUID,
-                        photo_filename TEXT,
-                        FOREIGN KEY (post_id_photo) REFERENCES post(post_id)
-                    );
-                `);
-				console.log("Created 'photo' table");
 			}
 		},
 		async checkPostExists(database_name, post_id) {
 			const postsTable = database_name + "_posts";
 			const attachmentsTable = database_name + "_attachments";
-			const response1 = await client.query(`
+			const response1 = await this.metadata.client.query(`
 				SELECT * FROM INFORMATION_SCHEMA.TABLES 
 				WHERE TABLE_NAME LIKE '${postsTable}'`);
-			const response2 = await client.query(`
+			const response2 = await this.metadata.client.query(`
 				SELECT * FROM INFORMATION_SCHEMA.TABLES 
 				WHERE TABLE_NAME LIKE '${attachmentsTable}'`);
-			console.log(response1.rowCount);
-			console.log(response2.rowCount);
 			if (!response1.rowCount || !response2.rowCount)
 				return Promise.reject(
 					new MoleculerError("database not found!", 404)
 				);
-			const res = await client.query(
+			const res = await this.metadata.client.query(
 				`
                 		SELECT COUNT(*) FROM ${postsTable} WHERE post_id = $1;`,
 				[post_id]
@@ -208,7 +154,7 @@ module.exports = {
 		async createPost(database_name, post_text) {
 			const postsTable = database_name + "_posts";
 			const post_id = uuidv4();
-			await client.query(
+			await this.metadata.client.query(
 				`
                 		INSERT INTO ${postsTable} (post_id, post_text)
                 		VALUES ($1, $2);`,
@@ -218,7 +164,7 @@ module.exports = {
 		},
 		async getPosts(database_name) {
 			const postsTable = database_name + "_posts";
-			const res = await client.query(`
+			const res = await this.metadata.client.query(`
                     SELECT * FROM ${postsTable};
                 `);
 			return res.rows;
@@ -226,7 +172,7 @@ module.exports = {
 		async getPost(database_name, post_id) {
 			const postsTable = database_name + "_posts";
 			await this.checkPostExists(database_name, post_id);
-			const res = await client.query(
+			const res = await this.metadata.client.query(
 				`SELECT * FROM ${postsTable} WHERE post_id = $1;`,
 				[post_id]
 			);
@@ -234,7 +180,7 @@ module.exports = {
 		},
 		async editPost(database_name, post_id, post_text) {
 			const postsTable = database_name + "_posts";
-			await client.query(
+			await this.metadata.client.query(
 				`
 				UPDATE ${postsTable} SET post_text = $1 
 				WHERE post_id = $2;`,
@@ -247,11 +193,11 @@ module.exports = {
 			const attachmentsTable = database_name + "_attachments";
 			try {
 				await this.checkPostExists(database_name, post_id);
-				await client.query(
+				await this.metadata.client.query(
 					`DELETE FROM ${attachmentsTable} WHERE post_id_attachment = $1;`,
 					[post_id]
 				);
-				await client.query(
+				await this.metadata.client.query(
 					`DELETE FROM ${postsTable} WHERE post_id = $1;`,
 					[post_id]
 				);
@@ -263,7 +209,7 @@ module.exports = {
 		},
 		async getAttachments(database_name, post_id) {
 			const attachmentsTable = database_name + "_attachments";
-			const res = await client.query(
+			const res = await this.metadata.client.query(
 				`
 				SELECT * FROM ${attachmentsTable} WHERE post_id_attachment = $1;`,
 				[post_id]
@@ -278,7 +224,7 @@ module.exports = {
 		) {
 			const attachmentsTable = database_name + "_attachments";
 			try {
-				await client.query(
+				await this.metadata.client.query(
 					`
 				INSERT INTO ${attachmentsTable} (attachment_id, post_id_attachment, attachment_filename)
 				VALUES ($1, $2, $3);`,
@@ -288,6 +234,38 @@ module.exports = {
 			} catch (error) {
 				console.log(error);
 				return false;
+			}
+		},
+		async fetchAndParseCSV(url) {
+			try {
+				// Fetch the CSV file from the server
+				const response = await fetch(url);
+
+				// Check if the response is OK
+				if (!response.ok) {
+					throw new Error(
+						`Failed to fetch CSV: ${response.statusText}`
+					);
+				}
+
+				// Create a readable stream from the response body
+				const bodyStream = Readable.from(await response.text());
+
+				// Create a promise to parse the CSV
+				const csvData = new Promise((resolve, reject) => {
+					const results = [];
+					bodyStream
+						.pipe(csvParser())
+						.on("data", (data) => results.push(data))
+						.on("end", () => resolve(results))
+						.on("error", (error) => reject(error));
+				});
+
+				// Wait for the CSV to be parsed and return the array of objects
+				return await csvData;
+			} catch (error) {
+				console.error("Error fetching or parsing CSV:", error);
+				throw error; // You may handle this error according to your application's logic
 			}
 		},
 		authorize(ctx, route, req, res) {
@@ -423,7 +401,7 @@ module.exports = {
 					await ctx.call("storage.deleteFile", {
 						filename: attachment_filename,
 					});
-					await client.query(
+					await this.metadata.client.query(
 						`
 						DELETE FROM ${attachmentsTable} WHERE post_id_attachment = $1 AND attachment_filename = $2;`,
 						[post_id, attachment_filename]
@@ -453,7 +431,6 @@ module.exports = {
 					const mediaArray = attachments.map(
 						(element) => element.attachment_filename
 					);
-					console.log({ text, mediaArray });
 					await ctx.call("telegram.sendPost", { text, mediaArray });
 					return mediaArray;
 				} catch (error) {
@@ -461,15 +438,15 @@ module.exports = {
 				}
 			},
 		},
-		createDatabse: {
+		createDatabase: {
 			rest: "POST /database",
 			params: {
 				dbname: { type: "string" },
 			},
 			async handler(ctx) {
 				const { dbname } = ctx.params;
-				const result = await this.createDatabase(dbname);
-				return result;
+				const dbId = await this.createDatabase(dbname);
+				return await this.getDatabase(dbId);
 			},
 		},
 		getDatabases: {
@@ -499,6 +476,30 @@ module.exports = {
 				const { name } = ctx.params;
 				const result = await this.deleteDatabase(name);
 				return result;
+			},
+		},
+		import: {
+			rest: "POST /import",
+			params: {
+				database_name: { type: "string" },
+				import_file: { type: "string" },
+			},
+			async handler(ctx) {
+				const { database_name, import_file } = ctx.params;
+				const { presignedURL } = await ctx.call("storage.getUrl", {
+					file: import_file,
+					folder: "import",
+				});
+				await this.fetchAndParseCSV(presignedURL)
+					.then((data) => {
+						console.log("Parsed CSV data:", data);
+						data.forEach((row) => {
+							this.createPost(database_name, row.post_text);
+						});
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+					});
 			},
 		},
 	},

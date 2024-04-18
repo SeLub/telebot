@@ -18,6 +18,9 @@ const CreatePublisherForm = (props) => {
 
     return (
         <Flex mih={50} gap="md" justify="flex-start" align="center" direction="row" wrap="wrap">
+            <InputPublisherName pubname={pubname} saved={saved} setSaved={setSaved} setPubname={setPubname} />
+            <SelectBot saved={saved} bots={bots} setBot={setBot} />
+            <SelectChannel saved={saved} channels={channels} setChannel={setChannel} />
             <SavePublisherButton
                 pubname={pubname}
                 bot={bot}
@@ -27,9 +30,6 @@ const CreatePublisherForm = (props) => {
                 saved={saved}
                 setSaved={setSaved}
             />
-            <InputPublisherName pubname={pubname} saved={saved} setSaved={setSaved} setPubname={setPubname} />
-            <SelectBot saved={saved} bots={bots} setBot={setBot} />
-            <SelectChannel saved={saved} channels={channels} setChannel={setChannel} />
         </Flex>
     );
 };

@@ -1,65 +1,39 @@
-import { Badge, Group, Paper, PasswordInput, Stack, Text, TextInput } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
-import { IconKey, IconPassword, IconPhone } from '@tabler/icons-react';
-import { useState } from 'react';
+import { Divider, Switch, Text, Title } from '@mantine/core';
+import { Fragment, useState } from 'react';
 
-import MyButton from '../../ui/MyButton';
+import { isArrayEmpty } from '../../../utils';
+import InputBots from '../../Bots/InputBots';
+import InputChannels from '../../Channels/InputChannels';
+import Auth from './Auth';
 
-const Step1 = () => {
-    const [logged, setLogged] = useLocalStorage({
-        key: 'logged',
-        defaultValue: false,
-    });
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
-    const [code, setCode] = useState('');
-    const [codeRequested, setCodeRequested] = useState(false);
-    const buttonDisabled = phone.length === 0 || password.length === 0;
+const Step1 = ({ setDisabledNext }) => {
+    const [ihavebots, setIhavebots] = useState(false);
+    const [bots, setBots] = useState([]);
+    const [channels, setChannels] = useState([]);
+    if (!isArrayEmpty(bots) && !isArrayEmpty(channels)) {
+        setDisabledNext(false);
+    } else {
+        setDisabledNext(true);
+    }
     return (
-        <Paper radius="md" p="xl">
-            <Group justify="flex-start" mt="md" mb="xs">
-                <Text fw={500}>Status :</Text>
-                {logged ? <Badge color="green">Logged In</Badge> : <Badge color="pink">Logged Out</Badge>}
-            </Group>
-            <Stack w={300}>
-                <TextInput
-                    required
-                    value={phone}
-                    onChange={(event) => setPhone(event.currentTarget.value)}
-                    leftSectionPointerEvents="none"
-                    leftSection={<IconPhone size={24} />}
-                    label="Your phone"
-                    placeholder="Your phone"
-                />
-                <PasswordInput
-                    required
-                    value={password}
-                    onChange={(event) => setPassword(event.currentTarget.value)}
-                    placeholder="Your password"
-                    leftSection={<IconPassword size={24} />}
-                />
-                <MyButton
-                    disabled={phone.length === 0 || password.length === 0}
-                    buttonText="Get Phone Code"
-                    leftSection={<IconKey size={24} />}
-                    onClick={() => {
-                        setCodeRequested(true);
-                        console.log('getCode');
-                    }}
-                ></MyButton>
-                {!buttonDisabled && codeRequested && (
-                    <TextInput
-                        required
-                        value={code}
-                        onChange={(event) => setCode(event.currentTarget.value)}
-                        leftSectionPointerEvents="none"
-                        leftSection={<IconKey size={24} />}
-                        label="Code from phone"
-                        placeholder="Code from phone"
-                    />
-                )}
-            </Stack>
-        </Paper>
+        <Fragment>
+            <Title order={3}>Step 1: Create channels and bots</Title>
+            <Text size="md">Define channeles and bots.</Text>
+            <Switch
+                checked={ihavebots}
+                size="lg"
+                onChange={(event) => setIhavebots(event.currentTarget.checked)}
+                label="I want to create channels and bots."
+            />
+            <Divider my="md" />
+            {ihavebots && <Auth />}
+            {!ihavebots && (
+                <>
+                    <InputBots bots={bots} setBots={setBots} />{' '}
+                    <InputChannels channels={channels} setChannels={setChannels} />
+                </>
+            )}
+        </Fragment>
     );
 };
 export default Step1;

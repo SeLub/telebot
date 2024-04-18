@@ -33,3 +33,16 @@ export interface IDatabases {
     database_id: string;
     database_name: string;
 }
+
+export interface IChannel {
+    channel_id?: string;
+    channel_name: string;
+    channel_chat_id: string;
+    channel_url: string;
+}
+
+export interface IBot {
+    bot_id?: string;
+    bot_name: string;
+    bot_token: string;
+}

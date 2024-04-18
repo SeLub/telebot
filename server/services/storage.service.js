@@ -93,21 +93,23 @@ module.exports = {
 				console.error(err);
 			}
 		},
-		getUrl: {
-			rest: "GET /geturl",
+		putUrl: {
+			rest: "GET /puturl",
 			params: {
 				file: { type: "string" },
+				folder: { type: "string" },
 			},
 			async handler(ctx) {
-				const { file } = ctx.params;
-
-				const fileNameWithPath = `images/${decodeURIComponent(file)}`;
+				const { file, folder } = ctx.params;
+				const dfolder = decodeURIComponent(folder);
+				const dfile = decodeURIComponent(file);
+				const fileNameWithPath = `${dfolder}/${dfile}`;
 				const ContentType = this.getImageContentType(fileNameWithPath);
 
 				const commandParams = {
 					Bucket,
 					Key: fileNameWithPath,
-					//ContentType, // Set the content type here
+					ContentType,
 					ACL: "public-read",
 				};
 
@@ -125,17 +127,50 @@ module.exports = {
 				}
 			},
 		},
+		getUrl: {
+			rest: "GET /geturl",
+			params: {
+				file: { type: "string" },
+				folder: { type: "string" },
+			},
+			async handler(ctx) {
+				const { file, folder } = ctx.params;
+				const dfolder = decodeURIComponent(folder);
+				const dfile = decodeURIComponent(file);
+				const fileNameWithPath = `${dfolder}/${dfile}`;
+				const ContentType = this.getImageContentType(fileNameWithPath);
+
+				const commandParams = {
+					Bucket,
+					Key: fileNameWithPath,
+					ContentType,
+					ACL: "public-read",
+				};
+				const getCommand = new GetObjectCommand(commandParams);
+
+				try {
+					const presignedURL = await getSignedUrl(
+						s3Client,
+						getCommand,
+						{ expiresIn: 3600 }
+					);
+					return { presignedURL };
+				} catch (error) {
+					console.log("Error during presigned URL", error);
+				}
+			},
+		},
 		deleteFile: {
 			rest: "DELETE /file/",
 			params: {
 				filename: { type: "string" },
 			},
 			async handler(ctx) {
+				const { file, folder } = ctx.params;
+				const dfolder = decodeURIComponent(folder);
+				const dfile = decodeURIComponent(file);
+				const fileNameWithPath = `${dfolder}/${dfile}`;
 				const { filename } = ctx.params;
-
-				const fileNameWithPath = `images/${decodeURIComponent(
-					filename
-				)}`;
 
 				const commandParams = {
 					Bucket,

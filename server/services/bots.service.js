@@ -32,7 +32,6 @@ module.exports = {
 			.connect()
 			.then(async () => {
 				await this.logger.info("Connected to PostgreSQL database");
-				
 			})
 			.catch((err) =>
 				this.logger.error(`Error connecting to PostgreSQL:\n ${err}`)
@@ -264,11 +263,6 @@ module.exports = {
 			async handler(ctx) {
 				const { bot_name } = ctx.params;
 				const res = await this.getBot(bot_name);
-				if (res.rows.length === 0) {
-					ctx.meta.$statusCode = 404;
-				} else {
-					ctx.meta.$statusCode = 200;
-				}
 				return res.rows;
 			},
 		},

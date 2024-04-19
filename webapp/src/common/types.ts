@@ -34,14 +34,14 @@ export interface IDatabases {
     database_name: string;
 }
 
-export interface IChannel {
+export interface IChannels {
     channel_id?: string;
     channel_name: string;
     channel_chat_id: string;
     channel_url: string;
 }
 
-export interface IBot {
+export interface IBots {
     bot_id?: string;
     bot_name: string;
     bot_token: string;

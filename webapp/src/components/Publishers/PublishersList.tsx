@@ -1,7 +1,8 @@
 import { Divider, Paper, Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 
-import { IPublishers } from '../../common/types';
+import { IBots, IChannels, IPublishers } from '../../common/types';
+import { isArrayEmpty } from '../../utils';
 import CreatePublisherForm from './CreatePublisherForm/CreatePublisherForm';
 import ListPublishers from './ListPublishers';
 
@@ -12,8 +13,32 @@ const fetchPublishers = async () => {
     return response.ok ? await response.json() : [];
 };
 
-function PublishersList() {
+const fetchBots = async () => {
+    const response = await fetch(`${serverHost}/api/bots`);
+    return response.ok ? await response.json() : [];
+};
+
+const fetchDatabases = async () => {
+    const response = await fetch(`${serverHost}/api/posts/databases`);
+    return response.ok ? await response.json() : [];
+};
+
+const fetchChannels = async () => {
+    const response = await fetch(`${serverHost}/api/channels`);
+    return response.ok ? await response.json() : [];
+};
+
+function PublishersList({ setDisabledNext }) {
     const [publishers, setPublishers] = useState<IPublishers[] | []>([]);
+    const [bots, setBots] = useState<IBots[]>([]);
+    const [channels, setChannels] = useState<IChannels[]>([]);
+    const [databases, setDatabases] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (setDisabledNext !== undefined) {
+            setDisabledNext(isArrayEmpty(publishers));
+        }
+    }, [publishers, setDisabledNext]);
 
     useEffect(() => {
         const prevPublisher = publishers;
@@ -23,14 +48,35 @@ function PublishersList() {
                 setPublishers(currentPublishers);
             }
         }
+        async function getBots() {
+            const currentBots = await fetchBots();
+            setBots(currentBots);
+        }
+        async function getChannels() {
+            const currentChannels = await fetchChannels();
+            setChannels(currentChannels);
+        }
+        async function getDatabases() {
+            const currentDatabases = await fetchDatabases();
+            setDatabases(currentDatabases);
+        }
         getPublishers();
-    }, [publishers]);
+        getBots();
+        getChannels();
+        getDatabases();
+    }, [publishers, bots.length, channels.length, databases.length]);
 
     return (
         <Fragment>
-            <Title order={1}>Publishers</Title>
+            <Title order={2}>Publishers</Title>
             <Paper shadow="lg" withBorder p="xl">
-                <CreatePublisherForm publishers={publishers} setPublishers={setPublishers} />
+                <CreatePublisherForm
+                    publishers={publishers}
+                    setPublishers={setPublishers}
+                    bots={bots}
+                    channels={channels}
+                    databases={databases}
+                />
                 <Divider my="md" />
                 <ListPublishers publishers={publishers} setPublishers={setPublishers} />
             </Paper>

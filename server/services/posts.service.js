@@ -178,6 +178,19 @@ module.exports = {
 			);
 			return res.rows;
 		},
+		async getFullPost(database_name, post_id) {
+			const postArray = await this.getPost(database_name, post_id);
+			const { post_text } = postArray[0];
+			const attachments = await this.getAttachments(
+				database_name,
+				post_id
+			);
+			return {
+				post_id,
+				post_text,
+				attachments,
+			};
+		},
 		async editPost(database_name, post_id, post_text) {
 			const postsTable = database_name + "_posts";
 			await this.metadata.client.query(
@@ -322,6 +335,17 @@ module.exports = {
 			async handler(ctx) {
 				const { database_name, post_id } = ctx.params;
 				return await this.getPost(database_name, post_id);
+			},
+		},
+		getFullPost: {
+			rest: "GET /full",
+			params: {
+				post_id: { type: "uuid" },
+				database_name: { type: "string" },
+			},
+			async handler(ctx) {
+				const { database_name, post_id } = ctx.params;
+				return await this.getFullPost(database_name, post_id);
 			},
 		},
 		editPost: {

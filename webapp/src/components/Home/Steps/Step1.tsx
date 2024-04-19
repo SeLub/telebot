@@ -11,9 +11,9 @@ const Step1 = ({ setDisabledNext }) => {
     const [bots, setBots] = useState([]);
     const [channels, setChannels] = useState([]);
     if (!isArrayEmpty(bots) && !isArrayEmpty(channels)) {
-        setDisabledNext(false);
+        () => setDisabledNext(false);
     } else {
-        setDisabledNext(true);
+        () => setDisabledNext(true);
     }
     return (
         <Fragment>

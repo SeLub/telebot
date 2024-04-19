@@ -1,20 +1,33 @@
-import { ActionIcon, Grid } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { ActionIcon } from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
+import { useEffect } from 'react';
 import { Fragment } from 'react/jsx-runtime';
+
+import { IPublishers } from '../../common/types';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-const removePublisher = async (id) => {
+const removePublisher = async (id: string) => {
     const response = await fetch(`${serverHost}/api/publisher/publishers/${id}`, {
         method: 'DELETE',
     });
     return await response.json();
 };
 
-const ListPublishers = (props) => {
+type Props = {
+    publishers: IPublishers[];
+    setPublishers: any;
+};
+
+const ListPublishers = (props: Props) => {
     const { publishers, setPublishers } = props;
 
-    const handleDelete = async (id) => {
+    const inline = {
+        display: 'inline-block',
+        margin: '0 0 0 60px',
+    };
+
+    const handleDelete = async (id: string) => {
         await removePublisher(id);
         setPublishers(publishers.filter((publisher: IPublishers) => publisher.publisher_id !== id));
     };
@@ -22,20 +35,24 @@ const ListPublishers = (props) => {
     return (
         <Fragment>
             {publishers.map((publisher) => (
-                <div key={publisher.publisher_id}>
-                    <Grid>
-                        <Grid.Col span={4}>{publisher.publisher_name}</Grid.Col>
-                        <Grid.Col span={3}>{publisher.publisher_bots}</Grid.Col>
-                        <Grid.Col span={3}>{publisher.publisher_channels}</Grid.Col>
-                        <Grid.Col span={2}>
-                            <ActionIcon>
-                                <IconEdit size={18} onClick={() => console.log('!')} />
-                            </ActionIcon>
-                            <ActionIcon>
-                                <IconTrash size={18} onDoubleClick={() => handleDelete(publisher.publisher_id)} />
-                            </ActionIcon>
-                        </Grid.Col>
-                    </Grid>
+                <div key={publisher.publisher_id} style={{ borderBottom: '1px solid lightgray' }}>
+                    <div style={inline}>
+                        <div>{publisher.publisher_name}</div>
+                    </div>
+                    <div style={inline}>
+                        <div>{publisher.publisher_database}</div>
+                    </div>
+                    <div style={inline}>
+                        <div>{publisher.publisher_bots}</div>
+                    </div>
+                    <div style={inline}>
+                        <div>{publisher.publisher_channels}</div>
+                    </div>
+                    <div style={inline}>
+                        <ActionIcon>
+                            <IconTrash size={18} onDoubleClick={() => handleDelete(publisher.publisher_id)} />
+                        </ActionIcon>
+                    </div>
                 </div>
             ))}
         </Fragment>

@@ -23,7 +23,7 @@ const ListPublishers = (props) => {
         <Fragment>
             {publishers.map((publisher) => (
                 <div key={publisher.publisher_id}>
-                    <Grid>
+                    <Grid key={publisher.publisher_id}>
                         <Grid.Col span={4}>{publisher.publisher_name}</Grid.Col>
                         <Grid.Col span={3}>{publisher.publisher_bots}</Grid.Col>
                         <Grid.Col span={3}>{publisher.publisher_channels}</Grid.Col>

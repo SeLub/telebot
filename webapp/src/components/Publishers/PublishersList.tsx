@@ -2,6 +2,7 @@ import { Divider, Paper, Title } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 
 import { IBots, IChannels, IPublishers } from '../../common/types';
+import { isArrayEmpty } from '../../utils';
 import CreatePublisherForm from './CreatePublisherForm/CreatePublisherForm';
 import ListPublishers from './ListPublishers';
 
@@ -33,11 +34,11 @@ function PublishersList({ setDisabledNext }) {
     const [channels, setChannels] = useState<IChannels[]>([]);
     const [databases, setDatabases] = useState<string[]>([]);
 
-    if (publishers.length === 0) {
-        () => setDisabledNext(true);
-    } else {
-        () => setDisabledNext(false);
-    }
+    useEffect(() => {
+        if (setDisabledNext !== undefined) {
+            setDisabledNext(isArrayEmpty(publishers));
+        }
+    }, [publishers, setDisabledNext]);
 
     useEffect(() => {
         const prevPublisher = publishers;
@@ -67,7 +68,7 @@ function PublishersList({ setDisabledNext }) {
 
     return (
         <Fragment>
-            <Title order={1}>Publishers</Title>
+            <Title order={2}>Publishers</Title>
             <Paper shadow="lg" withBorder p="xl">
                 <CreatePublisherForm
                     publishers={publishers}

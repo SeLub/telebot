@@ -1,5 +1,6 @@
 import { ActionIcon } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
+import { useEffect } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { IPublishers } from '../../common/types';

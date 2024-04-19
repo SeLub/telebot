@@ -6,6 +6,9 @@ import { Fragment, useState } from 'react';
 
 import Step1 from './Steps/Step1';
 import Step2 from './Steps/Step2';
+import Step3 from './Steps/Step3';
+import Step4 from './Steps/Step4';
+import Step5 from './Steps/Step5';
 
 const Home = () => {
     const [active, setActive] = useLocalStorage({
@@ -56,14 +59,18 @@ const Home = () => {
                     >
                         <Step2 setDisabledNext={setDisabledNext} />
                     </Stepper.Step>
-                    <Stepper.Step label="Step 3" description="Plan Posting" icon={<IconCalendarMonth size={26} />}>
-                        Step 3 content: Plan Posting
+                    <Stepper.Step
+                        label="Step 3"
+                        description="Arrange the Publishers"
+                        icon={<IconCalendarMonth size={26} />}
+                    >
+                        <Step3 setDisabledNext={setDisabledNext} />
                     </Stepper.Step>
-                    <Stepper.Step label="Step 4" description="Arrange the Publishers" icon={<IconRobot size={26} />}>
-                        Step 4 content: Arrange the Publishers
+                    <Stepper.Step label="Step 4" description="Plan Posting" icon={<IconRobot size={26} />}>
+                        <Step4 setDisabledNext={setDisabledNext} />
                     </Stepper.Step>
                     <Stepper.Step label="Step 5" description="Start and control process" icon={<IconRun size={26} />}>
-                        Step 5 content: Start and control process
+                        <Step5 setDisabledNext={setDisabledNext} />
                     </Stepper.Step>
                     <Stepper.Completed>Completed, click back button to get to previous step</Stepper.Completed>
                 </Stepper>

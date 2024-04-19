@@ -17,12 +17,12 @@ module.exports = {
 
 			// Create a PostgreSQL client
 			const client = new Client(pgConfig);
+			this.metadata.client = client;
 
 			// Connect to the PostgreSQL database
-			client
+			this.metadata.client
 				.connect()
 				.then(() => {
-					this.metadata.client = client;
 					this.logger.info("Connected to PostgreSQL database");
 				})
 				.catch((err) =>
@@ -30,6 +30,7 @@ module.exports = {
 						`Error connecting to PostgreSQL:\n ${err}`
 					)
 				);
+			await this.createTables();
 		} catch (err) {
 			console.error("Error creating tables:", err);
 		}
@@ -52,7 +53,8 @@ module.exports = {
 			            publisher_id UUID PRIMARY KEY,
 			            publisher_name TEXT,
 			            publisher_bots TEXT,
-			            publisher_channels TEXT
+			            publisher_channels TEXT,
+					publisher_database TEXT
 			        );
 			    `);
 				console.log("Created 'publishers' table");
@@ -99,8 +101,12 @@ module.exports = {
 			return res.rows[0];
 		},
 		async createPublisher(publisher) {
-			let { publisher_name, publisher_bots, publisher_channels } =
-				publisher;
+			let {
+				publisher_name,
+				publisher_bots,
+				publisher_channels,
+				publisher_database,
+			} = publisher;
 			const publisher_id = uuidv4();
 
 			if (!publisher_name) {
@@ -109,14 +115,15 @@ module.exports = {
 
 			const res = await this.metadata.client.query(
 				`
-				INSERT INTO publishers (publisher_id, publisher_name, publisher_bots, publisher_channels) 
-				VALUES ($1, $2, $3, $4) 
+				INSERT INTO publishers (publisher_id, publisher_name, publisher_bots, publisher_channels, publisher_database) 
+				VALUES ($1, $2, $3, $4, $5) 
 				RETURNING *`,
 				[
 					publisher_id,
 					publisher_name,
 					publisher_bots,
 					publisher_channels,
+					publisher_database,
 				]
 			);
 			return res.rows[0];
@@ -127,11 +134,12 @@ module.exports = {
 				publisher_name,
 				publisher_bots,
 				publisher_channels,
+				publisher_database,
 			} = publisher;
 			const res = await this.metadata.client.query(
 				`
 				UPDATE publishers SET publisher_name = $1, publisher_bots = $2, publisher_channels = $3
-				WHERE publisher_id = $4
+				WHERE publisher_id = $4, publisher_database = $5
 				RETURNING *`,
 				[
 					publisher_name,
@@ -173,14 +181,20 @@ module.exports = {
 				publisher_name: { type: "string", optional: true },
 				publisher_bots: { type: "string", optional: true },
 				publisher_channels: { type: "string", optional: true },
+				publisher_database: { type: "string", optional: false },
 			},
 			async handler(ctx) {
-				const { publisher_name, publisher_bots, publisher_channels } =
-					ctx.params;
+				const {
+					publisher_name,
+					publisher_bots,
+					publisher_channels,
+					publisher_database,
+				} = ctx.params;
 				return await this.createPublisher({
 					publisher_name,
 					publisher_bots,
 					publisher_channels,
+					publisher_database,
 				});
 			},
 		},
@@ -191,6 +205,7 @@ module.exports = {
 				publisher_name: { type: "string", optional: true },
 				publisher_bots: { type: "string", optional: true },
 				publisher_channels: { type: "string", optional: true },
+				publisher_database: { type: "string", optional: true },
 			},
 			async handler(ctx) {
 				const {
@@ -198,6 +213,7 @@ module.exports = {
 					publisher_name,
 					publisher_bots,
 					publisher_channels,
+					publisher_database,
 				} = ctx.params;
 
 				const newPublisher = {};
@@ -209,6 +225,9 @@ module.exports = {
 				}
 				if (publisher_channels) {
 					newPublisher.publisher_channels = publisher_channels;
+				}
+				if (publisher_database) {
+					newPublisher.publisher_database = publisher_database;
 				}
 				const currentPublisher = await this.getPublisher(id);
 

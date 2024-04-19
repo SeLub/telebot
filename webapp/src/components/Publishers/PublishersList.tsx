@@ -17,6 +17,11 @@ const fetchBots = async () => {
     return response.ok ? await response.json() : [];
 };
 
+const fetchDatabases = async () => {
+    const response = await fetch(`${serverHost}/api/posts/databases`);
+    return response.ok ? await response.json() : [];
+};
+
 const fetchChannels = async () => {
     const response = await fetch(`${serverHost}/api/channels`);
     return response.ok ? await response.json() : [];
@@ -26,6 +31,7 @@ function PublishersList({ setDisabledNext }) {
     const [publishers, setPublishers] = useState<IPublishers[] | []>([]);
     const [bots, setBots] = useState<IBots[]>([]);
     const [channels, setChannels] = useState<IChannels[]>([]);
+    const [databases, setDatabases] = useState<string[]>([]);
 
     if (publishers.length === 0) {
         () => setDisabledNext(true);
@@ -49,10 +55,15 @@ function PublishersList({ setDisabledNext }) {
             const currentChannels = await fetchChannels();
             setChannels(currentChannels);
         }
+        async function getDatabases() {
+            const currentDatabases = await fetchDatabases();
+            setDatabases(currentDatabases);
+        }
         getPublishers();
         getBots();
         getChannels();
-    }, [publishers, bots.length, channels.length]);
+        getDatabases();
+    }, [publishers, bots.length, channels.length, databases.length]);
 
     return (
         <Fragment>
@@ -62,9 +73,8 @@ function PublishersList({ setDisabledNext }) {
                     publishers={publishers}
                     setPublishers={setPublishers}
                     bots={bots}
-                    setBots={setBots}
                     channels={channels}
-                    setChannels={setChannels}
+                    databases={databases}
                 />
                 <Divider my="md" />
                 <ListPublishers publishers={publishers} setPublishers={setPublishers} />

@@ -27,6 +27,7 @@ export interface IPublishers {
     publisher_name: string;
     publisher_bots: string;
     publisher_channels: string;
+    publisher_databases: string;
 }
 
 export interface IDatabases {

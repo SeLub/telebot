@@ -9,7 +9,7 @@ const SelectBot = (props) => {
     const listBots = (bots: IBots[]) =>
         bots.map((bot, index) => {
             return (
-                <option key={index + 1} value={bot.bot_id}>
+                <option key={index + 1} value={bot.bot_name}>
                     {bot.bot_name}
                 </option>
             );

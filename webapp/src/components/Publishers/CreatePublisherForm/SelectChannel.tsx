@@ -7,9 +7,9 @@ const SelectChannel = (props) => {
     const { channels, setChannel, saved } = props;
 
     const listChannels = (channels: IChannels[]) =>
-        channels.map((channel) => {
+        channels.map((channel, index) => {
             return (
-                <option key={channel.channel_id} value={channel.channel_id}>
+                <option key={index + 1} value={channel.channel_name}>
                     {channel.channel_name}
                 </option>
             );

@@ -27,7 +27,7 @@
     "moleculer": "^0.14.26",
     "moleculer-db": "^0.8.25",
     "moleculer-web": "^0.10.4",
-    "nats": "^2.19.0",
+    "mqtt": "^5.5.3",
     "pg": "^8.11.3",
     "telegraf": "^4.16.3",
     "uuid": "^9.0.1",

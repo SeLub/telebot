@@ -3,6 +3,7 @@ version: "3.3"
 services:
   api:
     container_name: api
+    restart: always
     build:
       context: .
     image: selub/postup:latest
@@ -11,15 +12,14 @@ services:
       SERVICES: api # Moleculer Runner will start only the 'api' service in this container
       PORT: 3000 # Port of API gateway
     depends_on:
-      - nats
+      - mqtt
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
       - "traefik.http.services.api-gw.loadbalancer.server.port=3000"
-    networks:
-      - internal
 
   posts:
+    restart: always
     container_name: posts
     build:
       context: .
@@ -29,11 +29,10 @@ services:
       SERVICES: posts # Moleculer Runner will start only the 'posts' service in this container
     depends_on:
       - api
-      - nats
-    networks:
-      - internal
+      - mqtt
 
   storage:
+    restart: always
     container_name: storage
     build:
       context: .
@@ -43,27 +42,51 @@ services:
       SERVICES: storage # Moleculer Runner will start only the 'storage' service in this container
     depends_on:
       - api
-      - nats
-    networks:
-      - internal
+      - mqtt
 
-  telegram:
-    container_name: telegram
+  bots:
+    restart: always
+    container_name: bots
     build:
       context: .
     image: selub/postup:latest
     env_file: docker-compose.env
     environment:
-      SERVICES: telegram # Moleculer Runner will start only the 'storage' service in this container
+      SERVICES: bots # Moleculer Runner will start only the 'storage' service in this container
     depends_on:
-      - nats
+      - mqtt
       - posts
-    networks:
-      - internal
+
+  channels:
+    restart: always
+    container_name: channels
+    build:
+      context: .
+    image: selub/postup:latest
+    env_file: docker-compose.env
+    environment:
+      SERVICES: channels # Moleculer Runner will start only the 'storage' service in this container
+    depends_on:
+      - mqtt
+      - posts
+
+  publishers:
+    restart: always
+    container_name: publishers
+    build:
+      context: .
+    image: selub/postup:latest
+    env_file: docker-compose.env
+    environment:
+      SERVICES: publishers # Moleculer Runner will start only the 'storage' service in this container
+    depends_on:
+      - mqtt
+      - posts
 
   traefik:
     container_name: traefik
     image: traefik:v2.1
+    restart: always
     command:
       - "--api.insecure=true" # Don't do that in production!
       - "--providers.docker=true"
@@ -73,13 +96,25 @@ services:
       - 3001:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - internal
-      - default
-  nats:
-    image: nats:2
-    networks:
-      - internal
+
+  mqtt:
+    image: eclipse-mosquitto:1.6.15
+    restart: always
+    hostname: mqtt
+    container_name: mqtt
+    ports:
+      - "1883:1883"
+
+  # nats:
+  #   image: nats
+  #   restart: always
+  #   hostname: nats
+  #   container_name: nats
+  #   ports:
+  #     - "4222:4222"
+  #   networks:
+  #     - internal
+  #     - default
   db:
     image: postgres:latest
     networks:
@@ -96,6 +131,5 @@ services:
       - 5432:5432
 networks:
   internal:
-
-volumes:
-  db_data:
+# volumes:
+#   db_data:

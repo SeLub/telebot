@@ -1,5 +1,5 @@
-import { ActionIcon, Grid } from '@mantine/core';
-import { IconDatabaseSmile, IconEdit, IconTrash } from '@tabler/icons-react';
+import { ActionIcon } from '@mantine/core';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { IDatabases } from '../../common/types';
@@ -14,6 +14,11 @@ const removeDatabase = async (name) => {
 };
 
 const ListDatabases = ({ databases, setDatabases }) => {
+    const inline = {
+        display: 'inline-block',
+        margin: '0 0 0 60px',
+    };
+
     const handleDelete = async (name) => {
         await removeDatabase(name);
         setDatabases(databases.filter((database: IDatabases) => database.database_name !== name));
@@ -21,21 +26,18 @@ const ListDatabases = ({ databases, setDatabases }) => {
     return (
         <Fragment>
             {databases.map((database) => (
-                <div key={database.database_id}>
-                    <Grid key={database.database_id}>
-                        <Grid.Col span={5}>
-                            <IconDatabaseSmile size={18} /> {database.database_name}
-                        </Grid.Col>
-                        {/* <Grid.Col span={5}>{database.database_id}</Grid.Col> */}
-                        <Grid.Col span={4}>
-                            <ActionIcon component="a" href={`/database/name/${database.database_name}`}>
-                                <IconEdit size={18} />
-                            </ActionIcon>{' '}
-                            <ActionIcon>
-                                <IconTrash size={18} onDoubleClick={() => handleDelete(database.database_name)} />
-                            </ActionIcon>
-                        </Grid.Col>
-                    </Grid>
+                <div key={database.database_id} style={{ borderBottom: '1px solid lightgray' }}>
+                    <div style={inline}>
+                        <div>{database.database_name}</div>
+                    </div>
+                    <div style={inline}>
+                        <ActionIcon component="a" href={`/database/name/${database.database_name}`}>
+                            <IconEdit size={18} />
+                        </ActionIcon>{' '}
+                        <ActionIcon>
+                            <IconTrash size={18} onDoubleClick={() => handleDelete(database.database_name)} />
+                        </ActionIcon>
+                    </div>
                 </div>
             ))}
         </Fragment>

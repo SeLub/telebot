@@ -1,1 +1,4 @@
-db_data
+node_modules
+.vscode
+.env
+docker-compose.env

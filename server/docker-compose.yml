@@ -115,21 +115,3 @@ services:
   #   networks:
   #     - internal
   #     - default
-  db:
-    image: postgres:latest
-    networks:
-      - internal
-    env_file: docker-compose.env
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    restart: always
-    volumes:
-      - ./db_data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
-networks:
-  internal:
-# volumes:
-#   db_data:

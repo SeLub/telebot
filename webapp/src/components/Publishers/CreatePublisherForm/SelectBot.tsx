@@ -1,17 +1,19 @@
 import { Input } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 
-const listBots = (bots: string[]) =>
-    bots.map((bot, index) => {
-        return (
-            <option key={index + 1} value={bot}>
-                {bot}
-            </option>
-        );
-    });
+import { IBots } from '../../../common/types';
 
 const SelectBot = (props) => {
     const { bots, setBot, saved } = props;
+
+    const listBots = (bots: IBots[]) =>
+        bots.map((bot, index) => {
+            return (
+                <option key={index + 1} value={bot.bot_name}>
+                    {bot.bot_name}
+                </option>
+            );
+        });
 
     return (
         <Input

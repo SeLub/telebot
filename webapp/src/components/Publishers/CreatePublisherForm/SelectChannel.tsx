@@ -1,17 +1,19 @@
 import { Input } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 
-const listChannels = (channels: string[]) =>
-    channels.map((channel, index) => {
-        return (
-            <option key={index + 1} value={channel}>
-                {channel}
-            </option>
-        );
-    });
+import { IChannels } from '../../../common/types';
 
 const SelectChannel = (props) => {
     const { channels, setChannel, saved } = props;
+
+    const listChannels = (channels: IChannels[]) =>
+        channels.map((channel, index) => {
+            return (
+                <option key={index + 1} value={channel.channel_name}>
+                    {channel.channel_name}
+                </option>
+            );
+        });
     return (
         <Input
             disabled={saved}

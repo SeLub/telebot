@@ -157,6 +157,24 @@ module.exports = {
 			);
 			return res.rows;
 		},
+		async getInitData() {
+			try {
+				const publishers = await this.getPublishers();
+				const bots = await this.broker.call("bots.getBots");
+				const channels = await this.broker.call("channels.getChannels");
+				const databases = await this.broker.call("posts.getDatabases");
+				return {
+					publishers,
+					bots,
+					channels,
+					databases,
+				};
+			} catch (err) {
+				this.logger.error(
+					"Error to get init data for Publishers:" + err
+				);
+			}
+		},
 	},
 	actions: {
 		getPublishers: {
@@ -247,6 +265,12 @@ module.exports = {
 			async handler(ctx) {
 				const { id } = ctx.params;
 				return await this.deletePublisher(id);
+			},
+		},
+		getInitData: {
+			rest: "GET /getInitData",
+			async handler(ctx) {
+				return await this.getInitData();
 			},
 		},
 	},

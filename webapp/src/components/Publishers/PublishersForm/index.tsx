@@ -7,7 +7,7 @@ import SelectBot from './SelectBot';
 import SelectChannel from './SelectChannel';
 import SelectDatabase from './SelectDatabase';
 
-const CreatePublisherForm = (props) => {
+const PublishersForm = (props) => {
     const { publishers, setPublishers, bots, channels, databases } = props;
     const [pubname, setPubname] = useState('');
     const [saved, setSaved] = useState(true);
@@ -15,8 +15,14 @@ const CreatePublisherForm = (props) => {
     const [bot, setBot] = useState();
     const [channel, setChannel] = useState();
     const [database, setDatabase] = useState();
+    const [disabled, setDisabled] = useState(true);
 
     useEffect(() => {
+        if (bots.length === 0 || channels.length === 0 || databases.length === 0) {
+            setDisabled;
+        } else {
+            setDisabled(false);
+        }
         if (bots.length > 0) {
             setBot(bots[0]['bot_name']);
         }
@@ -30,7 +36,13 @@ const CreatePublisherForm = (props) => {
 
     return (
         <Flex mih={50} gap="md" justify="flex-start" align="center" direction="row" wrap="wrap">
-            <InputPublisherName pubname={pubname} saved={saved} setSaved={setSaved} setPubname={setPubname} />
+            <InputPublisherName
+                pubname={pubname}
+                saved={saved}
+                setSaved={setSaved}
+                setPubname={setPubname}
+                disabled={disabled}
+            />
             <SelectDatabase saved={saved} databases={databases} setDatabase={setDatabase} />
             <SelectBot saved={saved} bots={bots} setBot={setBot} />
             <SelectChannel saved={saved} channels={channels} setChannel={setChannel} />
@@ -47,4 +59,4 @@ const CreatePublisherForm = (props) => {
         </Flex>
     );
 };
-export default CreatePublisherForm;
+export default PublishersForm;

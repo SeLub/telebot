@@ -1,11 +1,24 @@
 import { Box, NavLink } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { IconDatabaseSmile, IconHome, IconRobot, IconSettings } from '@tabler/icons-react';
+import {
+    IconBrandTelegram,
+    IconCalendarMonth,
+    IconChartArrowsVertical,
+    IconDatabaseSmile,
+    IconHome,
+    IconRobot,
+    IconRobotFace,
+    IconSettings,
+} from '@tabler/icons-react';
 
 const data = [
     { link: '/', label: 'Home', icon: IconHome, description: 'Start your jorney.' },
-    { link: '/database', label: 'PostLines', icon: IconDatabaseSmile, description: 'Workshop for your Posts.' },
+    { link: '/bots', label: 'Bots', icon: IconRobotFace, description: 'Place where Bots live.' },
+    { link: '/channels', label: 'Channels', icon: IconBrandTelegram, description: 'Your channel`s list.' },
+    { link: '/databases', label: 'PostLines', icon: IconDatabaseSmile, description: 'Post`s repositories.' },
+    { link: '/plans', label: 'Plans', icon: IconCalendarMonth, description: 'The place where plans are born.' },
     { link: '/publishers', label: 'Publishers', icon: IconRobot, description: 'Robots to publish Posts.' },
+    { link: '/statistic', label: 'Statistic', icon: IconChartArrowsVertical, description: 'Report`s Room.' },
     { link: '/setting', label: 'Settings', icon: IconSettings, description: 'Wild territory.' },
 ];
 

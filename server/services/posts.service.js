@@ -21,7 +21,6 @@ module.exports = {
 	settings: {},
 	async started() {
 		try {
-			const client = new Client(pgConfig);
 			await client.connect();
 			await this.logger.info("Service 'posts' connected to DB");
 			await this.createDatabaseTable();

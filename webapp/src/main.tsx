@@ -7,23 +7,49 @@ import * as Sentry from '@sentry/react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
+import Bots from './components/Bots';
+import Channels from './components/Channels';
 import { Dashboard } from './components/Dashboard/Dashboard';
-import Databases from './components/Databases/Databases';
 import HomePage from './components/Home/HomePage';
 import NotFoundPage from './components/NotFoundPage/NotFoundPage';
+import Databases from './components/Postlines/Databases';
 import EditPost from './components/Posts/EditPost';
 import PostsList from './components/Posts/PostsList';
-import PublishersList from './components/Publishers/PublishersList';
+import Publishers from './components/Publishers';
 import Settings from './components/Settings/Settings';
 
 const dsn = import.meta.env.SENTRY_DSN;
 const environment = import.meta.env.SENTRY_ENV;
+const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 Sentry.init({
     dsn,
     environment,
     integrations: [],
 });
+
+const getBots = async () => {
+    const response = await fetch(serverHost + '/api/bots');
+    const data = await response.json();
+    return data;
+};
+
+const getChannels = async () => {
+    const response = await fetch(serverHost + '/api/channels');
+    const data = await response.json();
+    return data;
+};
+
+const fetchPublishers = async () => {
+    const response = await fetch(serverHost + '/api/publishers/getInitData');
+    const data = await response.json();
+    return data;
+};
+const fetchPostlines = async () => {
+    const response = await fetch(serverHost + '/api/postlines');
+    const data = await response.json();
+    return data;
+};
 
 const router = createBrowserRouter([
     {
@@ -32,12 +58,24 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
     },
     {
-        path: '/database',
-        element: <Databases />,
+        element: <Bots />,
+        path: '/bots',
+        loader: getBots,
         errorElement: <NotFoundPage />,
     },
     {
-        path: 'database/name/:database_name',
+        element: <Channels />,
+        path: '/channels',
+        loader: getChannels,
+        errorElement: <NotFoundPage />,
+    },
+    {
+        path: '/databases',
+        element: <Databases setDisabledNext={undefined} />,
+        errorElement: <NotFoundPage />,
+    },
+    {
+        path: 'databases/name/:database_name',
         element: <PostsList />,
     },
     {
@@ -45,8 +83,9 @@ const router = createBrowserRouter([
         element: <EditPost />,
     },
     {
+        element: <Publishers />,
         path: '/publishers',
-        element: <PublishersList />,
+        loader: fetchPublishers,
         errorElement: <NotFoundPage />,
     },
     {

@@ -8,12 +8,11 @@ import { IBots } from '../../common/types';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const ListBots = ({ bots, setBots }) => {
-    const deleteBotFromDatabase = (botName: string) => {
-        fetch(`${serverHost}/api/bots/${botName}`, { method: 'DELETE' });
-    };
-
     const handleDelete = (botName: string) => {
         const id = message.start('Start delete bot.');
+        const deleteBotFromDatabase = (botName: string) => {
+            fetch(`${serverHost}/api/bots/${botName}`, { method: 'DELETE' });
+        };
         try {
             deleteBotFromDatabase(botName);
             setBots(bots.filter((bot: IBots) => bot.bot_name !== botName));

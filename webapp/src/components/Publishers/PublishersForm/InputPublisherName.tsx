@@ -2,10 +2,11 @@ import { Input } from '@mantine/core';
 import { IconRobot } from '@tabler/icons-react';
 
 const InputPublisherName = (props) => {
-    const { pubname, setPubname, saved, setSaved } = props;
+    const { pubname, setPubname, saved, setSaved, disabled } = props;
 
     return (
         <Input
+            disabled={disabled}
             value={pubname}
             placeholder="Create new Publisher"
             onChange={(event) => {

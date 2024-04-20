@@ -18,15 +18,16 @@ module.exports = {
 		this.metadata.client = client;
 
 		// Connect to the PostgreSQL database
-		client
+		this.metadata.client
 			.connect()
 			.then(async () => {
 				await this.logger.info("Connected to PostgreSQL database");
-				await this.createChannelsTable();
+				
 			})
 			.catch((err) =>
 				this.logger.error(`Error connecting to PostgreSQL:\n ${err}`)
 			);
+		await this.createChannelsTable();
 	},
 	methods: {
 		async createChannelsTable() {

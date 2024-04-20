@@ -28,15 +28,16 @@ module.exports = {
 		this.metadata.client = client;
 
 		// Connect to the PostgreSQL database
-		client
+		this.metadata.client
 			.connect()
 			.then(async () => {
 				await this.logger.info("Connected to PostgreSQL database");
-				await this.createBotsTable();
+				
 			})
 			.catch((err) =>
 				this.logger.error(`Error connecting to PostgreSQL:\n ${err}`)
 			);
+		await this.createBotsTable();
 		const bots = await this.getBots();
 
 		for (const bot of await bots.rows) {
@@ -252,11 +253,6 @@ module.exports = {
 			rest: "GET /",
 			async handler(ctx) {
 				const res = await this.getBots();
-				if (res.rows.length === 0) {
-					ctx.meta.$statusCode = 404;
-				} else {
-					ctx.meta.$statusCode = 200;
-				}
 				return res.rows;
 			},
 		},

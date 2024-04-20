@@ -3,7 +3,7 @@ require("dotenv").config();
 const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
-	name: "publisher",
+	name: "publishers",
 	settings: {},
 	async started() {
 		try {

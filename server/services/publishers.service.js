@@ -160,13 +160,13 @@ module.exports = {
 	},
 	actions: {
 		getPublishers: {
-			rest: "GET /publishers",
+			rest: "GET /",
 			async handler(ctx) {
 				return await this.getPublishers();
 			},
 		},
 		getPublisher: {
-			rest: "GET /publishers/:id",
+			rest: "GET /:id",
 			params: {
 				id: "string",
 			},
@@ -176,7 +176,7 @@ module.exports = {
 			},
 		},
 		createPublisher: {
-			rest: "POST /publishers",
+			rest: "POST /",
 			params: {
 				publisher_name: { type: "string", optional: true },
 				publisher_bots: { type: "string", optional: true },
@@ -199,7 +199,7 @@ module.exports = {
 			},
 		},
 		updatePublisher: {
-			rest: "PUT /publishers/:id",
+			rest: "PUT /:id",
 			params: {
 				id: { type: "uuid" },
 				publisher_name: { type: "string", optional: true },
@@ -240,7 +240,7 @@ module.exports = {
 			},
 		},
 		deletePublisher: {
-			rest: "DELETE /publishers/:id",
+			rest: "DELETE /:id",
 			params: {
 				id: "string",
 			},

@@ -21,7 +21,7 @@ const SavePublisherButton = (props: Props) => {
 
     const savePublisher = async () => {
         console.log(bot, channel);
-        const response = await fetch(`${serverHost}/api/publisher/publishers`, {
+        const response = await fetch(`${serverHost}/api/publishers`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

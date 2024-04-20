@@ -1,6 +1,5 @@
 import { ActionIcon } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { useEffect } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 
 import { IPublishers } from '../../common/types';
@@ -8,7 +7,7 @@ import { IPublishers } from '../../common/types';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const removePublisher = async (id: string) => {
-    const response = await fetch(`${serverHost}/api/publisher/publishers/${id}`, {
+    const response = await fetch(`${serverHost}/api/publishers/${id}`, {
         method: 'DELETE',
     });
     return await response.json();

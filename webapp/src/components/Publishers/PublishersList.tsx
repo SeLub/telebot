@@ -9,7 +9,7 @@ import ListPublishers from './ListPublishers';
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
 const fetchPublishers = async () => {
-    const response = await fetch(`${serverHost}/api/publisher/publishers`);
+    const response = await fetch(`${serverHost}/api/publishers`);
     return response.ok ? await response.json() : [];
 };
 

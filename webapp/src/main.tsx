@@ -12,7 +12,7 @@ import Channels from './components/Channels';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import HomePage from './components/Home/HomePage';
 import NotFoundPage from './components/NotFoundPage/NotFoundPage';
-import Databases from './components/Postlines/Databases';
+import Postlines from './components/Postlines';
 import EditPost from './components/Posts/EditPost';
 import PostsList from './components/Posts/PostsList';
 import Publishers from './components/Publishers';
@@ -46,7 +46,7 @@ const fetchPublishers = async () => {
     return data;
 };
 const fetchPostlines = async () => {
-    const response = await fetch(serverHost + '/api/postlines');
+    const response = await fetch(serverHost + '/api/posts/databases');
     const data = await response.json();
     return data;
 };
@@ -70,8 +70,9 @@ const router = createBrowserRouter([
         errorElement: <NotFoundPage />,
     },
     {
-        path: '/databases',
-        element: <Databases setDisabledNext={undefined} />,
+        element: <Postlines />,
+        path: '/postlines',
+        loader: fetchPostlines,
         errorElement: <NotFoundPage />,
     },
     {

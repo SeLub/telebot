@@ -30,7 +30,7 @@ export interface IPublishers {
     publisher_database: string;
 }
 
-export interface IDatabases {
+export interface IPostlines {
     database_id: string;
     database_name: string;
 }

@@ -15,7 +15,7 @@ const data = [
     { link: '/', label: 'Home', icon: IconHome, description: 'Start your jorney.' },
     { link: '/bots', label: 'Bots', icon: IconRobotFace, description: 'Place where Bots live.' },
     { link: '/channels', label: 'Channels', icon: IconBrandTelegram, description: 'Your channel`s list.' },
-    { link: '/databases', label: 'PostLines', icon: IconDatabaseSmile, description: 'Post`s repositories.' },
+    { link: '/postlines', label: 'PostLines', icon: IconDatabaseSmile, description: 'Post`s repositories.' },
     { link: '/plans', label: 'Plans', icon: IconCalendarMonth, description: 'The place where plans are born.' },
     { link: '/publishers', label: 'Publishers', icon: IconRobot, description: 'Robots to publish Posts.' },
     { link: '/statistic', label: 'Statistic', icon: IconChartArrowsVertical, description: 'Report`s Room.' },

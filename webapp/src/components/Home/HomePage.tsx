@@ -50,27 +50,27 @@ const Home = () => {
                         description="Create channels and bots"
                         icon={<IconRobotFace size={24} />}
                     >
-                        <Step1 setDisabledNext={setDisabledNext} />
+                        {/* <Step1 setDisabledNext={setDisabledNext} /> */}
                     </Stepper.Step>
                     <Stepper.Step
                         label="Step 2"
                         description="Create PostLines and prepare posts"
                         icon={<IconDatabaseSmile size={26} />}
                     >
-                        <Step2 setDisabledNext={setDisabledNext} />
+                        {/* <Step2 setDisabledNext={setDisabledNext} /> */}
                     </Stepper.Step>
                     <Stepper.Step
                         label="Step 3"
                         description="Arrange the Publishers"
                         icon={<IconCalendarMonth size={26} />}
                     >
-                        <Step3 setDisabledNext={setDisabledNext} />
+                        {/* <Step3 setDisabledNext={setDisabledNext} /> */}
                     </Stepper.Step>
                     <Stepper.Step label="Step 4" description="Plan Posting" icon={<IconRobot size={26} />}>
-                        <Step4 setDisabledNext={setDisabledNext} />
+                        {/* <Step4 setDisabledNext={setDisabledNext} /> */}
                     </Stepper.Step>
                     <Stepper.Step label="Step 5" description="Start and control process" icon={<IconRun size={26} />}>
-                        <Step5 setDisabledNext={setDisabledNext} />
+                        {/* <Step5 setDisabledNext={setDisabledNext} /> */}
                     </Stepper.Step>
                     <Stepper.Completed>Completed, click back button to get to previous step</Stepper.Completed>
                 </Stepper>

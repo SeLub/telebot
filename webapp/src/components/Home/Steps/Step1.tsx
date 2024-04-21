@@ -2,8 +2,8 @@ import { Divider, Switch, Text, Title } from '@mantine/core';
 import { Fragment, useState } from 'react';
 
 import { isArrayEmpty } from '../../../utils';
-import InputBots from '../../Bots/InputBots';
-import InputChannels from '../../Channels/InputChannels';
+import InputBots from '../../Bots';
+import InputChannels from '../../Channels';
 import Auth from './Auth';
 
 const Step1 = ({ setDisabledNext }) => {

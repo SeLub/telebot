@@ -1,7 +1,7 @@
 import { Divider, Text, Title } from '@mantine/core';
 import { Fragment } from 'react/jsx-runtime';
 
-import Databases from '../../Databases/Databases';
+import Databases from '../../Postlines';
 
 const Step5 = ({ setDisabledNext }) => {
     return (

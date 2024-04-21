@@ -1,7 +1,7 @@
 import { Divider, Text, Title } from '@mantine/core';
 import { Fragment } from 'react/jsx-runtime';
 
-import PublishersList from '../../Publishers/PublishersList';
+import PublishersList from '../../Publishers';
 
 const Step3 = ({ setDisabledNext }) => {
     return (

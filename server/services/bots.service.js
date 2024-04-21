@@ -5,7 +5,9 @@ require("dotenv").config();
 
 module.exports = {
 	name: "bots",
-	settings: {},
+	settings: {
+		authorization: true,
+	},
 	bots: {},
 	async started(ctx) {
 		this.storagePath =
@@ -250,6 +252,7 @@ module.exports = {
 	actions: {
 		getBots: {
 			rest: "GET /",
+			auth: true,
 			async handler(ctx) {
 				const res = await this.getBots();
 				return res.rows;
@@ -337,7 +340,7 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const { bot_name } = ctx.params;
-				if (!this.bots[bot_name]) {
+				if (!this.bots.hasOwnProperty([bot_name])) {
 					ctx.meta.$statusCode = 404;
 					return { message: "Bot not found." };
 				} else {

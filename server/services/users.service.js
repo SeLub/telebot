@@ -17,7 +17,7 @@ module.exports = {
 	 */
 	settings: {
 		/** Secret for JWT */
-		JWT_SECRET: process.env.JWT_SECRET || "jwt-conduit-secret",
+		JWT_SECRET: process.env.JWT_SECRET,
 
 		/** Public fields */
 		fields: ["_id", "username", "email", "bio", "image"],
@@ -125,6 +125,8 @@ module.exports = {
 		 * @returns {Object} Logged in user with token
 		 */
 		login: {
+			rest: "POST /login",
+			auth: false,
 			params: {
 				user: {
 					type: "object",
@@ -177,9 +179,10 @@ module.exports = {
 								return this.transformDocuments(ctx, {}, user);
 							});
 					})
-					.then((user) =>
-						this.transformEntity(user, true, ctx.meta.token)
-					);
+					.then((user) => {
+						ctx.meta.user = user;
+						return this.transformEntity(user, true, ctx.meta.token);
+					});
 			},
 		},
 
@@ -200,19 +203,32 @@ module.exports = {
 				token: "string",
 			},
 			handler(ctx) {
+				// console.log(
+				// 	"resolveToken #############################",
+				// 	ctx.params
+				// );
 				return new this.Promise((resolve, reject) => {
 					jwt.verify(
 						ctx.params.token,
 						this.settings.JWT_SECRET,
 						(err, decoded) => {
-							if (err) return reject(err);
+							if (err) {
+								// console.log("Rejected token", err);
+								return reject(err);
+							}
+							// console.log("resolveToken >>>>>>>>>>>>", decoded);
 
 							resolve(decoded);
 						}
 					);
-				}).then((decoded) => {
-					if (decoded.id) return this.getById(decoded.id);
-				});
+				})
+					.then((decoded) => {
+						if (decoded.id) return this.getById(decoded.id);
+					})
+					.catch((err) => {
+						// console.log("resolveToken catch", err);
+						return null; //this.Promise.reject(err);
+					});
 			},
 		},
 

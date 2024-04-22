@@ -6,7 +6,7 @@ const { MoleculerClientError } = require("moleculer").Errors;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const DbService = require("../mixins/db.mixin");
+const DbService = require("../mixins/db.mongo.mixin");
 
 module.exports = {
 	name: "users",

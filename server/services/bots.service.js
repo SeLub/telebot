@@ -2,68 +2,27 @@ const { Client } = require("pg");
 const { v4: uuidv4 } = require("uuid");
 const { Telegraf } = require("telegraf");
 require("dotenv").config();
+const Sequelize = require("sequelize");
+
+const DbService = require("../mixins/db.sql.mixin");
+const CacheCleaner = require("../mixins/cache.cleaner.mixin");
 
 module.exports = {
 	name: "bots",
 	settings: {
-		authorization: true,
+		authorization: false,
 	},
-	bots: {},
-	async started(ctx) {
-		this.storagePath =
-			process.env.STORAGE_ENDPOINT +
-			"/" +
-			process.env.STORAGE_BUCKET_NAME +
-			"/" +
-			process.env.STORAGE_ATTACHMENTS_FOLDER +
-			"/";
-		// PostgreSQL connection configuration
-		const pgConfig = {
-			connectionString: process.env.DATABASE_URL,
-			ssl: {
-				rejectUnauthorized: false,
+	mixins: [DbService(), CacheCleaner(["bots"])],
+	model: {
+		name: "bots",
+		define: {
+			bot_id: {
+				primaryKey: true,
+				type: Sequelize.UUID,
 			},
-		};
-
-		// Create a PostgreSQL client
-		const client = new Client(pgConfig);
-		this.metadata.client = client;
-
-		// Connect to the PostgreSQL database
-		this.metadata.client
-			.connect()
-			.then(async () => {
-				await this.logger.info("Connected to PostgreSQL database");
-			})
-			.catch((err) =>
-				this.logger.error(`Error connecting to PostgreSQL:\n ${err}`)
-			);
-		await this.createBotsTable();
-		const bots = await this.getBots();
-
-		for (const bot of await bots.rows) {
-			const { bot_id: db_id, bot_name: db_name, bot_token } = bot;
-
-			const bot_instance = new Telegraf(bot_token);
-
-			await bot_instance.telegram.getMe().then((bot_info) => {
-				const { username, id, first_name } = bot_info;
-				const bot = Object.assign(
-					{},
-					{
-						db_name,
-						db_id,
-						bot_token,
-						bot_instance,
-						username,
-						id,
-						first_name,
-					}
-				);
-
-				this.bots = { ...this.bots, [db_name]: bot };
-			});
-		}
+			bot_name: Sequelize.STRING,
+			bot_token: Sequelize.STRING,
+		},
 	},
 	methods: {
 		isArrayEmpty(arr) {
@@ -115,28 +74,6 @@ module.exports = {
 					`Error creating tables in PostgreSQL:\n ${err}`
 				);
 				return created;
-			}
-		},
-		getBots() {
-			return this.metadata.client.query(`
-				SELECT * FROM bots;
-			`);
-		},
-		getBot(bot_name) {
-			return this.metadata.client.query(`
-				SELECT * FROM bots WHERE bot_name = '${bot_name}';
-			`);
-		},
-		async createBot(bot_id, bot_name, bot_token) {
-			try {
-				await this.metadata.client.query(`
-					INSERT INTO bots (bot_id, bot_name, bot_token)
-					VALUES ('${bot_id}', '${bot_name}', '${bot_token}');				
-				`);
-				return true;
-			} catch (err) {
-				this.logger.error(`Error creating bot in PostgreSQL:\n ${err}`);
-				return false;
 			}
 		},
 		async deleteBot(bot_name) {
@@ -252,24 +189,47 @@ module.exports = {
 	actions: {
 		getBots: {
 			rest: "GET /",
-			auth: true,
+			authorization: false,
 			async handler(ctx) {
-				const res = await this.getBots();
-				return res.rows;
+				return this.adapter.find();
 			},
 		},
-		getBot: {
-			rest: "GET /:bot_name",
+		getById: {
+			rest: "GET /:id",
+			authorization: true,
+			params: {
+				id: { type: "string" },
+			},
+			async handler(ctx) {
+				const { id } = ctx.params;
+				const res = [];
+				const bot = await this.adapter.findOne({
+					where: { bot_id: id },
+				});
+				if (bot !== null) {
+					res.push(bot);
+				}
+				return res;
+			},
+		},
+		getByName: {
+			rest: "GET /",
 			params: {
 				bot_name: { type: "string" },
 			},
 			async handler(ctx) {
 				const { bot_name } = ctx.params;
-				const res = await this.getBot(bot_name);
-				return res.rows;
+				const res = [];
+				const bot = await this.adapter.find({
+					where: { bot_name },
+				});
+				if (!bot) {
+					res.push(bot);
+				}
+				return res;
 			},
 		},
-		createBot: {
+		create: {
 			rest: "POST /",
 			params: {
 				bot_name: { type: "string" },
@@ -277,26 +237,31 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const { bot_name, bot_token } = ctx.params;
-				const bot_id = uuidv4();
-				let message = "Bot already exists.";
+
 				// Check bot already exists
-				const bot = await this.getBot(bot_name);
-				const data = bot["rows"][0];
+				const exists = await this.adapter.findOne({
+					where: { bot_name },
+				});
 
-				const alreadyExists = bot.rows.length !== 0;
+				let message = "Bot already exists.";
 
-				if (alreadyExists) {
+				if (!!exists) {
 					ctx.meta.$statusCode = 403;
-					return { message, data };
+					return { message, data: exists };
 				}
 				// Create bot
-				const res = await this.createBot(bot_id, bot_name, bot_token);
+				const bot_id = uuidv4();
+				const res = await this.adapter.insert({
+					bot_id,
+					bot_name,
+					bot_token,
+				});
+
 				if (res) {
 					ctx.meta.$statusCode = 201;
-					const bot = await this.getBot(bot_name);
-					const data = bot["rows"][0];
 					message = "Bot created successfully.";
-					return { message, data };
+					const newBot = await this.adapter.find({ bot_name });
+					return { message, data: newBot };
 				} else {
 					ctx.meta.$statusCode = 500;
 					message = "Error creating bot.";
@@ -304,107 +269,107 @@ module.exports = {
 				}
 			},
 		},
-		deleteBot: {
-			rest: "DELETE /:bot_name",
-			params: {
-				bot_name: { type: "string" },
-			},
-			async handler(ctx) {
-				const { bot_name } = ctx.params;
-				let message = "Bot not found.";
-				// Check bot already exists
-				const bot = await this.getBot(bot_name);
-				const alreadyExists = bot.rows.length !== 0;
+		// delete: {
+		// 	rest: "DELETE /:bot_name",
+		// 	params: {
+		// 		bot_name: { type: "string" },
+		// 	},
+		// 	async handler(ctx) {
+		// 		const { bot_name } = ctx.params;
+		// 		let message = "Bot not found.";
+		// 		// Check bot already exists
+		// 		const bot = await this.getBot(bot_name);
+		// 		const alreadyExists = bot.rows.length !== 0;
 
-				if (!alreadyExists) {
-					ctx.meta.$statusCode = 404;
-					return { message };
-				}
+		// 		if (!alreadyExists) {
+		// 			ctx.meta.$statusCode = 404;
+		// 			return { message };
+		// 		}
 
-				const res = await this.deleteBot(bot_name);
+		// 		const res = await this.deleteBot(bot_name);
 
-				if (res) {
-					ctx.meta.$statusCode = 200;
-					message = "Bot deleted successfully";
-				} else {
-					ctx.meta.$statusCode = 500;
-					message = "Error deleting bot.";
-				}
-				return { message };
-			},
-		},
-		getMe: {
-			rest: "GET /getMe",
-			params: {
-				bot_name: { type: "string" },
-			},
-			async handler(ctx) {
-				const { bot_name } = ctx.params;
-				if (!this.bots.hasOwnProperty([bot_name])) {
-					ctx.meta.$statusCode = 404;
-					return { message: "Bot not found." };
-				} else {
-					ctx.meta.$statusCode = 200;
-					return {
-						...this.bots[bot_name],
-						bot_instance: "<<...hidden...>>",
-					};
-				}
-			},
-		},
-		sendMessage: {
-			rest: "POST /sendMessage",
-			params: {
-				bot_name: { type: "string" },
-				post_id: { type: "uuid" },
-				database_name: { type: "string" },
-				channel_id: { type: "string" },
-			},
-			async handler(ctx) {
-				const { bot_name, post_id, database_name, channel_id } =
-					ctx.params;
+		// 		if (res) {
+		// 			ctx.meta.$statusCode = 200;
+		// 			message = "Bot deleted successfully";
+		// 		} else {
+		// 			ctx.meta.$statusCode = 500;
+		// 			message = "Error deleting bot.";
+		// 		}
+		// 		return { message };
+		// 	},
+		// },
+		// getMe: {
+		// 	rest: "GET /getMe",
+		// 	params: {
+		// 		bot_name: { type: "string" },
+		// 	},
+		// 	async handler(ctx) {
+		// 		const { bot_name } = ctx.params;
+		// 		if (!this.bots.hasOwnProperty([bot_name])) {
+		// 			ctx.meta.$statusCode = 404;
+		// 			return { message: "Bot not found." };
+		// 		} else {
+		// 			ctx.meta.$statusCode = 200;
+		// 			return {
+		// 				...this.bots[bot_name],
+		// 				bot_instance: "<<...hidden...>>",
+		// 			};
+		// 		}
+		// 	},
+		// },
+		// sendMessage: {
+		// 	rest: "POST /sendMessage",
+		// 	params: {
+		// 		bot_name: { type: "string" },
+		// 		post_id: { type: "uuid" },
+		// 		database_name: { type: "string" },
+		// 		channel_id: { type: "string" },
+		// 	},
+		// 	async handler(ctx) {
+		// 		const { bot_name, post_id, database_name, channel_id } =
+		// 			ctx.params;
 
-				const bot = this.bots[bot_name]?.bot_instance;
-				if (!bot) {
-					ctx.meta.$statusCode = 404;
-					return { message: "Bot not found." };
-				}
+		// 		const bot = this.bots[bot_name]?.bot_instance;
+		// 		if (!bot) {
+		// 			ctx.meta.$statusCode = 404;
+		// 			return { message: "Bot not found." };
+		// 		}
 
-				const { post_text, attachments } = await ctx.call(
-					"posts.getFullPost",
-					{
-						database_name,
-						post_id,
-					}
-				);
+		// 		const { post_text, attachments } = await ctx.call(
+		// 			"posts.getFullPost",
+		// 			{
+		// 				database_name,
+		// 				post_id,
+		// 			}
+		// 		);
 
-				const cleanText =
-					this.cleanTextFromUnsupportedHTMLtag(post_text);
+		// 		const cleanText =
+		// 			this.cleanTextFromUnsupportedHTMLtag(post_text);
 
-				const sendJustText = this.isArrayEmpty(attachments);
+		// 		const sendJustText = this.isArrayEmpty(attachments);
 
-				if (sendJustText) {
-					const result = bot.telegram.sendMessage(
-						channel_id,
-						cleanText,
-						{ parse_mode: "HTML" }
-					);
-					return result;
-				} else {
-					const media = attachments.map(
-						(attachment) => attachment.attachment_filename
-					);
-					const mediaGroup = await this.composeMediaGroup(
-						cleanText,
-						media
-					);
-					console.log("mediaGroep ", mediaGroup);
-					const res = await mediaGroup.map((media) => {
-						return bot.telegram.sendMediaGroup(channel_id, media);
-					});
-					return res;
-				}
-			},
-		},
+		// 		if (sendJustText) {
+		// 			const result = bot.telegram.sendMessage(
+		// 				channel_id,
+		// 				cleanText,
+		// 				{ parse_mode: "HTML" }
+		// 			);
+		// 			return result;
+		// 		} else {
+		// 			const media = attachments.map(
+		// 				(attachment) => attachment.attachment_filename
+		// 			);
+		// 			const mediaGroup = await this.composeMediaGroup(
+		// 				cleanText,
+		// 				media
+		// 			);
+		// 			console.log("mediaGroep ", mediaGroup);
+		// 			const res = await mediaGroup.map((media) => {
+		// 				return bot.telegram.sendMediaGroup(channel_id, media);
+		// 			});
+		// 			return res;
+		// 		}
+		// 	},
+		// },
 	},
 };

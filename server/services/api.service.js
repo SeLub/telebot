@@ -144,7 +144,18 @@ module.exports = {
 					token = req.headers.authorization.split(" ")[1];
 				}
 			}
-			if (req.$endpoint.action.auth) {
+			console.log(
+				"REQEST ",
+				"settings.authorization=",
+				req.$endpoint.service.settings.authorization,
+				"actions.authorization=",
+				req.$endpoint.action.authorization
+			);
+			if (
+				req.$endpoint.service.settings.authorization &&
+				(req.$endpoint.action.authorization === undefined ||
+					req.$endpoint.action.authorization === true)
+			) {
 				if (!token) {
 					return Promise.reject(new UnAuthorizedError(ERR_NO_TOKEN));
 				}

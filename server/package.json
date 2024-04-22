@@ -4,7 +4,7 @@
   "description": "My Moleculer-based microservices project",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services",
-    "dev:users": "moleculer-runner --repl --hot services/users.service.js services/api.service.js",
+    "dev:users": "moleculer-runner --repl --hot services/users.service.js services/api.service.js services/bots.service.js",
     "start": "moleculer-runner services",
     "cli": "moleculer connect ",
     "ci": "jest --watch",
@@ -30,6 +30,8 @@
     "moleculer": "^0.14.26",
     "moleculer-db": "^0.8.25",
     "moleculer-db-adapter-mongo": "^0.4.19",
+    "moleculer-db-adapter-sequelize": "^0.2.16",
+    "moleculer-sequelize": "^0.5.5",
     "moleculer-web": "^0.10.4",
     "mqtt": "^5.5.3",
     "pg": "^8.11.3",

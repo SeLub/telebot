@@ -20,19 +20,19 @@ model User {
   email   String   @unique
   bio    String?
   image String?
-  role  Role @default(USER)
-  tarif Tarif @default(FREE)
+  role  String //@default('USER')
+  tarif String //@default('FREE')
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 }
 
-enum Role {
-  USER
-  ADMIN
-}
+// enum Role {
+//   USER
+//   ADMIN
+// }
 
-enum Tarif {
-  FREE
-  STANDART
-  ADVANCED
-}
+// enum Tarif {
+//   FREE
+//   STANDART
+//   ADVANCED
+// }

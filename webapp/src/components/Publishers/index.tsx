@@ -16,7 +16,7 @@ function Publishers() {
     return (
         <Fragment>
             <Title order={2}>Publishers</Title>
-            <Paper shadow="lg" withBorder p="xl">
+            <Paper shadow="lg" withBorder p="xl" bg="var(--mantine-color-orange-1)">
                 <PublishersForm
                     publishers={publishers}
                     setPublishers={setPublishers}

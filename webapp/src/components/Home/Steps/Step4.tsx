@@ -1,7 +1,7 @@
 import { Divider, Text, Title } from '@mantine/core';
 import { Fragment } from 'react/jsx-runtime';
 
-import PlanPage from '../../Plans/PlansList';
+import PlanPage from '../../Plans';
 
 const Step4 = ({ setDisabledNext }) => {
     return (

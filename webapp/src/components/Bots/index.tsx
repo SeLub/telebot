@@ -1,4 +1,4 @@
-import { Divider, Title } from '@mantine/core';
+import { Divider, Paper, Title } from '@mantine/core';
 import { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { Fragment } from 'react/jsx-runtime';
@@ -14,9 +14,11 @@ const Bots = () => {
     return (
         <Fragment>
             <Title order={2}>Bots</Title>
-            <Divider my="md" />
-            <BotsForm bots={bots} setBots={setBots} />
-            <BotsList bots={bots} setBots={setBots} />
+            <Paper shadow="lg" withBorder p="xl" bg="var(--mantine-color-grape-1)">
+                <BotsForm bots={bots} setBots={setBots} />
+                <Divider my="md" />
+                <BotsList bots={bots} setBots={setBots} />
+            </Paper>
         </Fragment>
     );
 };

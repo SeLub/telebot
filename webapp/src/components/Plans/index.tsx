@@ -5,14 +5,14 @@ import { isArrayEmpty } from '../../utils';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function PlansList({ setDisabledNext }) {
-    const [plans, setPlans] = useState<any[]>([]);
+function Plans() {
+    // const [plans, setPlans] = useState<any[]>([]);
 
-    useEffect(() => {
-        if (setDisabledNext !== undefined) {
-            setDisabledNext(isArrayEmpty(plans));
-        }
-    }, [plans, setDisabledNext]);
+    // useEffect(() => {
+    //     if (setDisabledNext !== undefined) {
+    //         setDisabledNext(isArrayEmpty(plans));
+    //     }
+    // }, [plans, setDisabledNext]);
     // const [loading, setLoading] = useState<boolean>(false);
     // const [error, setError] = useState<string>('');
 
@@ -51,10 +51,10 @@ function PlansList({ setDisabledNext }) {
     return (
         <Fragment>
             <Title order={2}>Plans</Title>
-            <Paper shadow="lg" withBorder p="xl">
+            <Paper shadow="lg" withBorder p="xl" bg="var(--mantine-color-cyan-1)">
                 Plans
             </Paper>
         </Fragment>
     );
 }
-export default PlansList;
+export default Plans;

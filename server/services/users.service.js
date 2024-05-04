@@ -22,14 +22,14 @@ module.exports = {
 		/** Public fields */
 		fields: ["_id", "username", "email", "bio", "image"],
 
-		/** Validator schema for entity */
-		entityValidator: {
-			username: { type: "string", min: 2, pattern: /^[a-zA-Z0-9]+$/ },
-			password: { type: "string", min: 6 },
-			email: { type: "email" },
-			bio: { type: "string", optional: true },
-			image: { type: "string", optional: true },
-		},
+		// /** Validator schema for entity */
+		// entityValidator: {
+		// 	username: { type: "string", min: 2, pattern: /^[a-zA-Z0-9]+$/ },
+		// 	password: { type: "string", min: 6 },
+		// 	email: { type: "email" },
+		// 	bio: { type: "string", optional: true },
+		// 	image: { type: "string", optional: true },
+		// },
 	},
 
 	/**
@@ -45,11 +45,15 @@ module.exports = {
 		 * @returns {Object} Created entity & token
 		 */
 		create: {
+			rest: "POST /create",
+			auth: false,
 			params: {
-				user: { type: "object" },
+				username: { type: "string" },
+				email: { type: "string" },
+				password: { type: "string" },
 			},
 			handler(ctx) {
-				let entity = ctx.params.user;
+				let entity = ctx.params;
 				return this.validateEntity(entity)
 					.then(() => {
 						if (entity.username)
@@ -128,16 +132,17 @@ module.exports = {
 			rest: "POST /login",
 			auth: false,
 			params: {
-				user: {
-					type: "object",
-					props: {
-						email: { type: "email" },
-						password: { type: "string", min: 1 },
-					},
-				},
+				email: { type: "string" },
+				password: { type: "string" },
 			},
 			handler(ctx) {
-				const { email, password } = ctx.params.user;
+				const { email, password } = ctx.params;
+				const user = { email, password };
+
+				console.log(
+					"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
+					ctx.params
+				);
 
 				return this.Promise.resolve()
 					.then(() => this.adapter.findOne({ email }))

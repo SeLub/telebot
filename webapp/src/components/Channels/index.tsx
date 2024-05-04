@@ -1,4 +1,4 @@
-import { Divider, Title } from '@mantine/core';
+import { Divider, Paper, Title } from '@mantine/core';
 import { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import { Fragment } from 'react/jsx-runtime';
@@ -14,9 +14,11 @@ const Channels = () => {
     return (
         <Fragment>
             <Title order={2}>Channels</Title>
-            <Divider my="md" />
-            <ChannelsForm channels={channels} setChannels={setChannels} />
-            <ChannelsList channels={channels} setChannels={setChannels} />
+            <Paper shadow="lg" withBorder p="xl" bg="var(--mantine-color-teal-1)">
+                <ChannelsForm channels={channels} setChannels={setChannels} />
+                <Divider my="md" />
+                <ChannelsList channels={channels} setChannels={setChannels} />
+            </Paper>
         </Fragment>
     );
 };

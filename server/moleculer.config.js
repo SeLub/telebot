@@ -43,13 +43,13 @@ module.exports = {
 	nodeID: os.hostname().toLowerCase() + "-" + process.pid,
 	// Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
 	metadata: {},
-	logger: {
-		type: "Winston",
-		options: {
-			level: "info",
-			winston: winstonLogger,
-		},
-	},
+	// logger: {
+	// 	type: "Winston",
+	// 	options: {
+	// 		level: "info",
+	// 		winston: winstonLogger,
+	// 	},
+	// },
 
 	// Enable action & event parameter validation. More info: https://moleculer.services/docs/0.14/validating.html
 	validator: true,

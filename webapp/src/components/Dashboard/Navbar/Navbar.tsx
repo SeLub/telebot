@@ -19,7 +19,7 @@ const data = [
     { link: '/plans', label: 'Plans', icon: IconCalendarMonth, description: 'The place where plans are born.' },
     { link: '/publishers', label: 'Publishers', icon: IconRobot, description: 'Robots to publish Posts.' },
     { link: '/statistic', label: 'Statistic', icon: IconChartArrowsVertical, description: 'Report`s Room.' },
-    { link: '/setting', label: 'Settings', icon: IconSettings, description: 'Wild territory.' },
+    { link: '/settings', label: 'Settings', icon: IconSettings, description: 'Wild territory.' },
 ];
 
 export function Navbar() {

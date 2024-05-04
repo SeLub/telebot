@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "moleculer-runner --repl --hot services",
     "dev:users": "moleculer-runner --repl --hot services/users.service.js services/api.service.js",
+    "dev:bots": "moleculer-runner --repl --hot services/bots.service.js services/api.service.js",
     "start": "moleculer-runner services",
     "cli": "moleculer connect ",
     "ci": "jest --watch",

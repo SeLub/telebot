@@ -29,12 +29,13 @@ module.exports = {
 				path: "/api",
 				cors: {
 					origin: [
-						"http://0.0.0.0:3000/",
-						"http://localhost:5173/",
-						"http://localhost:5174/",
+						"http://0.0.0.0:5000",
+						"http://localhost:5173",
+						"http://localhost:5174",
 						`${process.env.FRONTEND_HOST}`,
 					],
 					methods: ["GET", "POST", "PUT", "DELETE"],
+					allowedHeaders: "*",
 					credentials: false,
 				},
 				whitelist: ["**"],
@@ -76,6 +77,9 @@ module.exports = {
 				// 	return;
 				// }
 				//},
+				onBeforeCall(ctx, route, req, res) {
+					console.log(req.body);
+				},
 
 				/**
 				 * After call hook. You can modify the data.

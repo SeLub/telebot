@@ -13,7 +13,7 @@ function Postlines() {
     return (
         <Fragment>
             <Title order={2}>PostLines</Title>
-            <Paper shadow="lg" withBorder p="xl">
+            <Paper shadow="lg" withBorder p="xl" bg="var(--mantine-color-green-1)">
                 <PostlinesForm postlines={postlines} setPostlines={setPostlines} />
                 <Divider my="md" />
                 <PostlinesList postlines={postlines} setPostlines={setPostlines} />

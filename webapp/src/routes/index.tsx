@@ -3,6 +3,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import Bots from '../components/Bots';
 import Channels from '../components/Channels';
+import HeaderTabs from '../components/Dashboard/HeaderTabs';
+import Demo from '../components/Demo';
 import Login from '../components/Login';
 import NotFoundPage from '../components/NotFoundPage/NotFoundPage';
 import Plans from '../components/Plans';
@@ -14,6 +16,7 @@ import Settings from '../components/Settings/Settings';
 import Logout from '../pages/Logout';
 import { useAuth } from '../provider/AuthProvider';
 import { ProtectedRoute } from './ProtectedRoutes';
+import PostTextEditor from '../components/Posts/PostTextEditor';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
@@ -48,6 +51,18 @@ const fetchPostlines = async () => {
     return data;
 };
 
+const fetchPostline = async (database_id) => {
+    const response = await fetch(serverHost + '/api/posts/' + database_id);
+    const data = await response.json();
+    return data;
+};
+
+const fetchPost = async (database_id, post_id) => {
+    const response = await fetch(serverHost + '/api/posts/database/' + database_id + '/post/' + post_id);
+    const data = await response.json();
+    return data;
+};
+
 const Routes = () => {
     const { token } = useAuth();
     //Public routs
@@ -68,10 +83,6 @@ const Routes = () => {
             element: <ProtectedRoute />,
             children: [
                 {
-                    path: '/',
-                    element: <div>Home Page Authorized</div>,
-                },
-                {
                     element: <Bots />,
                     path: '/bots',
                     loader: getBots,
@@ -87,12 +98,14 @@ const Routes = () => {
                     loader: fetchPostlines,
                 },
                 {
-                    path: 'databases/name/:database_name',
+                    path: '/postlines/:database_id',
                     element: <PostsList />,
+                    loader: ({ params }) => fetchPostline(params.database_id),
                 },
                 {
-                    path: 'database/name/:database_name/post/:post_id',
-                    element: <EditPost />,
+                    path: 'database/:database_id/post/:post_id',
+                    element: <PostTextEditor />,
+                    loader: ({ params }) => fetchPost(params.database_id, params.post_id),
                 },
                 {
                     element: <Plans />,
@@ -102,6 +115,10 @@ const Routes = () => {
                     element: <Publishers />,
                     path: '/publishers',
                     loader: fetchPublishers,
+                },
+                {
+                    element: <div>Statistic</div>,
+                    path: '/statistic',
                 },
                 {
                     path: '/settings',
@@ -122,7 +139,7 @@ const Routes = () => {
     const routesForNotAuthenticatedOnly = [
         {
             path: '/',
-            element: <div>Home Page Not Auth-ted</div>,
+            element: <div>Home for Not Auth</div>,
         },
         {
             path: '/login',
@@ -141,7 +158,7 @@ const Routes = () => {
         ...routesForPublic,
         ...(!token ? routesForNotAuthenticatedOnly : []),
         ...routesForAuthenticatedOnly,
-        // ...notFound,
+        ...notFound,
     ]);
 
     return <RouterProvider router={router} />;

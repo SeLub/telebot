@@ -12,6 +12,7 @@
 // export default ProtectedRoutes;
 import { Navigate, Outlet } from 'react-router-dom';
 
+import Demo from '../components/Demo';
 import { useAuth } from '../provider/AuthProvider';
 
 export const ProtectedRoute = () => {
@@ -24,5 +25,10 @@ export const ProtectedRoute = () => {
     }
 
     // If authenticated, render the child routes
-    return <Outlet />;
+    return (
+        <>
+            <Demo />
+            <Outlet />
+        </>
+    );
 };

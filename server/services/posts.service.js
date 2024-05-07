@@ -113,16 +113,18 @@ module.exports = {
 				return [];
 			}
 		},
-		async getDatabase(id) {
+		async getDatabase(database_id) {
 			const res = await client.query(`
-                  	SELECT * FROM databases WHERE database_id = '${id}';
+                  	SELECT * FROM databases WHERE database_id = '${database_id}';
             	`);
 			return res.rows[0];
 		},
-		async deleteDatabase(name) {
+		async deleteDatabase(database_id) {
 			try {
-				const postsTable = name + "_posts";
-				const attachmentsTable = name + "_attachments";
+				const { database_name } = await this.getDatabase(database_id);
+				const postsTable = database_name + "_posts";
+				const attachmentsTable = database_name + "_attachments";
+				console.log(postsTable, attachmentsTable);
 				await client.query(`
 					DROP TABLE IF EXISTS ${attachmentsTable};
 					`);
@@ -130,7 +132,7 @@ module.exports = {
 					DROP TABLE IF EXISTS ${postsTable};
 					`);
 				await client.query(`
-					DELETE FROM databases WHERE database_name = '${name}';
+					DELETE FROM databases WHERE database_id = '${database_id}';
 					`);
 				return true;
 			} catch (err) {
@@ -140,7 +142,8 @@ module.exports = {
 				return false;
 			}
 		},
-		async checkPostExists(database_name, post_id) {
+		async checkPostExists(database_id, post_id) {
+			const { database_name } = await this.getDatabase(database_id);
 			const postsTable = database_name + "_posts";
 			const attachmentsTable = database_name + "_attachments";
 			const response1 = await client.query(`
@@ -164,7 +167,8 @@ module.exports = {
 					new MoleculerError("Post not found!", 404)
 				);
 		},
-		async createPost(database_name, post_text) {
+		async createPost(database_id, post_text) {
+			const { database_name } = await this.getDatabase(database_id);
 			const postsTable = database_name + "_posts";
 			const post_id = uuidv4();
 			await client.query(
@@ -173,52 +177,55 @@ module.exports = {
                 		VALUES ($1, $2);`,
 				[post_id, post_text]
 			);
-			return await this.getPost(database_name, post_id);
+			return await this.getPost(database_id, post_id);
 		},
-		async getPosts(database_name) {
+		async getPosts(database_id) {
+			const { database_name } = await this.getDatabase(database_id);
 			const postsTable = database_name + "_posts";
 			const res = await client.query(`
                     SELECT * FROM ${postsTable};
                 `);
 			return res.rows;
 		},
-		async getPost(database_name, post_id) {
+		async getPost(database_id, post_id) {
+			const { database_name } = await this.getDatabase(database_id);
 			const postsTable = database_name + "_posts";
-			await this.checkPostExists(database_name, post_id);
+			await this.checkPostExists(database_id, post_id);
 			const res = await client.query(
 				`SELECT * FROM ${postsTable} WHERE post_id = $1;`,
 				[post_id]
 			);
 			return res.rows;
 		},
-		async getFullPost(database_name, post_id) {
-			const postArray = await this.getPost(database_name, post_id);
+		async getFullPost(database_id, post_id) {
+			const { database_name } = await this.getDatabase(database_id);
+			const postArray = await this.getPost(database_id, post_id);
 			const { post_text } = postArray[0];
-			const attachments = await this.getAttachments(
-				database_name,
-				post_id
-			);
+			const attachments = await this.getAttachments(database_id, post_id);
 			return {
 				post_id,
 				post_text,
 				attachments,
 			};
 		},
-		async editPost(database_name, post_id, post_text) {
+		async editPost(database_id, post_id, post_text) {
+			const { database_name } = await this.getDatabase(database_id);
 			const postsTable = database_name + "_posts";
+			await this.checkPostExists(database_id, post_id);
 			await client.query(
 				`
 				UPDATE ${postsTable} SET post_text = $1 
 				WHERE post_id = $2;`,
 				[post_text, post_id]
 			);
-			return await this.getPost(database_name, post_id);
+			return await this.getPost(database_id, post_id);
 		},
-		async deletePost(database_name, post_id) {
+		async deletePost(database_id, post_id) {
+			const { database_name } = await this.getDatabase(database_id);
 			const postsTable = database_name + "_posts";
 			const attachmentsTable = database_name + "_attachments";
 			try {
-				await this.checkPostExists(database_name, post_id);
+				await this.checkPostExists(database_id, post_id);
 				await client.query(
 					`DELETE FROM ${attachmentsTable} WHERE post_id_attachment = $1;`,
 					[post_id]
@@ -233,7 +240,8 @@ module.exports = {
 				return false;
 			}
 		},
-		async getAttachments(database_name, post_id) {
+		async getAttachments(database_id, post_id) {
+			const { database_name } = await this.getDatabase(database_id);
 			const attachmentsTable = database_name + "_attachments";
 			const res = await client.query(
 				`
@@ -243,11 +251,12 @@ module.exports = {
 			return res.rows;
 		},
 		async addAttachmentToPost(
-			database_name,
+			database_id,
 			attachment_id,
 			post_id,
 			attachment_filename
 		) {
+			const { database_name } = await this.getDatabase(database_id);
 			const attachmentsTable = database_name + "_attachments";
 			try {
 				await client.query(
@@ -294,127 +303,128 @@ module.exports = {
 				throw error; // You may handle this error according to your application's logic
 			}
 		},
-		authorize(ctx, route, req, res) {
-			// Read the token from header
-			let auth = req.headers["authorization"];
-			if (auth && auth.startsWith("Bearer")) {
-				let token = auth.slice(7);
+		// authorize(ctx, route, req, res) {
+		// 	// Read the token from header
+		// 	let auth = req.headers["authorization"];
+		// 	if (auth && auth.startsWith("Bearer")) {
+		// 		let token = auth.slice(7);
 
-				// Check the token
-				if (token == "123456") {
-					// Set the authorized user entity to `ctx.meta`
-					ctx.meta.user = { id: 1, name: "John Doe" };
-					return Promise.resolve(ctx);
-				} else {
-					// Invalid token
-					return Promise.reject(
-						new E.UnAuthorizedError(E.ERR_INVALID_TOKEN)
-					);
-				}
-			} else {
-				// No token
-				return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
-			}
-		},
+		// 		// Check the token
+		// 		if (token == "123456") {
+		// 			// Set the authorized user entity to `ctx.meta`
+		// 			ctx.meta.user = { id: 1, name: "John Doe" };
+		// 			return Promise.resolve(ctx);
+		// 		} else {
+		// 			// Invalid token
+		// 			return Promise.reject(
+		// 				new E.UnAuthorizedError(E.ERR_INVALID_TOKEN)
+		// 			);
+		// 		}
+		// 	} else {
+		// 		// No token
+		// 		return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+		// 	}
+		// },
 	},
 	actions: {
 		createPost: {
 			rest: "POST /createPost",
 			params: {
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 				post_text: { type: "string" },
 			},
 			async handler(ctx) {
-				const { database_name, post_text } = ctx.params;
-				return await this.createPost(database_name, post_text);
+				const { database_id, post_text } = ctx.params;
+				return await this.createPost(database_id, post_text);
 			},
 		},
 		getPosts: {
-			rest: "GET /all",
+			rest: "GET /:database_id",
 			params: {
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 			},
 			async handler(ctx) {
-				const { database_name } = ctx.params;
-				return await this.getPosts(database_name);
+				const { database_id } = ctx.params;
+				return await this.getPosts(database_id);
 			},
 		},
 		getPost: {
-			rest: "GET /",
+			rest: "GET /database/:database_id/post/:post_id",
 			params: {
 				post_id: { type: "uuid" },
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 			},
 			async handler(ctx) {
-				const { database_name, post_id } = ctx.params;
-				return await this.getPost(database_name, post_id);
+				const { database_id, post_id } = ctx.params;
+				return await this.getPost(database_id, post_id);
 			},
 		},
 		getFullPost: {
 			rest: "GET /full",
 			params: {
 				post_id: { type: "uuid" },
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 			},
 			async handler(ctx) {
-				const { database_name, post_id } = ctx.params;
-				return await this.getFullPost(database_name, post_id);
+				const { database_id, post_id } = ctx.params;
+				return await this.getFullPost(database_id, post_id);
 			},
 		},
 		editPost: {
 			rest: "PUT /editPost",
 			params: {
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 				post_id: { type: "uuid" },
 				post_text: { type: "string" },
 			},
 			async handler(ctx) {
-				const { database_name, post_id, post_text } = ctx.params;
-				await this.checkPostExists(database_name, post_id);
-				return await this.editPost(database_name, post_id, post_text);
+				const { database_id, post_id, post_text } = ctx.params;
+				await this.checkPostExists(database_id, post_id);
+				return await this.editPost(database_id, post_id, post_text);
 			},
 		},
 		deletePost: {
 			rest: "DELETE /",
 			params: {
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 				post_id: { type: "uuid" },
 			},
+			auth: false,
 			async handler(ctx) {
-				const { database_name, post_id } = ctx.params;
-				return await this.deletePost(database_name, post_id);
+				const { database_id, post_id } = ctx.params;
+				return await this.deletePost(database_id, post_id);
 			},
 		},
 		getAttachments: {
 			rest: "GET /attachments",
 			params: {
 				post_id: { type: "uuid" },
-				database_name: { type: "string" },
+				database_id: { type: "string" },
 			},
 			async handler(ctx) {
-				const { database_name, post_id } = ctx.params;
-				await this.checkPostExists(database_name, post_id);
-				return await this.getAttachments(database_name, post_id);
+				const { database_id, post_id } = ctx.params;
+				await this.checkPostExists(database_id, post_id);
+				return await this.getAttachments(database_id, post_id);
 			},
 		},
 		addAttachmentToPost: {
 			rest: "POST /attachments",
 			params: {
-				database_name: { type: "string" },
-				post_id: { type: "string" },
+				database_id: { type: "uuid" },
+				post_id: { type: "uuid" },
 				attachment_id: { type: "string" },
 				attachment_filename: { type: "string" },
 			},
 			async handler(ctx) {
 				const {
-					database_name,
+					database_id,
 					attachment_id,
 					post_id,
 					attachment_filename,
 				} = ctx.params;
-				await this.checkPostExists(database_name, post_id);
+				await this.checkPostExists(database_id, post_id);
 				return await this.addAttachmentToPost(
-					database_name,
+					database_id,
 					attachment_id,
 					post_id,
 					attachment_filename
@@ -424,14 +434,15 @@ module.exports = {
 		deleteAttachmentFromPost: {
 			rest: "DELETE /attachment",
 			params: {
-				database_name: { type: "string" },
-				post_id: { type: "string" },
+				database_id: { type: "uuid" },
+				post_id: { type: "uuid" },
 				attachment_filename: { type: "string" },
 			},
 			async handler(ctx) {
-				const { database_name, post_id, attachment_filename } =
+				const { database_id, post_id, attachment_filename } =
 					ctx.params;
-				//await this.checkPostExists(database_name, post_id);
+				await this.checkPostExists(database_id, post_id);
+				const { database_name } = await this.getDatabase(database_id);
 				const attachmentsTable = database_name + "_attachments";
 				console.log({ database_name, post_id, attachment_filename });
 				try {
@@ -454,15 +465,15 @@ module.exports = {
 			rest: "POST /publish",
 			params: {
 				post_id: { type: "uuid" },
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 			},
 			async handler(ctx) {
-				const { database_name, post_id } = ctx.params;
+				const { database_id, post_id } = ctx.params;
 				try {
-					const post = await this.getPost(database_name, post_id);
+					const post = await this.getPost(database_id, post_id);
 					const { post_text: text } = post[0];
 					const attachments = await this.getAttachments(
-						database_name,
+						database_id,
 						post_id
 					);
 					const mediaArray = attachments.map(
@@ -505,24 +516,24 @@ module.exports = {
 			},
 		},
 		deleteDatabase: {
-			rest: "DELETE /database/:name",
+			rest: "DELETE /database/:database_id",
 			params: {
-				name: { type: "string" },
+				database_id: { type: "uuid" },
 			},
 			async handler(ctx) {
-				const { name } = ctx.params;
-				const result = await this.deleteDatabase(name);
+				const { database_id } = ctx.params;
+				const result = await this.deleteDatabase(database_id);
 				return result;
 			},
 		},
 		import: {
 			rest: "POST /import",
 			params: {
-				database_name: { type: "string" },
+				database_id: { type: "uuid" },
 				import_file: { type: "string" },
 			},
 			async handler(ctx) {
-				const { database_name, import_file } = ctx.params;
+				const { database_id, import_file } = ctx.params;
 				const { presignedURL } = await ctx.call("storage.getUrl", {
 					file: import_file,
 					folder: "import",
@@ -531,7 +542,7 @@ module.exports = {
 					.then((data) => {
 						console.log("Parsed CSV data:", data);
 						data.forEach((row) => {
-							this.createPost(database_name, row.post_text);
+							this.createPost(database_id, row.post_text);
 						});
 					})
 					.catch((error) => {

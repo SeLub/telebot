@@ -51,16 +51,10 @@ function Header() {
 
     return (
         <header className={classes.header}>
-            <Container className={classes.inner}>
-                {/* <Image radius="md" src={PostUp24Logo} alt="React Logo image" /> */}
-                <Box className={classes.links} visibleFrom="sm">
-                    <Group justify="flex-end">{secondaryItems}</Group>
-                    <Group gap={0} justify="flex-end" className={classes.mainLinks}>
-                        {mainItems}
-                    </Group>
-                </Box>
-                <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" hiddenFrom="sm" />
-            </Container>
+            <Group justify="flex-end">
+                <Image radius="md" src={PostUp24Logo} alt="React Logo image" />
+            </Group>
+            <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" hiddenFrom="sm" />
         </header>
     );
 }

@@ -11,19 +11,19 @@ import { generateUniqueFileName, getImageContentType, getImageUrl, getUploadUrl,
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function CurrentAttachments(props: { post_id: string; dbname: string; height: number }) {
-    const { post_id, dbname, height } = props;
+function CurrentAttachments(props: { post_id: string; database_id: string; height: number }) {
+    const { post_id, database_id, height } = props;
     let imagesHeight = height;
     if (!imagesHeight) imagesHeight = 200;
     const [attachments, setAttachments] = useState<IAttachment[]>([]);
     const [files, setFiles] = useState<FileWithPath[] | []>([]);
 
     useEffect(() => {
-        fetch(`${serverHost}/api/posts/attachments?post_id=${post_id}&database_name=${dbname}`)
+        fetch(serverHost + `/api/posts/attachments?post_id=${post_id}&database_id=${database_id}`)
             .then((response) => response.json())
             .then((data) => setAttachments(data))
             .catch((error) => console.error(error));
-    }, [post_id, attachments.length, dbname]);
+    }, [post_id, attachments.length, database_id]);
 
     const showAttachments = () => {
         return attachments.map((attachment, index) => {
@@ -49,7 +49,7 @@ function CurrentAttachments(props: { post_id: string; dbname: string; height: nu
                 },
                 method: 'DELETE',
                 body: JSON.stringify({
-                    database_name: dbname,
+                    database_id,
                     post_id,
                     attachment_filename: filename,
                 }),
@@ -167,7 +167,7 @@ function CurrentAttachments(props: { post_id: string; dbname: string; height: nu
                 },
                 method: 'POST',
                 body: JSON.stringify({
-                    database_name: dbname,
+                    database_id,
                     attachment_id: UUID,
                     post_id,
                     attachment_filename: uniqueFileName,

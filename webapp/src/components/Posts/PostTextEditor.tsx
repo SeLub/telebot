@@ -4,26 +4,21 @@ import { Underline } from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Fragment, useEffect, useState } from 'react';
+import { useLoaderData, useParams } from 'react-router-dom';
 
+import { IPost } from '../../common/types';
 import DCButton from '../ui/DCButton';
-import ArticleCardVertical from './PostItem/PostItem';
+import PostItem from './PostItem/PostItem';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-function PostTextEditor(params) {
-    const { post_id, database_name } = params;
-    const [editorContent, setEditorContent] = useState('');
-    const [text, setText] = useState('');
+function PostTextEditor() {
+    const { post_id, database_id } = useParams<{ database_id: string; post_id: string }>();
+    const originPost = useLoaderData() as IPost[];
+    const { post_text } = originPost[0];
 
-    useEffect(() => {
-        const getText = async () => {
-            const response = await fetch(`${serverHost}/api/posts/?post_id=${post_id}&database_name=${database_name}`);
-            const data = await response.json();
-            const postText = data[0]['post_text'];
-            setText(postText);
-        };
-        getText();
-    }, [database_name, post_id]);
+    const [editorContent, setEditorContent] = useState('');
+    const [text, setText] = useState(post_text);
 
     const editor = useEditor(
         {
@@ -37,14 +32,14 @@ function PostTextEditor(params) {
         [text],
     );
 
-    const saveText = async (post_id, database_name) => {
+    const saveText = async (post_id, database_id) => {
         try {
             const result = await fetch(`${serverHost}/api/posts/editPost`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ database_name, post_id, post_text: editorContent }),
+                body: JSON.stringify({ database_id, post_id, post_text: editorContent }),
             });
 
             if (result.ok) {
@@ -54,7 +49,6 @@ function PostTextEditor(params) {
                     color: 'green',
                 });
             }
-            console.log(result);
         } catch (error) {
             notifications.show({
                 title: 'Failed',
@@ -66,7 +60,15 @@ function PostTextEditor(params) {
 
     return (
         <Fragment>
-            <ArticleCardVertical dbname={database_name} showEditButton={false} to={'#'} text={text} post_id={post_id} />
+            <PostItem
+                database_id={database_id}
+                showEditButton={false}
+                to={'#'}
+                text={text}
+                post_id={post_id}
+                posts={undefined}
+                setPosts={undefined}
+            />
             <RichTextEditor editor={editor}>
                 <RichTextEditor.Toolbar>
                     <RichTextEditor.ControlsGroup>
@@ -90,7 +92,7 @@ function PostTextEditor(params) {
                     </RichTextEditor.ControlsGroup>
                     <DCButton
                         buttonId="saveTextButton"
-                        handleOnClick={() => saveText(post_id, database_name)}
+                        handleOnClick={() => saveText(post_id, database_id)}
                         buttonClassName="submit"
                         buttonText="SaveText"
                     />

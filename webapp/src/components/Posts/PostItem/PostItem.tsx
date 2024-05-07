@@ -12,7 +12,7 @@ const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 type Props = {
     text: string;
     to: string;
-    dbname: string;
+    database_id: string;
     post_id: string;
     showEditButton: boolean;
     posts: any;
@@ -20,12 +20,12 @@ type Props = {
 };
 
 function PostItem(props: Props) {
-    const { text, to, dbname, post_id, posts, setPosts, showEditButton } = props;
+    const { text, to, database_id, post_id, posts, setPosts, showEditButton } = props;
     const [editorHTMLMode, handlers] = useDisclosure(true);
 
     const deletePost = async () => {
         try {
-            const response = await fetch(`${serverHost}/api/posts/?database_name=${dbname}&post_id=${post_id}`, {
+            const response = await fetch(`${serverHost}/api/posts/?database_id=${database_id}&post_id=${post_id}`, {
                 method: 'DELETE',
             });
             const newPosts = posts.filter((post) => post.post_id !== post_id);
@@ -57,7 +57,7 @@ function PostItem(props: Props) {
                                 handlers.toggle();
                             }}
                         />
-                        <PublishPost database_name={dbname} post_id={post_id} />
+                        <PublishPost database_id={database_id} post_id={post_id} />
                     </Group>
                     <Group wrap="nowrap" gap="xs" justify="flex-end">
                         <ActionIcon variant="filled" color={'yellow'} aria-label="Clone Post">
@@ -79,7 +79,7 @@ function PostItem(props: Props) {
                 )}
             </Card.Section>
             <Card.Section inheritPadding mt="sm" pb="md" className={classes.attachments}>
-                <Attachments dbname={dbname} post_id={post_id} height={70} />
+                <Attachments database_id={database_id} post_id={post_id} height={70} />
             </Card.Section>
         </Card>
     );

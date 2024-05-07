@@ -41,6 +41,8 @@ module.exports = {
 		await this.createBotsTable();
 		const bots = await this.getBots();
 
+		console.log("BBBBBBOOOOOTS ", bots);
+
 		for (const bot of await bots.rows) {
 			const { bot_id: db_id, bot_name: db_name, bot_token } = bot;
 
@@ -357,11 +359,11 @@ module.exports = {
 			params: {
 				bot_name: { type: "string" },
 				post_id: { type: "uuid" },
-				database_name: { type: "string" },
+				database_id: { type: "string" },
 				channel_id: { type: "string" },
 			},
 			async handler(ctx) {
-				const { bot_name, post_id, database_name, channel_id } =
+				const { bot_name, post_id, database_id, channel_id } =
 					ctx.params;
 
 				const bot = this.bots[bot_name]?.bot_instance;
@@ -373,7 +375,7 @@ module.exports = {
 				const { post_text, attachments } = await ctx.call(
 					"posts.getFullPost",
 					{
-						database_name,
+						database_id,
 						post_id,
 					}
 				);

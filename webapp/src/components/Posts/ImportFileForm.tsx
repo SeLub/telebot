@@ -7,7 +7,7 @@ import { getImageContentType } from '../../utils';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-const ImportFileForm = ({ database_name }) => {
+const ImportFileForm = ({ database_id }) => {
     const [file, setFile] = useState<File | null>(null);
     const [refreshDisabled, setRefresh] = useState(true);
     const [importButton, setImportButton] = useState(true);
@@ -20,7 +20,7 @@ const ImportFileForm = ({ database_name }) => {
                 },
                 method: 'POST',
                 body: JSON.stringify({
-                    database_name,
+                    database_id,
                     import_file: fileName,
                 }),
             });

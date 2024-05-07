@@ -12,15 +12,15 @@ const PostlinesList = ({ postlines, setPostlines }) => {
         margin: '0 0 0 60px',
     };
 
-    const handleDelete = async (name) => {
-        const removeDatabase = async (name) => {
-            const response = await fetch(`${serverHost}/api/posts/database/${name}`, {
+    const handleDelete = async (database_id) => {
+        const removeDatabase = async (database_id) => {
+            const response = await fetch(`${serverHost}/api/posts/database/${database_id}`, {
                 method: 'DELETE',
             });
             return await response.json();
         };
-        await removeDatabase(name);
-        setPostlines(postlines.filter((postline: IPostlines) => postline.database_name !== name));
+        await removeDatabase(database_id);
+        setPostlines(postlines.filter((postline: IPostlines) => postline.database_id !== database_id));
     };
     return (
         <Fragment>
@@ -30,11 +30,11 @@ const PostlinesList = ({ postlines, setPostlines }) => {
                         <div>{postline.database_name}</div>
                     </div>
                     <div style={inline}>
-                        <ActionIcon component="a" href={`/database/name/${postline.database_name}`}>
+                        <ActionIcon component="a" href={`/postlines/${postline.database_id}`}>
                             <IconEdit size={18} />
                         </ActionIcon>{' '}
                         <ActionIcon>
-                            <IconTrash size={18} onDoubleClick={() => handleDelete(postline.database_name)} />
+                            <IconTrash size={18} onDoubleClick={() => handleDelete(postline.database_id)} />
                         </ActionIcon>
                     </div>
                 </div>

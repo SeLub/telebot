@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom';
 
 import PostTextEditor from './PostTextEditor';
 
-const Post = () => {
-    const { post_id, database_name } = useParams<{ database_name: string; post_id: string }>();
+const EditPost = () => {
+    const { post_id, database_id } = useParams<{ database_id: string; post_id: string }>();
 
     return (
         <Fragment>
@@ -18,10 +18,10 @@ const Post = () => {
                     </Group>
                 </Card.Section>
                 <Card.Section inheritPadding py="xs">
-                    <PostTextEditor database_name={database_name} post_id={post_id} />
+                    <PostTextEditor database_name={database_id} post_id={post_id} />
                 </Card.Section>
             </Card>
         </Fragment>
     );
 };
-export default Post;
+export default EditPost;

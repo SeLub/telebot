@@ -5,7 +5,7 @@ import InputPostText from './InputPostText';
 import SavePostButton from './SavePostButton';
 
 const CreatePostForm = (props) => {
-    const { posts, setPosts, database_name } = props;
+    const { posts, setPosts, database_id } = props;
     const [text, setText] = useState('');
     const [saved, setSaved] = useState(true);
 
@@ -18,7 +18,7 @@ const CreatePostForm = (props) => {
                 setPosts={setPosts}
                 saved={saved}
                 setSaved={setSaved}
-                database_name={database_name}
+                database_id={database_id}
             />
         </Flex>
     );

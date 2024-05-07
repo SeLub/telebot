@@ -6,8 +6,8 @@ import DCButton from '../ui/DCButton';
 
 const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
 
-const PublishPost = (props: { database_name: string; post_id: string }) => {
-    const { database_name, post_id } = props;
+const PublishPost = (props: { database_id: string; post_id: string }) => {
+    const { database_id, post_id } = props;
 
     const publishPost = async (post_id: string): Promise<void> => {
         try {
@@ -17,7 +17,7 @@ const PublishPost = (props: { database_name: string; post_id: string }) => {
                 },
                 method: 'POST',
                 body: JSON.stringify({
-                    database_name,
+                    database_id,
                     post_id,
                 }),
             });
@@ -27,7 +27,7 @@ const PublishPost = (props: { database_name: string; post_id: string }) => {
                 },
                 method: 'POST',
                 body: JSON.stringify({
-                    database_name,
+                    database_id,
                     post_id,
                 }),
             });

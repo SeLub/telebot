@@ -28,10 +28,10 @@ const theme = {
 ReactDOM.createRoot(document.getElementById('root')).render(
     <MantineProvider defaultColorScheme="light" theme={theme}>
         <Notifications position="top-right" />
-        <Dashboard>
-            <AuthProvider>
+        <AuthProvider>
+            <Dashboard>
                 <Routes />
-            </AuthProvider>
-        </Dashboard>
+            </Dashboard>
+        </AuthProvider>
     </MantineProvider>,
 );

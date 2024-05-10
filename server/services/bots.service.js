@@ -5,6 +5,7 @@ require("dotenv").config();
 
 module.exports = {
 	name: "bots",
+	dependencies: ["posts"],
 	settings: {
 		authorization: true,
 	},
@@ -41,7 +42,7 @@ module.exports = {
 		await this.createBotsTable();
 		const bots = await this.getBots();
 
-		console.log("BBBBBBOOOOOTS ", bots);
+		//console.log("BBBBBBOOOOOTS ", bots);
 
 		for (const bot of await bots.rows) {
 			const { bot_id: db_id, bot_name: db_name, bot_token } = bot;

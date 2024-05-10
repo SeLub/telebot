@@ -1,4 +1,3 @@
-import { readLocalStorageValue } from '@mantine/hooks';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import Bots from '../components/Bots';
@@ -10,58 +9,14 @@ import NotFoundPage from '../components/NotFoundPage/NotFoundPage';
 import Plans from '../components/Plans';
 import Postlines from '../components/Postlines';
 import EditPost from '../components/Posts/EditPost';
+import PostTextEditor from '../components/Posts/PostTextEditor';
 import PostsList from '../components/Posts/PostsList';
 import Publishers from '../components/Publishers';
 import Settings from '../components/Settings/Settings';
 import Logout from '../pages/Logout';
 import { useAuth } from '../provider/AuthProvider';
 import { ProtectedRoute } from './ProtectedRoutes';
-import PostTextEditor from '../components/Posts/PostTextEditor';
-
-const serverHost = import.meta.env.VITE_REACT_APP_SERVER_HOST;
-
-const token = readLocalStorageValue({ key: 'token' });
-console.log('token from localStorage ', token);
-
-const getBots = async () => {
-    const response = await fetch(serverHost + '/api/bots', {
-        method: 'GET',
-        headers: {
-            Authorization: 'Bearer ' + token,
-        },
-    });
-    const data = await response.json();
-    return data;
-};
-
-const getChannels = async () => {
-    const response = await fetch(serverHost + '/api/channels');
-    const data = await response.json();
-    return data;
-};
-
-const fetchPublishers = async () => {
-    const response = await fetch(serverHost + '/api/publishers/getInitData');
-    const data = await response.json();
-    return data;
-};
-const fetchPostlines = async () => {
-    const response = await fetch(serverHost + '/api/posts/databases');
-    const data = await response.json();
-    return data;
-};
-
-const fetchPostline = async (database_id) => {
-    const response = await fetch(serverHost + '/api/posts/' + database_id);
-    const data = await response.json();
-    return data;
-};
-
-const fetchPost = async (database_id, post_id) => {
-    const response = await fetch(serverHost + '/api/posts/database/' + database_id + '/post/' + post_id);
-    const data = await response.json();
-    return data;
-};
+import * as loaders from './loaders';
 
 const Routes = () => {
     const { token } = useAuth();
@@ -85,27 +40,27 @@ const Routes = () => {
                 {
                     element: <Bots />,
                     path: '/bots',
-                    loader: getBots,
+                    loader: loaders.getBots,
                 },
                 {
                     element: <Channels />,
                     path: '/channels',
-                    loader: getChannels,
+                    loader: loaders.getChannels,
                 },
                 {
                     element: <Postlines />,
                     path: '/postlines',
-                    loader: fetchPostlines,
+                    loader: loaders.fetchPostlines,
                 },
                 {
                     path: '/postlines/:database_id',
                     element: <PostsList />,
-                    loader: ({ params }) => fetchPostline(params.database_id),
+                    loader: ({ params }) => loaders.fetchPostline(params.database_id),
                 },
                 {
                     path: 'database/:database_id/post/:post_id',
                     element: <PostTextEditor />,
-                    loader: ({ params }) => fetchPost(params.database_id, params.post_id),
+                    loader: ({ params }) => loaders.fetchPost(params.database_id, params.post_id),
                 },
                 {
                     element: <Plans />,
@@ -114,7 +69,7 @@ const Routes = () => {
                 {
                     element: <Publishers />,
                     path: '/publishers',
-                    loader: fetchPublishers,
+                    loader: loaders.fetchPublishers,
                 },
                 {
                     element: <div>Statistic</div>,

@@ -2,16 +2,23 @@ import { Divider, Paper, Title } from '@mantine/core';
 import { Fragment, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 
-import { IBots, IChannels, IDatabases, IPublishers } from '../../common/types';
+import { IBots, IChannels, IFullPublishers, IPostlines, IPublishers } from '../../common/types';
 import ListPublishers from './ListPublishers';
 import PublishersForm from './PublishersForm/index';
 
 function Publishers() {
-    const { publishers: orPubs, bots: orBots, channels: orChs, databases: orPls } = useLoaderData();
+    const {
+        publishers: orPubs,
+        bots: orBots,
+        channels: orChs,
+        databases: orPls,
+        strategies: orStrat,
+    } = useLoaderData() as IFullPublishers;
     const [channels] = useState<IChannels[] | []>(orChs);
     const [publishers, setPublishers] = useState<IPublishers[] | []>(orPubs);
     const [bots] = useState<IBots[] | []>(orBots);
-    const [databases] = useState<IDatabases[] | []>(orPls);
+    const [databases] = useState<IPostlines[] | []>(orPls);
+    const [strategies] = useState<string[] | []>(orStrat);
 
     return (
         <Fragment>
@@ -23,6 +30,7 @@ function Publishers() {
                     bots={bots}
                     channels={channels}
                     databases={databases}
+                    strategies={strategies}
                 />
                 <Divider my="md" />
                 <ListPublishers publishers={publishers} setPublishers={setPublishers} />

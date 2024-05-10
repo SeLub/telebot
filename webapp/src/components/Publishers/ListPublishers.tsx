@@ -1,4 +1,4 @@
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Box } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import { Fragment } from 'react/jsx-runtime';
 
@@ -31,30 +31,36 @@ const ListPublishers = (props: Props) => {
         setPublishers(publishers.filter((publisher: IPublishers) => publisher.publisher_id !== id));
     };
 
-    return (
-        <Fragment>
-            {publishers.map((publisher) => (
-                <div key={publisher.publisher_id} style={{ borderBottom: '1px solid lightgray' }}>
-                    <div style={inline}>
-                        <div>{publisher.publisher_name}</div>
-                    </div>
-                    <div style={inline}>
-                        <div>{publisher.publisher_database}</div>
-                    </div>
-                    <div style={inline}>
-                        <div>{publisher.publisher_bots}</div>
-                    </div>
-                    <div style={inline}>
-                        <div>{publisher.publisher_channels}</div>
-                    </div>
-                    <div style={inline}>
-                        <ActionIcon>
-                            <IconTrash size={18} onDoubleClick={() => handleDelete(publisher.publisher_id)} />
-                        </ActionIcon>
-                    </div>
+    const pubList = () =>
+        publishers.map((publisher) => (
+            <div key={publisher.publisher_id} style={{ borderBottom: '1px solid lightgray' }}>
+                <div style={inline}>
+                    <div>{publisher.publisher_name}</div>
                 </div>
-            ))}
-        </Fragment>
-    );
+                <div style={inline}>
+                    <div>{publisher.postline_id}</div>
+                </div>
+                <div style={inline}>
+                    <div>{publisher.bot_id}</div>
+                </div>
+                <div style={inline}>
+                    <div>{publisher.channel_id}</div>
+                </div>
+                <div style={inline}>
+                    <div>{publisher.strategy_id}</div>
+                </div>
+                <div style={inline}>
+                    <ActionIcon key={publisher.publisher_id}>
+                        <IconTrash
+                            key={publisher.publisher_id}
+                            size={18}
+                            onDoubleClick={() => handleDelete(publisher.publisher_id)}
+                        />
+                    </ActionIcon>
+                </div>
+            </div>
+        ));
+
+    return <Fragment>{pubList()}</Fragment>;
 };
 export default ListPublishers;

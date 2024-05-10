@@ -15,7 +15,7 @@ const SelectDatabase = (props: Props) => {
     const listDatabases = (databases: IDatabases[]) =>
         databases.map((database, index) => {
             return (
-                <option key={index + 1} value={database.database_name}>
+                <option key={index + 1} value={database.database_id}>
                     {database.database_name}
                 </option>
             );
@@ -28,7 +28,7 @@ const SelectDatabase = (props: Props) => {
             leftSection={<IconChevronDown size={14} stroke={1.5} />}
             pointer
             onChange={(event) => {
-                const selectedDatabase = event.target.options[event.target.options.selectedIndex].text;
+                const selectedDatabase = event.target.options[event.target.options.selectedIndex].value;
                 console.log(selectedDatabase);
                 setDatabase(selectedDatabase);
             }}

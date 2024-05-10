@@ -9,7 +9,7 @@ const SelectBot = (props) => {
     const listBots = (bots: IBots[]) =>
         bots.map((bot, index) => {
             return (
-                <option key={index + 1} value={bot.bot_name}>
+                <option key={index + 1} value={bot.bot_id}>
                     {bot.bot_name}
                 </option>
             );
@@ -23,8 +23,8 @@ const SelectBot = (props) => {
             leftSection={<IconChevronDown size={14} stroke={1.5} />}
             pointer
             onChange={(event) => {
-                const selectedBot = event.target.options[event.target.options.selectedIndex].text;
-                console.log(selectedBot);
+                const selectedBot = event.target.options[event.target.options.selectedIndex];
+                console.log('selectedBot ', selectedBot);
                 setBot(selectedBot);
             }}
         >

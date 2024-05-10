@@ -11,13 +11,14 @@ type Props = {
     channel: IChannels;
     database: IDatabases;
     publishers: IPublishers[];
+    strategy: string;
     setPublishers: any;
     saved: boolean;
     setSaved: any;
 };
 
 const SavePublisherButton = (props: Props) => {
-    const { pubname, bot, channel, database, publishers, setPublishers, saved, setSaved } = props;
+    const { pubname, bot, channel, database, publishers, strategy, setPublishers, saved, setSaved } = props;
 
     const savePublisher = async () => {
         console.log(bot, channel);
@@ -28,9 +29,10 @@ const SavePublisherButton = (props: Props) => {
             },
             body: JSON.stringify({
                 publisher_name: pubname,
-                publisher_database: database,
-                publisher_bots: bot,
-                publisher_channels: channel,
+                postline_id: database,
+                bot_id: bot,
+                channel_id: channel,
+                strategy_id: strategy,
             }),
         });
         const publisher = await response.json();

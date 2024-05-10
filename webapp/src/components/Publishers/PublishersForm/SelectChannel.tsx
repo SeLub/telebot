@@ -9,7 +9,7 @@ const SelectChannel = (props) => {
     const listChannels = (channels: IChannels[]) =>
         channels.map((channel, index) => {
             return (
-                <option key={index + 1} value={channel.channel_name}>
+                <option key={index + 1} value={channel.channel_id}>
                     {channel.channel_name}
                 </option>
             );
@@ -22,7 +22,7 @@ const SelectChannel = (props) => {
             leftSection={<IconChevronDown size={14} stroke={1.5} />}
             pointer
             onChange={(event) => {
-                const selectedChannel = event.target.options[event.target.options.selectedIndex].text;
+                const selectedChannel = event.target.options[event.target.options.selectedIndex].value;
                 console.log(selectedChannel);
                 setChannel(selectedChannel);
             }}

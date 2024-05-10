@@ -25,9 +25,18 @@ export interface ICurrentAttachmentsProps {
 export interface IPublishers {
     publisher_id: string;
     publisher_name: string;
-    publisher_bots: string;
-    publisher_channels: string;
-    publisher_database: string;
+    bot_id: string;
+    channel_id: string;
+    postline_id: string;
+    strategy_id: string;
+}
+
+export interface IFullPublishers {
+    publishers: IPublishers[] | [];
+    bots: IBots[] | [];
+    channels: IChannels[] | [];
+    databases: IPostlines[] | [];
+    strategies: string[] | [];
 }
 
 export interface IPostlines {

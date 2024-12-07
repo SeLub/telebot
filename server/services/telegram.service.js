@@ -14,7 +14,7 @@ module.exports = {
 			process.env.STORAGE_ATTACHMENTS_FOLDER +
 			"/";
 		this.bot = new telegrambot(token, { polling: true });
-		this.bot.close();
+		//this.bot.close();
 		//this.bot.logOut();
 	},
 	methods: {

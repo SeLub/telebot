@@ -1,0 +1,101 @@
+version: "3.3"
+
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+    image: selub/postup:latest
+    env_file: docker-compose.env
+    environment:
+      SERVICES: api # Moleculer Runner will start only the 'api' service in this container
+      PORT: 3000 # Port of API gateway
+    depends_on:
+      - nats
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
+      - "traefik.http.services.api-gw.loadbalancer.server.port=3000"
+    networks:
+      - internal
+
+  posts:
+    container_name: posts
+    build:
+      context: .
+    image: selub/postup:latest
+    env_file: docker-compose.env
+    environment:
+      SERVICES: posts # Moleculer Runner will start only the 'posts' service in this container
+    depends_on:
+      - api
+      - nats
+    networks:
+      - internal
+
+  storage:
+    container_name: storage
+    build:
+      context: .
+    image: selub/postup:latest
+    env_file: docker-compose.env
+    environment:
+      SERVICES: storage # Moleculer Runner will start only the 'storage' service in this container
+    depends_on:
+      - api
+      - nats
+    networks:
+      - internal
+
+  telegram:
+    container_name: telegram
+    build:
+      context: .
+    image: selub/postup:latest
+    env_file: docker-compose.env
+    environment:
+      SERVICES: telegram # Moleculer Runner will start only the 'storage' service in this container
+    depends_on:
+      - nats
+      - posts
+    networks:
+      - internal
+
+  traefik:
+    container_name: traefik
+    image: traefik:v2.1
+    command:
+      - "--api.insecure=true" # Don't do that in production!
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+    ports:
+      - 3000:80
+      - 3001:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - internal
+      - default
+  nats:
+    image: nats:2
+    networks:
+      - internal
+  db:
+    image: postgres:latest
+    networks:
+      - internal
+    env_file: docker-compose.env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    restart: always
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+networks:
+  internal:
+
+volumes:
+  db_data:

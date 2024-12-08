@@ -2,3 +2,7 @@
 .aider*
 .env
 db/pg
+server/node_modules/
+server/dist/
+server/docs/
+server/logs/

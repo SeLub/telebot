@@ -1,0 +1,8 @@
+.vscode
+.aider*
+.env
+db/pg
+node_modules/
+dist/
+docs/
+logs/

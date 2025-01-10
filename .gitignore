@@ -3,6 +3,6 @@
 .env
 db/pg
 server/node_modules/
-server/dist/
+server/dist/*
 server/docs/
 server/logs/

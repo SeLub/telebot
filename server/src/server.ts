@@ -1,6 +1,7 @@
 import fastify, { FastifyInstance } from 'fastify';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+import fastifyCors from '@fastify/cors'; 
 import { PORT, NODE_ENV } from './common/config';
 import { logger } from './logger';
 import { handleExit, handleUncaughtErrors } from './common/fatal';
@@ -36,6 +37,13 @@ export const createServer = (): FastifyInstance => {
       },
     },
   });
+
+    // Регистрируем плагин CORS
+    server.register(fastifyCors, {
+      origin: '*', // Разрешаем все источники, вы можете настроить его по необходимости
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      credentials: true,
+    });
 
   // Register Swagger
   server.register(fastifySwagger, swaggerOptions);

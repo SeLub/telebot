@@ -3,10 +3,19 @@ import { SubscriptionService } from "./subscription.service";
 import { subscriptionSchema } from "./subscription.schema";
 import { ISubscriptionCreate, ISubscriptionUpdate } from "./subscription.types";
 
+/**
+ * Subscription Controller handles all subscription-related HTTP endpoints
+ * @param fastify - Fastify instance for route registration
+ * @category Controllers
+ */
 export default async function subscriptionController(fastify: FastifyInstance) {
   const service = new SubscriptionService();
 
-  // Get all subscriptions
+  /**
+   * GET /subscriptions
+   * Retrieves all subscriptions from the database
+   * @returns Array of subscription objects
+   */
   fastify.route({
     method: 'GET',
     url: '/',
@@ -22,7 +31,12 @@ export default async function subscriptionController(fastify: FastifyInstance) {
     }
   });
 
-  // Get single subscription
+  /**
+   * GET /subscriptions/:id
+   * Retrieves a specific subscription by ID
+   * @param id - Subscription identifier
+   * @returns Single subscription object
+   */
   fastify.route({
     method: 'GET',
     url: '/:id',
@@ -33,7 +47,12 @@ export default async function subscriptionController(fastify: FastifyInstance) {
     }
   });
 
-  // Create subscription
+  /**
+   * POST /subscriptions
+   * Creates a new subscription
+   * @param body - Subscription creation data
+   * @returns Newly created subscription object
+   */
   fastify.route({
     method: 'POST',
     url: '/',
@@ -44,7 +63,13 @@ export default async function subscriptionController(fastify: FastifyInstance) {
     }
   });
 
-  // Update subscription
+  /**
+   * PUT /subscriptions/:id
+   * Updates an existing subscription
+   * @param id - Subscription identifier
+   * @param body - Updated subscription data
+   * @returns Updated subscription object
+   */
   fastify.route({
     method: 'PUT',
     url: '/:id',
@@ -55,7 +80,12 @@ export default async function subscriptionController(fastify: FastifyInstance) {
     }
   });
 
-  // Delete subscription
+  /**
+   * DELETE /subscriptions/:id
+   * Removes a subscription from the system
+   * @param id - Subscription identifier
+   * @returns Success message
+   */
   fastify.route({
     method: 'DELETE',
     url: '/:id',
@@ -66,3 +96,4 @@ export default async function subscriptionController(fastify: FastifyInstance) {
     }
   });
 }
+

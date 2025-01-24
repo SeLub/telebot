@@ -15,6 +15,13 @@ const swaggerOptions = {
       description: 'PostUp Telegram auto-posting application API',
       version: '1.0.0',
     },
+    tags: [
+      { name: 'Subscriptions', description: 'Subscription management endpoints' },
+      { name: 'Channels', description: 'Channel management endpoints' },
+      { name: 'Bots', description: 'Bot management endpoints' },
+      { name: 'Postlines', description: 'Postline management endpoints' },
+      { name: 'Posts', description: 'Post management endpoints' }
+    ],
     servers: [
       {
         url: `http://localhost:${PORT}`,
@@ -23,6 +30,8 @@ const swaggerOptions = {
     ],
   },
 };
+
+
 
 export const createServer = (): FastifyInstance => {
   const server = fastify({

@@ -41,31 +41,32 @@ export default async function MainRouter(fastify: FastifyInstance) {
   fastify.register(fastifyStatic, {
     root: path.join(__dirname, "../docs"),
     prefix: "/docs",
-    decorateReply: false, // the reply decorator has been added by the first plugin registration
+    decorateReply: false,
   });
 
-  /** Register Subscription Controller
-   * @param subscriptionController - {@link SubscriptionController}
-   */
-  fastify.register(subscriptionController, { prefix: "/subscriptions" });
+  fastify.register(subscriptionController, { 
+    prefix: "/subscriptions",
+    schema: { tags: ['Subscriptions'] }
+  });
 
-  /** Register Channel Controller
-   * @param channelController - {@link ChannelController}
-   */
-  fastify.register(channelController, { prefix: "/channels" });
+  fastify.register(channelController, { 
+    prefix: "/channels",
+    schema: { tags: ['Channels'] }
+  });
 
-  /** Register Bot Controller
-   * @param botController - {@link BotController}
-   */
-  fastify.register(botController, { prefix: "/bots" });
+  fastify.register(botController, { 
+    prefix: "/bots",
+    schema: { tags: ['Bots'] }
+  });
 
-  /** Register Postline Controller
-   * @param postlineController - {@link PostlineController}
-   */
-  fastify.register(postlineController, { prefix: "/postlines" });
+  fastify.register(postlineController, { 
+    prefix: "/postlines",
+    schema: { tags: ['Postlines'] }
+  });
 
-  /** Register Post Controller
-   * @param postController - {@link PostController}
-   */
-  fastify.register(postController, { prefix: "/posts" });
+  fastify.register(postController, { 
+    prefix: "/posts",
+    schema: { tags: ['Posts'] }
+  });
 }
+

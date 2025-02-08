@@ -15,7 +15,8 @@ export const swaggerOptions = {
         { name: 'Channels', description: 'Channel management endpoints' },
         { name: 'Bots', description: 'Bot management endpoints' },
         { name: 'Postlines', description: 'Postline management endpoints' },
-        { name: 'Posts', description: 'Post management endpoints' }
+        { name: 'Posts', description: 'Post management endpoints' },
+        { name: 'Health', description: 'Healthcheck endpoints' },
       ],
       servers: [
         {
@@ -26,9 +27,14 @@ export const swaggerOptions = {
     },
   };
 
-  export const registerSwagger = (server: FastifyInstance, swaggerOptions: FastifyRegisterOptions<SwaggerOptions>) => {
+  export const registerSwagger = async (server: FastifyInstance) => {
     server.register(fastifySwagger, swaggerOptions);
     server.register(fastifySwaggerUi, {
       routePrefix: '/documentation',
+      uiConfig: {
+        docExpansion: 'list',
+        deepLinking: true
+      },
+      staticCSP: false
     });
   };

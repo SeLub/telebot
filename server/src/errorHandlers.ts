@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { logError, logInfo } from './common/logger';
-import mongoose from 'mongoose';
+import { closeDB } from './db/connection';
 
 export const handleExit = () => {
   process.on('SIGTERM', gracefulShutdown);
@@ -10,13 +10,7 @@ export const handleExit = () => {
 const gracefulShutdown = async () => {
   try {
     logInfo('🔵 Received shutdown signal, closing connections...');
-
-    // Close database connection
-    if (mongoose.connection.readyState === 1) {
-      await mongoose.connection.close();
-      logInfo('🔵 Database connection closed');
-    }
-
+    await closeDB();
     process.exit(0);
   } catch (error) {
     logError('🔴 Error during graceful shutdown', { error });
@@ -26,13 +20,12 @@ const gracefulShutdown = async () => {
 
 export const handleUncaughtErrors = () => {
   process.on('uncaughtException', (err) => {
-    logError('🔴 Uncaught Exception:', err);
+    logError(`🔴 Uncaught Exception: ${err.message}`, { err });
     process.exit(1);
   });
 
-
   process.on('unhandledRejection', (reason, promise) => {
-    logError(`🔴 Unhandled Rejection at: ${promise}, reason: ${reason}`, { promise, reason });
+    logError(`🔴 Unhandled Rejection`, { reason, promise });
     process.exit(1);
   });
 };

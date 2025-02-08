@@ -1,12 +1,9 @@
-import mongoose from 'mongoose';
 import { FastifyInstance } from 'fastify';
 import createServer from './createServer';
-import { registerHealthCheck } from './healthCheck';
-import { registerCors } from './cors';
-import { registerSwagger , swaggerOptions } from './swagger';
 import { handleExit, handleUncaughtErrors } from './errorHandlers';
 import { logError, logInfo } from './common/logger';
 import { PORT, NODE_ENV, MONGO_URI } from './common/config';
+import { connectDB } from './db/connection';
 
 
 const start = async () => {
@@ -16,16 +13,11 @@ const start = async () => {
     handleUncaughtErrors();
 
     // Connect to database
-    await mongoose.connect(MONGO_URI);
+    await connectDB();
     logInfo('🟢 MongoDB connected successfully');
 
-    const server: FastifyInstance = createServer();
-
-    // Register CORS, Swagger, and Health Check
-    registerCors(server);
-    registerSwagger(server, swaggerOptions); // Pass the correctly typed options
-    registerHealthCheck(server);
-
+    const server: FastifyInstance = await createServer();
+    
     await server.listen({ port: Number(PORT), host: '0.0.0.0' });
     logInfo(`🟢 Server running on port ${PORT} in ${NODE_ENV} mode`);
   } catch (error) {
@@ -33,6 +25,7 @@ const start = async () => {
     process.exit(1);
   }
 };
+
 
 // Start server
 start();

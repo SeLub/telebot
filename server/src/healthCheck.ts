@@ -1,17 +1,40 @@
 import { FastifyInstance } from 'fastify';
-import mongoose from 'mongoose';
+import { getDBStatus } from './db/connection';
 
-export const registerHealthCheck = (server: FastifyInstance) => {
-  server.get('/health', async (request, reply) => {
-    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-
-    reply.send({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      services: {
-        server: 'running',
-        database: dbStatus
+export default async function healthController(fastify: FastifyInstance) {
+    fastify.route({
+      method: 'GET',
+      url: '/',
+      schema: {
+        tags: ['Health'],
+        description: 'Health check endpoint',
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              status: { type: 'string' },
+              timestamp: { type: 'string' },
+              services: {
+                type: 'object',
+                properties: {
+                  server: { type: 'string' },
+                  database: { type: 'string' }
+                }
+              }
+            }
+          }
+        }
+      },
+      handler: async (request, reply) => {
+        reply.send({
+          status: 'ok',
+          timestamp: new Date().toISOString(),
+          services: {
+            server: 'running',
+            database: getDBStatus()
+          }
+        });
       }
     });
-  });
-};
+  }
+  

@@ -1,13 +1,26 @@
 import fastify from 'fastify';
 import MainRouter from './router';
+import { registerCors } from './cors';
+import { registerSwagger } from './swagger';
 
-const createServer = () => {
+const createServer = async () => {
   const server = fastify({
-    logger: true,
+    logger: {
+      level: 'info',
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'SYS:standard',
+        },
+      },
+    },
   });
 
-  // Register main router
-  server.register(MainRouter);
+  // Register CORS, Swagger and main router
+  await registerCors(server);
+  await registerSwagger(server);
+  await server.register(MainRouter);
 
   return server;
 };

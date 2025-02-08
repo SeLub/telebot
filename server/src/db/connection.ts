@@ -1,4 +1,3 @@
-// src/db/connection.ts
 import mongoose from 'mongoose';
 import { MONGO_URI } from '../common/config';
 import { logError, logInfo } from '../common/logger';
@@ -68,11 +67,20 @@ export const connectDB = async (retryCount = 0): Promise<void> => {
   }
 };
 
-let disconnectedLogged = false;
+export const closeDB = async (): Promise<void> => {
+  if (mongoose.connection.readyState === 1) {
+    await mongoose.connection.close();
+    logInfo('🔵 Database connection closed');
+  }
+};
 
+export const getDBStatus = (): string => {
+  return mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+};
+
+// Event listeners for connection status
 mongoose.connection.on('disconnected', () => {
-  if (!disconnectedLogged && !isConnecting) {
-    disconnectedLogged = true;
+  if (!isConnecting) {
     logError('🔴 MongoDB disconnected', {
       status: 'disconnected',
       action: currentRetry < MAX_RETRIES ? 'Attempting to reconnect...' : 'Max retries reached'
@@ -81,13 +89,7 @@ mongoose.connection.on('disconnected', () => {
 });
 
 mongoose.connection.on('connected', () => {
-  disconnectedLogged = false;
   logInfo('🟢 MongoDB connected');
-});
-
-mongoose.connection.on('reconnected', () => {
-  disconnectedLogged = false;
-  logInfo('🟢 MongoDB reconnected');
 });
 
 mongoose.connection.on('error', (error: Error) => {

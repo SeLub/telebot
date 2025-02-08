@@ -21,6 +21,7 @@ import channelController from "./domains/channels/channel.controller";
 import botController from "./domains/bots/bot.controller";
 import postlineController from "./domains/postlines/postline.controller";
 import postController from "./domains/posts/post.controller";
+import healthController from "./healthCheck";
 
 /**
  * Main server Router.
@@ -67,6 +68,11 @@ export default async function MainRouter(fastify: FastifyInstance) {
   fastify.register(postController, { 
     prefix: "/posts",
     schema: { tags: ['Posts'] }
+  });
+
+  fastify.register(healthController, { 
+    prefix: "/health",
+    schema: { tags: ['Health'] }
   });
 }
 

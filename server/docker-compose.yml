@@ -1,0 +1,23 @@
+# server/docker-compose.yml
+version: "3.8"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: postup-server
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGO_URI=mongodb://admin:pass@mongo:27017/postup?authSource=admin
+    networks:
+      - postup-network
+
+networks:
+  postup-network:
+    driver: bridge

@@ -1,0 +1,27 @@
+services:
+  mongo:
+    extends:
+      file: ./db/mongo/docker-compose.yml
+      service: mongo
+    networks:
+      - postup-network
+
+  mongo-express:
+    extends:
+      file: ./db/mongo/docker-compose.yml
+      service: mongo-express
+    networks:
+      - postup-network
+
+  server:
+    extends:
+      file: ./server/docker-compose.yml
+      service: server
+    depends_on:
+      - mongo
+    networks:
+      - postup-network
+
+networks:
+  postup-network:
+    driver: bridge

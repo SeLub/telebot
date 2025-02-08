@@ -34,4 +34,8 @@ export class SubscriptionRepository {
     const result = await SubscriptionModel.deleteOne({ subscription_id: id });
     return result.deletedCount > 0;
   }
+
+  async findByUserId(userId: string): Promise<ISubscription | null> {
+  return SubscriptionModel.findOne({ user_id: userId });
+}
 }

@@ -5,6 +5,12 @@
  *  - {@link BotController}
  *  - {@link PostlineController}
  *  - {@link PostController}
+ *  - {@link UserController}
+ *  - {@link RoleController}
+ *  - {@link PermissionController}
+ *  - {@link HealthController}
+ *  - {@link AuthController}
+ * 
  *
  * and register them in Server.
  *
@@ -22,6 +28,12 @@ import botController from "./domains/bots/bot.controller";
 import postlineController from "./domains/postlines/postline.controller";
 import postController from "./domains/posts/post.controller";
 import healthController from "./healthCheck";
+import userController from './domains/users/user.controller';
+import roleController from './domains/roles/role.controller';
+import permissionController from './domains/permissions/permission.controller';
+import planController from './domains/plans/plan.controller';
+import authController from './domains/auth/auth.controller';
+
 
 /**
  * Main server Router.
@@ -74,5 +86,29 @@ export default async function MainRouter(fastify: FastifyInstance) {
     prefix: "/health",
     schema: { tags: ['Health'] }
   });
-}
 
+  fastify.register(userController, { 
+    prefix: "/users",
+    schema: { tags: ['Users'] }
+  });
+
+  fastify.register(roleController, { 
+    prefix: "/roles",
+    schema: { tags: ['Roles'] }
+  });
+
+  fastify.register(permissionController, {
+    prefix: "/permissions",
+    schema: { tags: ['Permissions'] }
+  });
+
+  fastify.register(planController, {
+    prefix: "/plans",
+    schema: { tags: ['Plans'] }
+  });
+
+  fastify.register(authController, {
+    prefix: "/auth",
+    schema: { tags: ['Auth'] }
+  });
+}

@@ -17,23 +17,33 @@
     "node": ">=18.0.0"
   },
   "nodemonConfig": {
-    "watch": ["src"],
+    "watch": [
+      "src"
+    ],
     "ext": ".ts,.js,.json",
-    "ignore": ["src/**/*.spec.ts", "src/**/*.test.ts"]
+    "ignore": [
+      "src/**/*.spec.ts",
+      "src/**/*.test.ts"
+    ]
   },
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^10.0.2",
     "@fastify/static": "^8.0.3",
     "@fastify/swagger": "^9.4.0",
     "@fastify/swagger-ui": "^5.2.0",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "fastify": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.4",
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^22.10.1",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
@@ -49,9 +59,9 @@
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
-    "typescript": "^5.7.2",
     "typedoc": "^0.27.3",
     "typedoc-plugin-mdn-links": "^4.0.3",
-    "typedoc-plugin-missing-exports": "^3.1.0"
+    "typedoc-plugin-missing-exports": "^3.1.0",
+    "typescript": "^5.7.2"
   }
 }

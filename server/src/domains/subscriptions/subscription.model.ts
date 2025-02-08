@@ -14,8 +14,16 @@ const subscriptionSchema = new Schema<ISubscription>({
   plan: {
     type: String,
     required: true,
-    enum: ["free", "premium"],
+    enum: ["free", "personal", "teams"],
   },
+  max_users: {
+    type: Number,
+    default: null,
+  },
+  features: [{
+    type: String,
+    required: true,
+  }],
   start_date: {
     type: Date,
     required: true,
@@ -26,7 +34,4 @@ const subscriptionSchema = new Schema<ISubscription>({
   },
 });
 
-export default mongoose.model<ISubscription>(
-  "Subscription",
-  subscriptionSchema
-);
+export default mongoose.model<ISubscription>("Subscription", subscriptionSchema);

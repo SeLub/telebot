@@ -11,7 +11,9 @@ export const subscriptionSchema = {
           properties: {
             subscription_id: { type: 'string' },
             user_id: { type: 'string' },
-            plan: { type: 'string', enum: ['free', 'premium'] },
+            plan: { type: 'string', enum: ['free', 'personal', 'teams'] },
+            max_users: { type: ['number', 'null'] },
+            features: { type: 'array', items: { type: 'string' } },
             start_date: { type: 'string', format: 'date-time' },
             end_date: { type: 'string', format: 'date-time' }
           }
@@ -51,10 +53,12 @@ export const subscriptionSchema = {
     summary: 'Create new subscription',
     body: {
       type: 'object',
-      required: ['user_id', 'plan', 'start_date', 'end_date'],
+      required: ['user_id', 'plan', 'features', 'start_date', 'end_date'],
       properties: {
         user_id: { type: 'string' },
-        plan: { type: 'string', enum: ['free', 'premium'] },
+        plan: { type: 'string', enum: ['free', 'personal', 'teams'] },
+        max_users: { type: ['number', 'null'] },
+        features: { type: 'array', items: { type: 'string' } },
         start_date: { type: 'string', format: 'date-time' },
         end_date: { type: 'string', format: 'date-time' }
       }

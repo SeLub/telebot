@@ -18,11 +18,22 @@ const start = async () => {
     
     await server.listen({ port: Number(PORT), host: '0.0.0.0' });
     logInfo(`🟢 Server running on port ${PORT} in ${NODE_ENV} mode`);
-  } catch (error) {
-    logError('🔴 Server failed to start', { error });
+  } catch (error: unknown) {
+    const errorDetails = {
+      message: error instanceof Error ? error.message : String(error),
+      code: error instanceof Error && 'code' in error ? (error as { code?: string }).code : undefined,
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString()
+    };
+    
+    logError('🔴 Server failed to start', {
+      error: errorDetails,
+      mongoUri: MONGO_URI.replace(/\/\/.*@/, '//***:***@'), // Hide credentials
+      port: PORT,
+      environment: NODE_ENV
+    });
     process.exit(1);
   }
 };
-
 
 start();

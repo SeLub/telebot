@@ -16,6 +16,11 @@ export const swaggerOptions = {
         { name: 'Bots', description: 'Bot management endpoints' },
         { name: 'Postlines', description: 'Postline management endpoints' },
         { name: 'Posts', description: 'Post management endpoints' },
+        { name: 'Users', description: 'User management endpoints' },
+        { name: 'Roles', description: 'Roles management endpoints' },
+        { name: 'Permissions', description: 'Permissions management endpoints' },
+        { name: 'Plans', description: 'Plans management endpoints' },
+        { name: 'Auth', description: 'Authentication endpoints' },
         { name: 'Health', description: 'Healthcheck endpoints' },
       ],
       servers: [

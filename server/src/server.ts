@@ -8,11 +8,9 @@ import { connectDB } from './db/connection';
 
 const start = async () => {
   try {
-    // Setup error handlers
     handleExit();
     handleUncaughtErrors();
 
-    // Connect to database
     await connectDB();
     logInfo('🟢 MongoDB connected successfully');
 
@@ -27,5 +25,4 @@ const start = async () => {
 };
 
 
-// Start server
 start();
